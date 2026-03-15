@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Claude Code
+.claude/
+
+# Sistema
+*.log
+.DS_Store
+Thumbs.db
+
+# Dados sensíveis / planilhas pessoais (opcional — remover se quiser versionar)
+# planilhas/

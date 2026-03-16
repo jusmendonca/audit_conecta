@@ -266,6 +266,8 @@ def _tabela_relacao_auditadas(
             cell.paragraphs[0].runs[0].bold = True
             cell.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
 
+    conf_col_idx = cols_show.index(COL_CONFORMIDADE)
+
     for row_idx, (_, row) in enumerate(df_aud.iterrows(), start=1):
         r = table.rows[row_idx]
         for col_idx, col in enumerate(cols_show):
@@ -273,9 +275,9 @@ def _tabela_relacao_auditadas(
         # Colorir conformidade
         conf = str(row.get(COL_CONFORMIDADE, ""))
         if conf == "Conforme":
-            _set_cell_bg(r.cells[-1], "d5f5e3")
+            _set_cell_bg(r.cells[conf_col_idx], "d5f5e3")
         elif conf == "Não Conforme":
-            _set_cell_bg(r.cells[-1], "fadbd8")
+            _set_cell_bg(r.cells[conf_col_idx], "fadbd8")
 
 
 def _section_auditoria(

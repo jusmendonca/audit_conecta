@@ -88,6 +88,32 @@ class AuthClient:
 
     # ── login / obtenção de token ─────────────────────────────────────────────
 
+    def login_step1(self, username: str, password: str) -> dict:
+        """
+        POST /auth/get_token com detecção de TOTP.
+
+        Retorna:
+          {"status": "ok"}                         — login direto; token em self.token
+          {"status": "totp", "challenge": "..."}   — 2FA necessário; chame totp_verify()
+        """
+        resp = self._http.post(
+            "/auth/get_token",
+            json={"username": username, "password": password},
+        )
+        data = _check(resp)
+        token = data.get("token") or data.get("access_token") or data.get("jwt")
+        if token:
+            self.token = token
+            return {"status": "ok"}
+        challenge = (
+            data.get("challenge")
+            or data.get("challengeToken")
+            or data.get("tempToken")
+        )
+        if challenge:
+            return {"status": "totp", "challenge": challenge}
+        raise AuthError(200, f"Resposta inesperada do servidor: {data}")
+
     def login(self, username: str, password: str) -> str:
         """
         POST /auth/get_token

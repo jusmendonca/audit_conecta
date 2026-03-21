@@ -55,54 +55,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ---------------------------------------------------------------------------
-# Auto-persistência: salva edições pendentes de data_editors ao navegar
-# ---------------------------------------------------------------------------
-
-def _persist_editor(df_key: str, editor_key: str, indices_key: str) -> None:
-    """
-    Lê o delta de edição do data_editor (session_state[editor_key]) e aplica
-    as mudanças de volta ao DataFrame completo (session_state[df_key]).
-
-    O delta usa índices POSICIONAIS (0, 1, 2…) relativos às linhas exibidas,
-    enquanto o DataFrame pode ter índices diferentes quando filtrado.
-    indices_key armazena o mapeamento posição → índice original.
-    """
-    edits = st.session_state.get(editor_key, {})
-    edited_rows = edits.get("edited_rows", {})
-
-    df = st.session_state.get(df_key)
-    if df is None:
-        return
-
-    if edited_rows:
-        indices = st.session_state.get(indices_key, list(range(len(df))))
-        df = df.copy()
-        for pos_str, changes in edited_rows.items():
-            pos = int(pos_str)
-            if pos < len(indices):
-                orig_idx = indices[pos]
-                for col, val in changes.items():
-                    if col in df.columns:
-                        df.at[orig_idx, col] = val
-        st.session_state[df_key] = df
-
-    # Limpar estado do editor para evitar mapeamento stale
-    if editor_key in st.session_state:
-        del st.session_state[editor_key]
-
-
-def _auto_persist_all() -> None:
-    """Persiste edições pendentes de TODOS os editors. Roda no topo de cada ciclo."""
-    for df_key, editor_key, indices_key in [
-        ("df_audit_triadas", "editor_triadas", "_idx_triadas"),
-        ("df_audit_nao_triadas", "editor_nao_triadas", "_idx_nao_triadas"),
-    ]:
-        if st.session_state.get(df_key) is not None:
-            _persist_editor(df_key, editor_key, indices_key)
-
-
-_auto_persist_all()
 
 
 # ---------------------------------------------------------------------------
@@ -124,6 +76,91 @@ def _check_icon(chave: str) -> str:
         "relatorio":   False,
     }
     return "  ✓" if checks.get(chave) else ""
+
+
+# ---------------------------------------------------------------------------
+# SUPP Login — helpers
+# ---------------------------------------------------------------------------
+
+def _supp_get_nome(client, fallback: str) -> str:
+    """Tenta obter o nome do usuário via payload do JWT."""
+    try:
+        payload = client.payload()
+        return (
+            payload.get("name")
+            or payload.get("username")
+            or payload.get("login")
+            or payload.get("sub")
+            or fallback
+        )
+    except Exception:
+        return fallback
+
+
+def _supp_logout_cleanup() -> None:
+    client = st.session_state.pop("supp_auth_client", None)
+    if client:
+        try:
+            client.close()
+        except Exception:
+            pass
+    for k in ("supp_logged_in", "supp_username", "supp_auth_client",
+              "supp_login_step", "supp_totp_challenge"):
+        st.session_state.pop(k, None)
+
+
+def _supp_do_login(base_url: str, usuario: str, senha: str) -> None:
+    """Autentica via LDAP e armazena o cliente na sessão."""
+    try:
+        from modules.auth import AuthClient, AuthError as _AE
+        client = AuthClient(base_url=base_url.rstrip("/"))
+        client.login_ldap(usuario, senha)
+        st.session_state["supp_auth_client"] = client
+        st.session_state["supp_logged_in"] = True
+        st.session_state["supp_username"] = _supp_get_nome(client, usuario)
+        st.session_state["supp_base_url"] = base_url.rstrip("/")
+        st.rerun()
+    except Exception as exc:
+        try:
+            from modules.auth import AuthError as _AE2
+            msg = exc.body if isinstance(exc, _AE2) else str(exc)
+        except Exception:
+            msg = str(exc)
+        st.error(f"Credenciais inválidas: {msg}")
+
+
+def _render_login_page() -> None:
+    """Tela de login SUPP via LDAP — exibida antes de qualquer outra coisa."""
+    st.markdown(
+        "<style>.block-container{padding-top:5rem;}</style>",
+        unsafe_allow_html=True,
+    )
+    _, col, _ = st.columns([1, 1.5, 1])
+    with col:
+        st.markdown("## 📋 Auditoria Conecta+")
+        st.markdown("##### Procuradoria-Geral Federal / AGU")
+        st.divider()
+
+        SUPP_URL = "https://supersapiensbackend.agu.gov.br"
+
+        with st.form("login_page_form"):
+            usuario = st.text_input("Usuário (login LDAP)", placeholder="cpf ou login")
+            senha = st.text_input("Senha", type="password")
+            ok = st.form_submit_button(
+                "Entrar →", use_container_width=True, type="primary"
+            )
+
+        if ok:
+            if not usuario.strip() or not senha:
+                st.error("Preencha usuário e senha.")
+            else:
+                _supp_do_login(SUPP_URL, usuario.strip(), senha)
+
+
+# ── Login gate: app só funciona após autenticação ──────────────────────────
+if not st.session_state.get("supp_logged_in"):
+    _render_login_page()
+    st.stop()
 
 
 with st.sidebar:
@@ -172,47 +209,337 @@ with st.sidebar:
     if st.button("🔄 Nova Auditoria", use_container_width=True):
         # Limpar tudo
         for k in list(st.session_state.keys()):
-            if k.startswith(("editor_", "_idx_", "filtro_", "busca_", "sort_col_", "sort_dir_")):
+            if k.startswith(("filtro_", "busca_", "tbl_",
+                             "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
                 del st.session_state[k]
         reset_auditoria()
         st.session_state["pagina"] = "importacao"
         st.session_state["audit_data_merged"] = None
         st.rerun()
 
+    # ── Usuário SUPP ──────────────────────────────────────────────────────────
+    st.divider()
+    nome = st.session_state.get("supp_username", "")
+    st.caption(f"🟢 **{nome}**")
+    if st.button("Sair do SUPP", use_container_width=True, key="btn_supp_logout"):
+        _supp_logout_cleanup()
+        st.rerun()
+
 
 # ---------------------------------------------------------------------------
-# Editor compartilhado: tabela editável com filtro e salvamento
+# SUPP — Painel de conferência
 # ---------------------------------------------------------------------------
 
-_COL_LABELS: dict[str, str] = {
-    COL_TAREFA:       "Tarefa",
-    COL_NUP:          "NUP",
-    COL_USUARIO:      "Usuário",
-    COL_CONFIG:       "Config. Encontradas",
-    COL_STATUS:       "Status",
-    COL_CONFORMIDADE: "Conformidade",
-    COL_MOTIVO:       "Motivo NC",
-    COL_ACAO:         "Ação Corretiva",
-}
+def _get_nested(d: dict, path: str):
+    """Acessa valor aninhado por caminho dotted. Ex: 'setorAtual.nome'"""
+    val = d
+    for k in path.split("."):
+        if not isinstance(val, dict):
+            return None
+        val = val.get(k)
+    return val
 
 
-def _render_editor(
+def _fmt_date(s) -> str:
+    """Formata ISO datetime para dd/mm/aaaa."""
+    if not s:
+        return "—"
+    try:
+        from datetime import datetime as _dt
+        dt = _dt.fromisoformat(str(s).replace("Z", "+00:00"))
+        return dt.strftime("%d/%m/%Y")
+    except Exception:
+        return str(s)[:10]
+
+
+
+def _render_supp_panel() -> None:
+    """Painel lateral de conferência — exibe dados completos da tarefa e do processo."""
+    from datetime import datetime as _dt, timezone as _tz, timedelta as _td
+
+    nup = st.session_state.get("supp_sel_nup")
+    tarefa_id = st.session_state.get("supp_sel_tarefa_id")
+
+    st.markdown("#### 🔍 Conferência SUPP")
+
+    if not nup:
+        st.info("Selecione uma linha na tabela para consultar dados no sistema.")
+        return
+
+    # ── Configuração de período (persiste na sessão) ─────────────────────────
+    dias = st.slider(
+        "Eventos dos últimos (dias):",
+        min_value=7, max_value=365, step=7,
+        key="supp_dias_eventos",
+        value=st.session_state.get("supp_dias_eventos", 30),
+    )
+
+    cache_key = f"_supp_cache_{nup}"
+
+    if cache_key not in st.session_state:
+        auth = st.session_state.get("supp_auth_client")
+        cache: dict = {}
+        if auth:
+            with st.spinner("Consultando SUPP..."):
+                # 1. Tarefa
+                if tarefa_id:
+                    try:
+                        from modules.tarefa import TarefaClient
+                        tc = TarefaClient.from_auth(auth)
+                        cache["tarefa"] = tc.buscar(
+                            tarefa_id,
+                            populate=["processo", "vinculacaoWorkflow", "especieTarefa",
+                                      "usuarioResponsavel"],
+                        )
+                    except Exception as e:
+                        cache["tarefa_erro"] = str(e)
+
+                # 2. Processo — extraindo o ID da tarefa
+                proc_id = None
+                if "tarefa" in cache:
+                    proc_emb = cache["tarefa"].get("processo")
+                    if isinstance(proc_emb, dict):
+                        proc_id = proc_emb.get("id")
+
+                if proc_id:
+                    try:
+                        from modules.processo import ProcessoClient
+                        pc = ProcessoClient.from_auth(auth)
+                        cache["processo"] = pc.buscar(
+                            proc_id,
+                            populate=["especieProcesso", "setorAtual", "setorInicial",
+                                      "classificacao", "criadoPor", "processoJudicial"],
+                        )
+                    except Exception as e:
+                        cache["processo_erro"] = str(e)
+
+                    # 3. Etiquetas do processo
+                    try:
+                        from modules.etiqueta import EtiquetaClient
+                        ec = EtiquetaClient.from_auth(auth)
+                        cache["etiquetas_processo"] = ec.listar_por_processo(proc_id)
+                    except Exception as e:
+                        cache["etiquetas_processo_erro"] = str(e)
+
+                    # 4. Interessados do processo
+                    try:
+                        from modules.interessado import InteressadoClient
+                        ic = InteressadoClient.from_auth(auth)
+                        cache["interessados"] = ic.listar_por_processo(proc_id)
+                    except Exception as e:
+                        cache["interessados_erro"] = str(e)
+
+                    # 5. Timeline do processo (filtrada por dias na exibição)
+                    try:
+                        from modules.processo import ProcessoClient as _PC2
+                        cache["timeline"] = _PC2.from_auth(auth).timeline(proc_id)
+                    except Exception as e:
+                        cache["timeline_erro"] = str(e)
+
+                # 6. Etiquetas da tarefa
+                if tarefa_id:
+                    try:
+                        from modules.etiqueta import EtiquetaClient as _EC2
+                        cache["etiquetas_tarefa"] = _EC2.from_auth(auth).listar_por_tarefa(tarefa_id)
+                    except Exception as e:
+                        cache["etiquetas_tarefa_erro"] = str(e)
+
+        st.session_state[cache_key] = cache
+
+    cache = st.session_state[cache_key]
+
+    # Cabeçalho + botão atualizar
+    c_nup, c_btn = st.columns([4, 1])
+    with c_nup:
+        st.caption(f"`{nup}`")
+    with c_btn:
+        if st.button("🔄", key=f"_refresh_{nup}", help="Recarregar dados do SUPP"):
+            st.session_state.pop(cache_key, None)
+            st.rerun()
+
+    # ── Tarefa ────────────────────────────────────────────────────────────────
+    if "tarefa" in cache:
+        t = cache["tarefa"]
+        st.markdown("**📋 Tarefa**")
+
+        vw = t.get("vinculacaoWorkflow")
+        workflow_txt = None
+        if isinstance(vw, dict):
+            wf = vw.get("workflow")
+            workflow_txt = (
+                (_get_nested(wf, "nome") if isinstance(wf, dict) else None)
+                or f"ID {vw.get('id')}"
+                + (" (concluído)" if vw.get("concluido") else "")
+            )
+
+        campos_t = [
+            ("Espécie", _get_nested(t, "especieTarefa.nome") or t.get("especieTarefa")),
+            ("Responsável", _get_nested(t, "usuarioResponsavel.nome")),
+            ("Prazo", _fmt_date(t.get("dataHoraFinalPrazo"))),
+            ("Urgente", "Sim" if t.get("urgente") else "Não"),
+            ("Status", t.get("situacaoTarefa") or t.get("situacao") or t.get("status")),
+            ("Fluxo", workflow_txt),
+            ("Post-it", t.get("postIt")),
+        ]
+        for label, val in campos_t:
+            if val is not None and val != "":
+                st.markdown(f"**{label}:** {val}")
+
+        # Etiquetas da tarefa
+        et_t = cache.get("etiquetas_tarefa", [])
+        if et_t:
+            nomes_et_t = [
+                _get_nested(e, "etiqueta.nome") or str(e.get("etiqueta", ""))
+                for e in et_t if e
+            ]
+            nomes_et_t = [n for n in nomes_et_t if n]
+            if nomes_et_t:
+                st.markdown("**Etiquetas:** " + " · ".join(f"`{n}`" for n in nomes_et_t))
+        elif "etiquetas_tarefa_erro" in cache:
+            st.caption(f"⚠️ Etiquetas: {cache['etiquetas_tarefa_erro']}")
+
+    elif "tarefa_erro" in cache:
+        st.warning(f"Tarefa: {cache['tarefa_erro']}", icon="⚠️")
+
+    # ── Processo ──────────────────────────────────────────────────────────────
+    if "processo" in cache:
+        p = cache["processo"]
+        st.markdown("---")
+        st.markdown("**📁 Processo**")
+
+        # CNJ e classe: via processoJudicial se disponível
+        pj = p.get("processoJudicial")
+        cnj = None
+        classe_cnj = None
+        if isinstance(pj, dict):
+            cnj = pj.get("numero") or pj.get("numeroFormatado") or pj.get("numeroAlternativo")
+            classe_cnj = _get_nested(pj, "classeNacional.nome")
+        classe_proc = _get_nested(p, "classificacao.nome") or _get_nested(p, "classificacao.nomeCompleto")
+
+        campos_p = [
+            ("NUP", p.get("NUP") or p.get("nup")),
+            ("Espécie/Tipo", _get_nested(p, "especieProcesso.nome") or p.get("descricao") or p.get("assunto")),
+            ("Número CNJ", cnj),
+            ("Classe CNJ", classe_cnj),
+            ("Classe processual", classe_proc),
+            ("Setor responsável", _get_nested(p, "setorAtual.nome")),
+            ("Setor inicial", _get_nested(p, "setorInicial.nome")),
+            ("Status", p.get("status") or p.get("situacao")),
+            ("Autuado em", _fmt_date(p.get("dataHoraAbertura") or p.get("dataHoraCriacao"))),
+            ("Observação", p.get("observacao")),
+        ]
+        for label, val in campos_p:
+            if val is not None and val != "":
+                st.markdown(f"**{label}:** {val}")
+
+        # Etiquetas do processo
+        et_p = cache.get("etiquetas_processo", [])
+        if et_p:
+            nomes_et_p = [
+                _get_nested(e, "etiqueta.nome") or str(e.get("etiqueta", ""))
+                for e in et_p if e
+            ]
+            nomes_et_p = [n for n in nomes_et_p if n]
+            if nomes_et_p:
+                st.markdown("**Etiquetas:** " + " · ".join(f"`{n}`" for n in nomes_et_p))
+        elif "etiquetas_processo_erro" in cache:
+            st.caption(f"⚠️ Etiquetas: {cache['etiquetas_processo_erro']}")
+
+        # Interessados
+        interessados = cache.get("interessados", [])
+        label_int = f"👥 Interessados ({len(interessados)})"
+        if "interessados_erro" in cache:
+            label_int += " ⚠️"
+        with st.expander(label_int, expanded=False):
+            if interessados:
+                for intr in interessados:
+                    nome_p = (
+                        _get_nested(intr, "pessoa.nome")
+                        or _get_nested(intr, "pessoa.pessoaFisica.nome")
+                        or _get_nested(intr, "pessoa.pessoaJuridica.razaoSocial")
+                        or str(intr.get("pessoa", "—"))
+                    )
+                    modalidade = _get_nested(intr, "modalidadeInteressado.valor") or ""
+                    linha = f"- {nome_p}"
+                    if modalidade:
+                        linha += f" *({modalidade})*"
+                    st.markdown(linha)
+            elif "interessados_erro" in cache:
+                st.warning(cache["interessados_erro"])
+            else:
+                st.caption("Nenhum interessado registrado.")
+
+    elif "processo_erro" in cache:
+        st.warning(f"Processo: {cache['processo_erro']}", icon="⚠️")
+
+    # ── Timeline ──────────────────────────────────────────────────────────────
+    timeline_raw = cache.get("timeline", [])
+    corte = _dt.now(_tz.utc) - _td(days=dias)
+
+    def _parse_timeline_events(raw: list) -> list[dict]:
+        """Normaliza estrutura variável da timeline para lista de {data, msg}."""
+        events = []
+        for item in raw:
+            if isinstance(item, dict):
+                # Estrutura direta
+                evt_date = item.get("eventDate") or item.get("dataHora") or item.get("criadoEm")
+                msg = item.get("message") or item.get("mensagem") or item.get("descricao") or ""
+                # Estrutura aninhada em entities
+                if not evt_date and "entities" in item:
+                    for sub in item.get("entities", []):
+                        if isinstance(sub, dict):
+                            te = sub.get("timelineEvent") or sub
+                            evt_date = te.get("eventDate") or te.get("dataHora")
+                            msg = te.get("message") or te.get("mensagem") or msg
+                            break
+                if evt_date:
+                    events.append({"data": evt_date, "msg": str(msg)})
+        return events
+
+    eventos = _parse_timeline_events(timeline_raw)
+    eventos_filtrados = []
+    for ev in eventos:
+        try:
+            dt_ev = _dt.fromisoformat(str(ev["data"]).replace("Z", "+00:00"))
+            if dt_ev >= corte:
+                eventos_filtrados.append((dt_ev, ev["msg"]))
+        except Exception:
+            pass
+    eventos_filtrados.sort(key=lambda x: x[0], reverse=True)
+
+    label_tl = f"📅 Eventos — últimos {dias} dias ({len(eventos_filtrados)})"
+    if "timeline_erro" in cache:
+        label_tl += " ⚠️"
+    with st.expander(label_tl, expanded=len(eventos_filtrados) > 0 and len(eventos_filtrados) <= 5):
+        if eventos_filtrados:
+            for dt_ev, msg in eventos_filtrados:
+                st.markdown(f"- **{dt_ev.strftime('%d/%m/%Y')}** — {msg}")
+        elif "timeline_erro" in cache:
+            st.warning(cache["timeline_erro"])
+        elif timeline_raw is not None:
+            st.caption(f"Nenhum evento nos últimos {dias} dias.")
+
+
+# ---------------------------------------------------------------------------
+# Tabela interativa + editor de linha
+# ---------------------------------------------------------------------------
+
+
+def _render_audit_table(
     df_key: str,
-    editor_key: str,
-    indices_key: str,
     filtro_key: str,
     busca_key: str,
-    sort_col_key: str,
-    sort_dir_key: str,
     column_order: list[str],
-    disabled_cols: list[str],
-) -> None:
-    """Renderiza editor de auditoria com filtro, busca, ordenação e botão de salvar."""
+    table_key: str,
+) -> tuple:
+    """
+    Tabela interativa com filtros e seleção de linha.
+    Retorna (orig_idx, row_dict) da linha selecionada, ou (None, None).
+    """
     df = st.session_state[df_key]
     total = len(df)
     s = stats_df(df)
 
-    # ── Progresso ──
     pct = s["auditadas"] / total if total > 0 else 0
     st.progress(
         pct,
@@ -222,63 +549,21 @@ def _render_editor(
         ),
     )
 
-    # ── Filtros ──
-    def _on_filter_change():
-        _persist_editor(df_key, editor_key, indices_key)
-
     col_f1, col_f2 = st.columns([1, 2])
     with col_f1:
         filtro = st.multiselect(
-            "Filtrar por conformidade:",
+            "Filtrar conformidade:",
             OPCOES_CONFORMIDADE,
             default=OPCOES_CONFORMIDADE,
             key=filtro_key,
-            on_change=_on_filter_change,
         )
     with col_f2:
         has_config = COL_CONFIG in df.columns
         busca_label = (
-            "Buscar (Tarefa, NUP ou Config. Encontradas):"
-            if has_config
-            else "Buscar (Tarefa ou NUP):"
+            "Buscar (Tarefa, NUP ou Config.):" if has_config else "Buscar (Tarefa ou NUP):"
         )
-        busca = st.text_input(
-            busca_label,
-            key=busca_key,
-            placeholder="Digite para filtrar…",
-            on_change=_on_filter_change,
-        )
+        busca = st.text_input(busca_label, key=busca_key, placeholder="Digite para filtrar…")
 
-    # ── Ordenação persistente ──
-    sortable_cols = [c for c in column_order if c in df.columns]
-    sortable_labels = [_COL_LABELS.get(c, c) for c in sortable_cols]
-
-    cur_sort_col = st.session_state.get(sort_col_key, sortable_cols[0] if sortable_cols else None)
-    if cur_sort_col not in sortable_cols:
-        cur_sort_col = sortable_cols[0] if sortable_cols else None
-    cur_sort_asc = st.session_state.get(sort_dir_key, True)
-
-    col_s1, col_s2 = st.columns([3, 1])
-    with col_s1:
-        default_idx = sortable_cols.index(cur_sort_col) if cur_sort_col in sortable_cols else 0
-        sort_label = st.selectbox(
-            "Ordenar por:",
-            sortable_labels,
-            index=default_idx,
-            key=f"{sort_col_key}_widget",
-            on_change=_on_filter_change,
-        )
-        st.session_state[sort_col_key] = sortable_cols[sortable_labels.index(sort_label)]
-    with col_s2:
-        sort_asc = st.toggle(
-            "Crescente",
-            value=cur_sort_asc,
-            key=f"{sort_dir_key}_widget",
-            on_change=_on_filter_change,
-        )
-        st.session_state[sort_dir_key] = sort_asc
-
-    # Aplicar filtros
     mask = df[COL_CONFORMIDADE].isin(filtro)
     if busca.strip():
         txt = busca.strip()
@@ -291,83 +576,83 @@ def _render_editor(
         mask = mask & search_mask
 
     df_view = df.loc[mask]
+    col_order = [c for c in column_order if c in df_view.columns]
 
-    # Aplicar ordenação server-side (persiste após rerun)
-    active_sort_col = st.session_state.get(sort_col_key)
-    if active_sort_col and active_sort_col in df_view.columns:
-        df_view = df_view.sort_values(
-            active_sort_col,
-            ascending=st.session_state.get(sort_dir_key, True),
-            kind="stable",
-        )
-
-    st.session_state[indices_key] = df_view.index.tolist()
-
-    st.caption(f"Exibindo **{len(df_view)}** de {total} tarefas")
+    st.caption(f"Exibindo **{len(df_view)}** de {total} tarefas — clique em uma linha para auditar")
 
     if df_view.empty:
         st.info("Nenhuma tarefa corresponde ao filtro atual.")
-        return
+        return None, None
 
-    # ── Garantir que colunas existem no df_view (para column_order) ──
-    col_order = [c for c in column_order if c in df_view.columns]
-    disabled = [c for c in disabled_cols if c in df_view.columns]
-
-    # ── Editor ──
-    edited = st.data_editor(
-        df_view,
-        key=editor_key,
-        column_order=col_order,
+    event = st.dataframe(
+        df_view[col_order],
+        use_container_width=True,
+        hide_index=True,
+        on_select="rerun",
+        selection_mode="single-row",
+        key=table_key,
         column_config={
             COL_TAREFA: st.column_config.TextColumn("Tarefa", width="small"),
             COL_NUP: st.column_config.TextColumn("NUP", width="medium"),
             COL_USUARIO: st.column_config.TextColumn("Usuário", width="small"),
-            COL_CONFIG: st.column_config.TextColumn("Config. Encontradas", width="medium"),
+            COL_CONFIG: st.column_config.TextColumn("Config.", width="medium"),
             COL_STATUS: st.column_config.TextColumn("Status", width="small"),
-            COL_CONFORMIDADE: st.column_config.SelectboxColumn(
-                "Conformidade",
-                options=OPCOES_CONFORMIDADE,
-                required=True,
-                width="small",
-            ),
-            COL_MOTIVO: st.column_config.TextColumn(
-                "Motivo NC",
-                width="large",
-                help="Descreva o motivo da não conformidade",
-            ),
-            COL_ACAO: st.column_config.TextColumn(
-                "Ação Corretiva",
-                width="large",
-                help="Descreva a ação corretiva proposta",
-            ),
+            COL_CONFORMIDADE: st.column_config.TextColumn("Conformidade", width="small"),
+            COL_MOTIVO: st.column_config.TextColumn("Motivo NC", width="medium"),
+            COL_ACAO: st.column_config.TextColumn("Ação Corretiva", width="medium"),
         },
-        disabled=disabled,
-        hide_index=True,
-        use_container_width=True,
-        num_rows="fixed",
-        height=min(800, max(200, 37 + 35 * len(df_view))),
+        height=min(600, max(200, 37 + 35 * len(df_view))),
     )
 
-    # ── Salvar ──
-    col_save, col_info = st.columns([1, 3])
-    with col_save:
-        if st.button("💾 Salvar Alterações", type="primary", key=f"btn_save_{df_key}"):
-            # Usar o retorno do editor (que já tem os índices originais)
-            df_updated = st.session_state[df_key].copy()
-            for col in [COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO]:
-                if col in edited.columns:
-                    df_updated.loc[edited.index, col] = edited[col]
-            st.session_state[df_key] = df_updated
-            if editor_key in st.session_state:
-                del st.session_state[editor_key]
-            st.rerun()
-    with col_info:
-        s_new = stats_df(st.session_state[df_key])
-        pendentes = total - s_new["auditadas"]
-        if pendentes > 0:
-            st.caption(f"⏳ {pendentes} tarefa(s) ainda não auditada(s)")
-        else:
-            st.caption("✅ Todas as tarefas foram auditadas")
+    rows = event.selection.rows
+    if rows:
+        orig_idx = df_view.index[rows[0]]
+        row = df.loc[orig_idx].to_dict()
+        st.session_state["supp_sel_nup"] = row.get(COL_NUP)
+        st.session_state["supp_sel_tarefa_id"] = row.get(COL_TAREFA)
+        return orig_idx, row
+
+    return None, None
+
+
+def _render_row_editor(df_key: str, orig_idx, row: dict) -> None:
+    """Painel de edição dos campos de auditoria de uma linha selecionada."""
+    st.markdown("#### ✏️ Auditoria")
+    st.caption(f"Tarefa `{row.get(COL_TAREFA)}` · `{row.get(COL_NUP)}`")
+
+    cur_conf = row.get(COL_CONFORMIDADE, OPCOES_CONFORMIDADE[0])
+    if cur_conf not in OPCOES_CONFORMIDADE:
+        cur_conf = OPCOES_CONFORMIDADE[0]
+
+    conf = st.selectbox(
+        "Conformidade:",
+        OPCOES_CONFORMIDADE,
+        index=OPCOES_CONFORMIDADE.index(cur_conf),
+        key=f"edit_conf_{orig_idx}_{df_key}",
+    )
+    motivo = st.text_area(
+        "Motivo NC:",
+        value=row.get(COL_MOTIVO, "") or "",
+        key=f"edit_motivo_{orig_idx}_{df_key}",
+        height=90,
+        placeholder="Descreva o motivo da não conformidade…",
+    )
+    acao = st.text_area(
+        "Ação Corretiva:",
+        value=row.get(COL_ACAO, "") or "",
+        key=f"edit_acao_{orig_idx}_{df_key}",
+        height=90,
+        placeholder="Descreva a ação corretiva proposta…",
+    )
+
+    if st.button("💾 Salvar", type="primary", key=f"btn_save_row_{orig_idx}_{df_key}",
+                 use_container_width=True):
+        df = st.session_state[df_key].copy()
+        df.at[orig_idx, COL_CONFORMIDADE] = conf
+        df.at[orig_idx, COL_MOTIVO] = motivo
+        df.at[orig_idx, COL_ACAO] = acao
+        st.session_state[df_key] = df
+        st.rerun()
 
 
 # ===========================================================================
@@ -566,24 +851,21 @@ def render_auditoria_triadas() -> None:
     descr = f"Amostra: **{n_amostra}** tarefas" if n_amostra else f"Total: **{len(df)}** tarefas"
     st.markdown(f"**Tipo:** {tipo_label} · {descr}")
 
-    st.info(
-        "Edite a coluna **Conformidade** para cada tarefa. "
-        "Para não conformidades, preencha também **Motivo NC** e **Ação Corretiva**. "
-        "Clique em **Salvar Alterações** para persistir.",
-        icon="ℹ️",
-    )
-
-    _render_editor(
-        df_key="df_audit_triadas",
-        editor_key="editor_triadas",
-        indices_key="_idx_triadas",
-        filtro_key="filtro_conf_tri",
-        busca_key="busca_tri",
-        sort_col_key="sort_col_tri",
-        sort_dir_key="sort_dir_tri",
-        column_order=[COL_TAREFA, COL_NUP, COL_CONFIG, COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
-        disabled_cols=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_CONFIG, COL_STATUS],
-    )
+    col_left, col_right = st.columns([3, 2], gap="medium")
+    with col_left:
+        orig_idx, row = _render_audit_table(
+            df_key="df_audit_triadas",
+            filtro_key="filtro_conf_tri",
+            busca_key="busca_tri",
+            column_order=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_CONFIG, COL_STATUS,
+                          COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
+            table_key="tbl_triadas",
+        )
+    with col_right:
+        if orig_idx is not None and row is not None:
+            _render_row_editor("df_audit_triadas", orig_idx, row)
+            st.divider()
+        _render_supp_panel()
 
     st.divider()
     col1, col2 = st.columns([2, 1])
@@ -599,8 +881,8 @@ def render_auditoria_triadas() -> None:
             st.session_state["tamanho_amostra"] = None
             st.session_state["auditoria_triadas_concluida"] = False
             for k in list(st.session_state.keys()):
-                if k.startswith(("editor_triadas", "_idx_triadas", "filtro_conf_tri",
-                                 "busca_tri", "sort_col_tri", "sort_dir_tri")):
+                if k.startswith(("filtro_conf_tri", "busca_tri", "tbl_triadas",
+                                 "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
                     del st.session_state[k]
             st.rerun()
 
@@ -671,24 +953,21 @@ def render_auditoria_nao_triadas() -> None:
         return
 
     # ── Editor ──
-    st.info(
-        "Edite a coluna **Conformidade** para cada tarefa. "
-        "Para não conformidades, preencha também **Motivo NC** e **Ação Corretiva**. "
-        "Clique em **Salvar Alterações** para persistir.",
-        icon="ℹ️",
-    )
-
-    _render_editor(
-        df_key="df_audit_nao_triadas",
-        editor_key="editor_nao_triadas",
-        indices_key="_idx_nao_triadas",
-        filtro_key="filtro_conf_nao",
-        busca_key="busca_nao",
-        sort_col_key="sort_col_nao",
-        sort_dir_key="sort_dir_nao",
-        column_order=[COL_TAREFA, COL_NUP, COL_STATUS, COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
-        disabled_cols=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_STATUS],
-    )
+    col_left, col_right = st.columns([3, 2], gap="medium")
+    with col_left:
+        orig_idx, row = _render_audit_table(
+            df_key="df_audit_nao_triadas",
+            filtro_key="filtro_conf_nao",
+            busca_key="busca_nao",
+            column_order=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_STATUS,
+                          COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
+            table_key="tbl_nao_triadas",
+        )
+    with col_right:
+        if orig_idx is not None and row is not None:
+            _render_row_editor("df_audit_nao_triadas", orig_idx, row)
+            st.divider()
+        _render_supp_panel()
 
     st.divider()
     col1, col2 = st.columns([2, 1])
@@ -702,9 +981,8 @@ def render_auditoria_nao_triadas() -> None:
             st.session_state["df_audit_nao_triadas"] = None
             st.session_state["auditoria_nao_triadas_concluida"] = False
             for k in list(st.session_state.keys()):
-                if k.startswith(("editor_nao_triadas", "_idx_nao_triadas",
-                                 "filtro_conf_nao", "busca_nao",
-                                 "sort_col_nao", "sort_dir_nao")):
+                if k.startswith(("filtro_conf_nao", "busca_nao", "tbl_nao_triadas",
+                                 "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
                     del st.session_state[k]
             st.rerun()
 

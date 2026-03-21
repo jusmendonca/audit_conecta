@@ -19,5 +19,8 @@ env/
 .DS_Store
 Thumbs.db
 
+# Variáveis de ambiente
+.env
+
 # Dados sensíveis / planilhas pessoais (opcional — remover se quiser versionar)
 # planilhas/

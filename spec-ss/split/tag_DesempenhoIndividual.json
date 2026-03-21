@@ -1,0 +1,67 @@
+{
+  "tag": "DesempenhoIndividual",
+  "paths": {
+    "/v1/administrativo/grafico_desempenho_individual": {
+      "get": {
+        "tags": [
+          "Default",
+          "DesempenhoIndividual"
+        ],
+        "summary": "Route for get API version.",
+        "operationId": "get_suppcore_administrativobackend_api_v1_indicadorindividual_obtergraficodesempenhoindividual",
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "description": "Mercure ativation",
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "success": "true"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/judicial/grafico_desempenho_individual": {
+      "get": {
+        "tags": [
+          "Default",
+          "DesempenhoIndividual"
+        ],
+        "operationId": "get_suppcore_judicialbackend_api_v1_desempenhoindividual_obtergraficodesempenhoindividual",
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "description": "Mercure ativation",
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "success": "true"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "schemas": {}
+}

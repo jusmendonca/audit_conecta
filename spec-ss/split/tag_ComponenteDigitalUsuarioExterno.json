@@ -1,0 +1,302 @@
+{
+  "tag": "ComponenteDigitalUsuarioExterno",
+  "paths": {
+    "/v1/divida/usuario_externo/componente_digital/{id}/download": {
+      "get": {
+        "tags": [
+          "ComponenteDigitalUsuarioExterno"
+        ],
+        "summary": "Endpoint action to download.",
+        "operationId": "get_suppcore_dividabackend_api_v1_usuarioexterno_administrativocomponentedigital_download",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/divida/usuario_externo/componente_digital/{id}/download_as_pdf": {
+      "get": {
+        "tags": [
+          "ComponenteDigitalUsuarioExterno"
+        ],
+        "summary": "Endpoint action to download.",
+        "operationId": "get_suppcore_dividabackend_api_v1_usuarioexterno_administrativocomponentedigital_downloadaspdf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/divida/usuario_externo/componente_digital/documento/{uuid}": {
+      "get": {
+        "tags": [
+          "ComponenteDigitalUsuarioExterno"
+        ],
+        "summary": "somente para o componente digital",
+        "operationId": "get_suppcore_dividabackend_api_v1_usuarioexterno_administrativocomponentedigital_documentouuid",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[\\w-]{36}"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/divida/usuario_externo/componente_digital/{id}/download_as_zip": {
+      "get": {
+        "tags": [
+          "ComponenteDigitalUsuarioExterno"
+        ],
+        "summary": "Endpoint action to download.",
+        "operationId": "get_suppcore_dividabackend_api_v1_usuarioexterno_administrativocomponentedigital_downloadaszip",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "schemas": {}
+}

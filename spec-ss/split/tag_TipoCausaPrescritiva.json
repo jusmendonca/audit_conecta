@@ -1,0 +1,5695 @@
+{
+  "tag": "TipoCausaPrescritiva",
+  "paths": {
+    "/v1/divida/tipo_causa_prescritiva/{id}": {
+      "get": {
+        "tags": [
+          "TipoCausaPrescritiva"
+        ],
+        "summary": "Endpoint action to fetch specified entity (SuppCore\\DividaBackend\\Entity\\TipoCausaPrescritiva) from this resource. Base route: \"/v1/divida/tipo_causa_prescritiva\"",
+        "operationId": "get_suppcore_dividabackend_api_v1_tipocausaprescritiva_findone",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Identifier"
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Used populate parts in request.\n\n<p>Associations that can be used:</p>\n<pre>criadoPor<br />atualizadoPor<br />apagadoPor</pre>\n\n<p>Usage examples:</p>\n<pre><em>populate: [\"criadoPor\", \"atualizadoPor\", \"apagadoPor\"]</em></pre>\n\n<br />",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "[\"populateAll\"]"
+            }
+          },
+          {
+            "parameter": "context",
+            "name": "context",
+            "in": "query",
+            "description": "Used context option in request.\n\n<p>Usage examples:</p>\n<pre><em>{\"context\": \"12345678\"}</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "context",
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "$ref": "#/components/schemas/TipoCausaPrescritiva"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Not found, code: 0, status: 404}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "TipoCausaPrescritiva"
+        ],
+        "summary": "Endpoint action to create update specified entity (SuppCore\\DividaBackend\\Entity\\TipoCausaPrescritiva) on this resource. Base route: \"/v1/divida/tipo_causa_prescritiva\"",
+        "description": "",
+        "operationId": "put_suppcore_dividabackend_api_v1_tipocausaprescritiva_update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Identifier"
+            }
+          },
+          {
+            "parameter": "context",
+            "name": "context",
+            "in": "query",
+            "description": "Used context option in request.\n\n<p>Usage examples:</p>\n<pre><em>{\"context\": \"12345678\"}</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "context",
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "JSON payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "eficaciaCausa": "eficaciaCausa",
+                  "nome": "nome",
+                  "descricao": "descricao",
+                  "ativo": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "$ref": "#/components/schemas/TipoCausaPrescritiva"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Not found, code: 0, status: 404}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "TipoCausaPrescritiva"
+        ],
+        "summary": "Endpoint action to delete specified entity (SuppCore\\DividaBackend\\Entity\\TipoCausaPrescritiva) from this resource. Base route: \"/v1/divida/tipo_causa_prescritiva\"",
+        "description": "",
+        "operationId": "delete_suppcore_dividabackend_api_v1_tipocausaprescritiva_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "$ref": "#/components/schemas/TipoCausaPrescritiva"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Not found, code: 0, status: 404}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "TipoCausaPrescritiva"
+        ],
+        "summary": "Endpoint action to create patch specified entity (SuppCore\\DividaBackend\\Entity\\TipoCausaPrescritiva) on this resource. Base route: \"/v1/divida/tipo_causa_prescritiva\"",
+        "operationId": "patch_suppcore_dividabackend_api_v1_tipocausaprescritiva_patch",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Identifier"
+            }
+          },
+          {
+            "parameter": "context",
+            "name": "context",
+            "in": "query",
+            "description": "Used context option in request.\n\n<p>Usage examples:</p>\n<pre><em>{\"context\": \"12345678\"}</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "context",
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "JSON payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "eficaciaCausa": "eficaciaCausa",
+                  "nome": "nome",
+                  "descricao": "descricao",
+                  "ativo": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "$ref": "#/components/schemas/TipoCausaPrescritiva"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Not found, code: 0, status: 404}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/divida/tipo_causa_prescritiva": {
+      "get": {
+        "tags": [
+          "TipoCausaPrescritiva"
+        ],
+        "summary": "Endpoint action to fetch entities (SuppCore\\DividaBackend\\Entity\\TipoCausaPrescritiva) from this resource. Base route: \"/v1/divida/tipo_causa_prescritiva\"",
+        "operationId": "get_suppcore_dividabackend_api_v1_tipocausaprescritiva_find",
+        "parameters": [
+          {
+            "parameter": "order",
+            "name": "order",
+            "in": "query",
+            "description": "Used order in request.\n\n<p>Usage examples:</p>\n<pre><em>order: {\"principal\": \"ASC\"}      => ORDER BY entity.principal ASC<br />order: {\"criadoEm\": \"DESC\"}      => ORDER BY entity.criadoEm DESC </em></pre>\n\n<p>Advanced usage  examples:</p>\n<pre><em>order: {\"principal\": \"DESC\", \"criadoEm\": \"DESC\"}   => ORDER BY entity.principal ASC, entity.criadoEm DESC </em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "order",
+              "type": "string",
+              "default": "{\"id\":\"DESC\"}"
+            }
+          },
+          {
+            "parameter": "limit",
+            "name": "limit",
+            "in": "query",
+            "description": "Used limit option in request.\n\n<p>Usage examples:</p>\n<pre><em>limit: 10</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "limit",
+              "type": "string",
+              "default": "10"
+            }
+          },
+          {
+            "parameter": "offset",
+            "name": "offset",
+            "in": "query",
+            "description": "Used offset option in request.\n\n<p>Usage examples:</p>\n<pre><em>offset: 0</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "offset",
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "parameter": "context",
+            "name": "context",
+            "in": "query",
+            "description": "Used context option in request.\n\n<p>Usage examples:</p>\n<pre><em>{\"context\": \"12345678\"}</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "context",
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "where",
+            "in": "query",
+            "description": "Used search criteria in request.\n\n<p>Usage examples:</p>\n<pre><em>where: {\"id\": \"eq:1\"}                                            => WHERE entity.id = 1<br />where: {\"id\": \"neq:1\"}                                           => WHERE entity.id != 1<br />where: {\"id\": \"like:1%}                                          => WHERE entity.id like (\"1%\")<br />where: {\"id\": \"notLike:1%\"}                                      => WHERE entity.id not like (\"1%\")<br />where: {\"id\": \"gt:1\"}                                            => WHERE entity.id > 1<br />where: {\"id\": \"gte:1\"}                                           => WHERE entity.id >= 1<br />where: {\"id\": \"lt:1\"}                                            => WHERE entity.id < 1<br />where: {\"id\": \"lte:1\"}                                           => WHERE entity.id <= 1<br />where: {\"id\": \"in:1,2,3,4\"}                                      => WHERE entity.id in (1,2,3,4)<br />where: {\"id\": \"notIn:1,2,3,4\"}                                   => WHERE entity.id not in (1,2,3,4)<br />where: {\"id\": \"isNull\"}                                          => WHERE entity.id isNull<br />where: {\"id\": \"isNotNull\"}                                       => WHERE entity.id isNotNull<br />where: {\"orX\": [\"id\": \"eq:1\"},{\"uuid\": \"eq:2\"}]}                 => WHERE entity.id = 1 or entity.id = 2</em></pre>\n",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "{\"id\": \"eq:1\"}"
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Used populate parts in request.\n\n<p>Associations that can be used:</p>\n<pre>criadoPor<br />atualizadoPor<br />apagadoPor</pre>\n\n<p>Usage examples:</p>\n<pre><em>populate: [\"criadoPor\", \"atualizadoPor\", \"apagadoPor\"]</em></pre>\n\n<br />",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "[\"populateAll\"]"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "$ref": "#/components/schemas/TipoCausaPrescritiva"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "TipoCausaPrescritiva"
+        ],
+        "summary": "Endpoint action to create new entity (SuppCore\\DividaBackend\\Entity\\TipoCausaPrescritiva) to this resource. Base route: \"/v1/divida/tipo_causa_prescritiva\"",
+        "description": "",
+        "operationId": "post_suppcore_dividabackend_api_v1_tipocausaprescritiva_create",
+        "parameters": [
+          {
+            "parameter": "context",
+            "name": "context",
+            "in": "query",
+            "description": "Used context option in request.\n\n<p>Usage examples:</p>\n<pre><em>{\"context\": \"12345678\"}</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "context",
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "JSON payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "eficaciaCausa": "eficaciaCausa",
+                  "nome": "nome",
+                  "descricao": "descricao",
+                  "ativo": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "$ref": "#/components/schemas/TipoCausaPrescritiva"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/divida/tipo_causa_prescritiva/count": {
+      "get": {
+        "tags": [
+          "TipoCausaPrescritiva"
+        ],
+        "summary": "Endpoint action to get count of entities (SuppCore\\DividaBackend\\Entity\\TipoCausaPrescritiva) on this resource. Base route: \"/v1/divida/tipo_causa_prescritiva\"",
+        "operationId": "get_suppcore_dividabackend_api_v1_tipocausaprescritiva_count",
+        "parameters": [
+          {
+            "name": "where",
+            "in": "query",
+            "description": "Used search criteria in request.\n\n<p>Usage examples:</p>\n<pre><em>where: {\"id\": \"eq:1\"}                                            => WHERE entity.id = 1<br />where: {\"id\": \"neq:1\"}                                           => WHERE entity.id != 1<br />where: {\"id\": \"like:1%}                                          => WHERE entity.id like (\"1%\")<br />where: {\"id\": \"notLike:1%\"}                                      => WHERE entity.id not like (\"1%\")<br />where: {\"id\": \"gt:1\"}                                            => WHERE entity.id > 1<br />where: {\"id\": \"gte:1\"}                                           => WHERE entity.id >= 1<br />where: {\"id\": \"lt:1\"}                                            => WHERE entity.id < 1<br />where: {\"id\": \"lte:1\"}                                           => WHERE entity.id <= 1<br />where: {\"id\": \"in:1,2,3,4\"}                                      => WHERE entity.id in (1,2,3,4)<br />where: {\"id\": \"notIn:1,2,3,4\"}                                   => WHERE entity.id not in (1,2,3,4)<br />where: {\"id\": \"isNull\"}                                          => WHERE entity.id isNull<br />where: {\"id\": \"isNotNull\"}                                       => WHERE entity.id isNotNull<br />where: {\"orX\": [\"id\": \"eq:1\"},{\"uuid\": \"eq:2\"}]}                 => WHERE entity.id = 1 or entity.id = 2</em></pre>\n",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "{\"id\": \"eq:1\"}"
+            }
+          },
+          {
+            "parameter": "context",
+            "name": "context",
+            "in": "query",
+            "description": "Used context option in request.\n\n<p>Usage examples:</p>\n<pre><em>{\"context\": \"12345678\"}</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "context",
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "$ref": "#/components/schemas/TipoCausaPrescritiva"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Not found, code: 0, status: 404}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "schemas": {
+    "TipoCausaPrescritiva": {
+      "required": [
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "eficaciaCausa": {
+          "description": "Sigla de identificacao do tipo de causa prescritiva. I para interruptiva e S para suspensiva.",
+          "type": "string",
+          "enum": [
+            "I",
+            "S"
+          ]
+        },
+        "nome": {
+          "description": "nome do tipo de causa descritiva.",
+          "type": "string",
+          "maxLength": 255
+        },
+        "descricao": {
+          "description": "descricao do tipo de causa descritiva.",
+          "type": "string",
+          "maxLength": 255
+        },
+        "ativo": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Usuario": {
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "username": {
+          "type": "string",
+          "maxLength": 11,
+          "minLength": 11
+        },
+        "nome": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "assinaturaHTML": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "nivelAcesso": {
+          "type": "integer",
+          "default": 0,
+          "maximum": 4,
+          "minimum": 0
+        },
+        "colaborador": {
+          "$ref": "#/components/schemas/Colaborador"
+        },
+        "coordenadores": {
+          "$ref": "#/components/schemas/Coordenador"
+        },
+        "validado": {
+          "type": "boolean",
+          "default": false
+        },
+        "reset": {
+          "type": "boolean",
+          "default": false
+        },
+        "isDisponivel": {
+          "type": "boolean"
+        },
+        "imgPerfil": {
+          "$ref": "#/components/schemas/ComponenteDigital"
+        },
+        "imgChancela": {
+          "$ref": "#/components/schemas/ComponenteDigital"
+        },
+        "passwordAtualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Colaborador": {
+      "required": [
+        "cargo",
+        "modalidadeColaborador",
+        "usuario"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "cargo": {
+          "$ref": "#/components/schemas/Cargo"
+        },
+        "modalidadeColaborador": {
+          "$ref": "#/components/schemas/ModalidadeColaborador"
+        },
+        "usuario": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeColaborador": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Cargo": {
+      "required": [
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "type": "object"
+    },
+    "ComponenteDigital": {
+      "required": [
+        "fileName"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "fileName": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "hash": {
+          "type": "string"
+        },
+        "numeracaoSequencial": {
+          "type": "integer"
+        },
+        "interacoes": {
+          "type": "integer"
+        },
+        "conteudo": {
+          "type": "string"
+        },
+        "tamanho": {
+          "type": "integer"
+        },
+        "nivelComposicao": {
+          "type": "integer"
+        },
+        "softwareCriacao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "chaveInibidor": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "dataHoraSoftwareCriacao": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "versaoSoftwareCriacao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "mimetype": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "dataHoraLockEdicao": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "usernameLockEdicao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "extensao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "processoOrigem": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "documentoOrigem": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "tarefaOrigem": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "componenteDigitalOrigem": {
+          "$ref": "#/components/schemas/ComponenteDigital"
+        },
+        "documentoAvulsoOrigem": {
+          "$ref": "#/components/schemas/DocumentoAvulso"
+        },
+        "editavel": {
+          "type": "boolean"
+        },
+        "convertidoPdf": {
+          "type": "boolean"
+        },
+        "assinado": {
+          "type": "boolean"
+        },
+        "minhaAssinatura": {
+          "type": "boolean"
+        },
+        "unsafe": {
+          "type": "boolean"
+        },
+        "score": {
+          "type": "float"
+        },
+        "modalidadeAlvoInibidor": {
+          "$ref": "#/components/schemas/ModalidadeAlvoInibidor"
+        },
+        "modalidadeTipoInibidor": {
+          "$ref": "#/components/schemas/ModalidadeTipoInibidor"
+        },
+        "modelo": {
+          "$ref": "#/components/schemas/Modelo"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "statusVerificacaoVirus": {
+          "type": "integer"
+        },
+        "highlights": {
+          "title": "Highlights.",
+          "type": "string"
+        },
+        "sumarizacao": {
+          "type": "string"
+        },
+        "json": {
+          "type": "string"
+        },
+        "versaoEditor": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "usuarioLockEdicao": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "isAttachment": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "origemDados": {
+          "$ref": "#/components/schemas/OrigemDados"
+        }
+      },
+      "type": "object"
+    },
+    "Processo": {
+      "required": [
+        "titulo"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "unidadeArquivistica": {
+          "type": "integer"
+        },
+        "tipoProtocolo": {
+          "type": "integer"
+        },
+        "valorEconomico": {
+          "type": "number",
+          "format": "float"
+        },
+        "semValorEconomico": {
+          "type": "boolean",
+          "default": false
+        },
+        "protocoloEletronico": {
+          "type": "boolean",
+          "default": false
+        },
+        "NUP": {
+          "type": "string",
+          "maxLength": 21
+        },
+        "juntadaIndex": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "NUPFormatado": {
+          "type": "string"
+        },
+        "processoOrigem": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "especieProcesso": {
+          "$ref": "#/components/schemas/EspecieProcesso"
+        },
+        "visibilidadeExterna": {
+          "type": "boolean",
+          "default": false
+        },
+        "acessoNegado": {
+          "type": "boolean"
+        },
+        "somenteLeitura": {
+          "type": "boolean"
+        },
+        "dataHoraAbertura": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraEncerramento": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraDesarquivamento": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraProximaTransicao": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "titulo": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "outroNumero": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "chaveAcesso": {
+          "type": "string"
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "lembreteArquivista": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "requerimento": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "dadosRequerimento": {
+          "type": "string"
+        },
+        "modalidadeMeio": {
+          "$ref": "#/components/schemas/ModalidadeMeio"
+        },
+        "modalidadeFase": {
+          "$ref": "#/components/schemas/ModalidadeFase"
+        },
+        "documentoAvulsoOrigem": {
+          "$ref": "#/components/schemas/DocumentoAvulso"
+        },
+        "classificacao": {
+          "$ref": "#/components/schemas/Classificacao"
+        },
+        "procedencia": {
+          "$ref": "#/components/schemas/Pessoa"
+        },
+        "localizador": {
+          "$ref": "#/components/schemas/Localizador"
+        },
+        "setorAtual": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "setorInicial": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "compartilhamentoUsuario": {
+          "$ref": "#/components/schemas/Compartilhamento"
+        },
+        "acessoRestrito": {
+          "title": "Usada no pipe mas tambem na criação do processo, para que tenho acesso restrito no nascimento.",
+          "type": "boolean"
+        },
+        "configuracaoNup": {
+          "$ref": "#/components/schemas/ConfiguracaoNup"
+        },
+        "emTramitacaoExterna": {
+          "type": "boolean"
+        },
+        "hasBookmark": {
+          "type": "boolean"
+        },
+        "hasFundamentacaoRestricao": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "origemDados": {
+          "$ref": "#/components/schemas/OrigemDados"
+        }
+      },
+      "type": "object"
+    },
+    "EspecieProcesso": {
+      "required": [
+        "generoProcesso",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "generoProcesso": {
+          "$ref": "#/components/schemas/GeneroProcesso"
+        },
+        "classificacao": {
+          "$ref": "#/components/schemas/Classificacao"
+        },
+        "modalidadeMeio": {
+          "$ref": "#/components/schemas/ModalidadeMeio"
+        },
+        "titulo": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "workflow": {
+          "type": "boolean",
+          "default": false
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Classificacao": {
+      "required": [
+        "codigo",
+        "nome"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "expansable": {
+          "type": "boolean"
+        },
+        "hasChild": {
+          "type": "boolean"
+        },
+        "modalidadeDestinacao": {
+          "$ref": "#/components/schemas/ModalidadeDestinacao"
+        },
+        "prazoGuardaFaseCorrenteAno": {
+          "type": "integer"
+        },
+        "prazoGuardaFaseCorrenteMes": {
+          "type": "integer"
+        },
+        "prazoGuardaFaseCorrenteDia": {
+          "type": "integer"
+        },
+        "prazoGuardaFaseCorrenteEvento": {
+          "type": "string"
+        },
+        "prazoGuardaFaseIntermediariaAno": {
+          "type": "integer"
+        },
+        "prazoGuardaFaseIntermediariaMes": {
+          "type": "integer"
+        },
+        "prazoGuardaFaseIntermediariaDia": {
+          "type": "integer"
+        },
+        "prazoGuardaFaseIntermediariaEvento": {
+          "type": "string"
+        },
+        "codigo": {
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 3,
+          "pattern": ".*[A-Z0-9]+.*"
+        },
+        "permissaoUso": {
+          "type": "boolean",
+          "default": true
+        },
+        "observacao": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "parent": {
+          "$ref": "#/components/schemas/Classificacao"
+        },
+        "nomeCompleto": {
+          "type": "string"
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeDestinacao": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "GeneroProcesso": {
+      "required": [
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeMeio": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ConfiguracaoNup": {
+      "required": [
+        "dataHoraInicioVigencia",
+        "nome",
+        "descricao",
+        "sigla"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "dataHoraInicioVigencia": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraFimVigencia": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "sigla": {
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 3,
+          "pattern": ".*[A-Z0-9]+.*"
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeFase": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "OrigemDados": {
+      "required": [
+        "idExterno",
+        "servico",
+        "fonteDados"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "idExterno": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "dataHoraUltimaConsulta": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "servico": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "fonteDados": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "mensagemUltimaConsulta": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "status": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Pessoa": {
+      "required": [
+        "nome"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "naturalidade": {
+          "$ref": "#/components/schemas/Municipio"
+        },
+        "profissao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "contato": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "pessoaValidada": {
+          "type": "boolean",
+          "default": false
+        },
+        "pessoaConveniada": {
+          "type": "boolean",
+          "default": false
+        },
+        "dataNascimento": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataObito": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "nacionalidade": {
+          "$ref": "#/components/schemas/Pais"
+        },
+        "nome": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "numeroDocumentoPrincipal": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "nomeGenitor": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "nomeGenitora": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "modalidadeGeneroPessoa": {
+          "$ref": "#/components/schemas/ModalidadeGeneroPessoa"
+        },
+        "modalidadeQualificacaoPessoa": {
+          "$ref": "#/components/schemas/ModalidadeQualificacaoPessoa"
+        },
+        "modalidadeNaturezaJuridica": {
+          "$ref": "#/components/schemas/ModalidadeNaturezaJuridica"
+        },
+        "raiz": {
+          "type": "string",
+          "maxLength": 11
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "origemDados": {
+          "$ref": "#/components/schemas/OrigemDados"
+        }
+      },
+      "type": "object"
+    },
+    "Pais": {
+      "required": [
+        "codigo",
+        "nome"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "codigo": {
+          "type": "string",
+          "pattern": "[A-Z]{2}"
+        },
+        "codigoReceitaFederal": {
+          "type": "string",
+          "pattern": "[0-9]{3}"
+        },
+        "nomeReceitaFederal": {
+          "type": "string",
+          "pattern": ".{3,255}"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeNaturezaJuridica": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeGeneroPessoa": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Municipio": {
+      "required": [
+        "codigoIBGE",
+        "estado",
+        "nome"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "codigoIBGE": {
+          "type": "string",
+          "pattern": "[0-9]{7}"
+        },
+        "codigoSIAFI": {
+          "type": "string",
+          "pattern": "[0-9]{4}"
+        },
+        "estado": {
+          "$ref": "#/components/schemas/Estado"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Estado": {
+      "required": [
+        "uf",
+        "pais",
+        "nome"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "uf": {
+          "type": "string",
+          "maxLength": 2,
+          "minLength": 2
+        },
+        "pais": {
+          "$ref": "#/components/schemas/Pais"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeQualificacaoPessoa": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Localizador": {
+      "required": [
+        "setor",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "setor": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Setor": {
+      "required": [
+        "sigla",
+        "municipio",
+        "nome"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "especieSetor": {
+          "$ref": "#/components/schemas/EspecieSetor"
+        },
+        "generoSetor": {
+          "$ref": "#/components/schemas/GeneroSetor"
+        },
+        "modalidadeOrgaoCentral": {
+          "$ref": "#/components/schemas/ModalidadeOrgaoCentral"
+        },
+        "endereco": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "sigla": {
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 2,
+          "pattern": ".*[A-Z0-9]+.*"
+        },
+        "unidade": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "parent": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "unidadePai": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "municipio": {
+          "$ref": "#/components/schemas/Municipio"
+        },
+        "expansable": {
+          "type": "boolean"
+        },
+        "prefixoNUP": {
+          "type": "string",
+          "pattern": ".*\\d{5}.*"
+        },
+        "sequenciaInicialNUP": {
+          "type": "integer",
+          "default": 0
+        },
+        "divergenciaMaxima": {
+          "type": "integer",
+          "default": 0
+        },
+        "gerenciamento": {
+          "type": "boolean",
+          "default": true
+        },
+        "apenasProtocolo": {
+          "type": "boolean",
+          "default": false
+        },
+        "numeracaoDocumentoUnidade": {
+          "type": "boolean",
+          "default": false
+        },
+        "apenasDistribuidor": {
+          "type": "boolean",
+          "default": false
+        },
+        "distribuicaoCentena": {
+          "type": "boolean",
+          "default": false
+        },
+        "prazoEqualizacao": {
+          "type": "integer",
+          "default": 7
+        },
+        "apenasDistribuicaoAutomatica": {
+          "type": "boolean",
+          "default": false
+        },
+        "comPrevencaoRelativa": {
+          "type": "boolean",
+          "default": false
+        },
+        "hasChild": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeOrgaoCentral": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "EspecieSetor": {
+      "required": [
+        "generoSetor",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "generoSetor": {
+          "$ref": "#/components/schemas/GeneroSetor"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "GeneroSetor": {
+      "required": [
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "DocumentoAvulso": {
+      "required": [
+        "especieDocumentoAvulso",
+        "modelo",
+        "dataHoraInicioPrazo",
+        "dataHoraFinalPrazo",
+        "processo"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "setorOrigem": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "especieDocumentoAvulso": {
+          "$ref": "#/components/schemas/EspecieDocumentoAvulso"
+        },
+        "observacao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "urgente": {
+          "type": "boolean",
+          "default": false
+        },
+        "mecanismoRemessa": {
+          "type": "string"
+        },
+        "modelo": {
+          "$ref": "#/components/schemas/Modelo"
+        },
+        "dataHoraEncerramento": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraInicioPrazo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraFinalPrazo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "pessoaDestino": {
+          "$ref": "#/components/schemas/Pessoa"
+        },
+        "setorDestino": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "dataHoraRemessa": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraResposta": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraReiteracao": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "documentoResposta": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "documentoRemessa": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "usuarioResponsavel": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "setorResponsavel": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "usuarioResposta": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "usuarioRemessa": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "processo": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "processoDestino": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "documentoAvulsoOrigem": {
+          "$ref": "#/components/schemas/DocumentoAvulso"
+        },
+        "tarefaOrigem": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "postIt": {
+          "type": "string"
+        },
+        "dataHoraLeitura": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Tarefa": {
+      "required": [
+        "processo",
+        "setorResponsavel"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "processo": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "vinculacaoWorkflow": {
+          "$ref": "#/components/schemas/VinculacaoWorkflow"
+        },
+        "observacao": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "localEvento": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "folder": {
+          "$ref": "#/components/schemas/Folder"
+        },
+        "postIt": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "urgente": {
+          "type": "boolean",
+          "default": false
+        },
+        "dataHoraInicioPrazo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraFinalPrazo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraConclusaoPrazo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataHoraAsyncLock": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "locked": {
+          "type": "boolean",
+          "default": false
+        },
+        "restartEsteiraVisivel": {
+          "type": "boolean",
+          "default": false
+        },
+        "naoElegivelRestartEsteira": {
+          "type": "boolean",
+          "default": false
+        },
+        "motivoNaoElegivelRestartEsteira": {
+          "type": "string"
+        },
+        "dataHoraDistribuicao": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "especieTarefa": {
+          "$ref": "#/components/schemas/EspecieTarefa"
+        },
+        "usuarioResponsavel": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "setorResponsavel": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "usuarioConclusaoPrazo": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "setorOrigem": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "dataHoraLeitura": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "redistribuida": {
+          "type": "boolean",
+          "default": false
+        },
+        "distribuicaoAutomatica": {
+          "type": "boolean",
+          "default": false
+        },
+        "livreBalanceamento": {
+          "type": "boolean",
+          "default": false
+        },
+        "auditoriaDistribuicao": {
+          "type": "string"
+        },
+        "tipoDistribuicao": {
+          "type": "integer",
+          "default": 0
+        },
+        "temEtiquetas": {
+          "type": "boolean"
+        },
+        "isRelevante": {
+          "type": "boolean"
+        },
+        "workflow": {
+          "$ref": "#/components/schemas/Workflow"
+        },
+        "solicitacaoAutomatizadaAnalise": {
+          "$ref": "#/components/schemas/EntityInterface"
+        },
+        "solicitacaoAutomatizadaDadosCumprimento": {
+          "$ref": "#/components/schemas/EntityInterface"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Workflow": {
+      "required": [
+        "especieTarefaInicial",
+        "generoProcesso",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "especieTarefaInicial": {
+          "$ref": "#/components/schemas/EspecieTarefa"
+        },
+        "generoProcesso": {
+          "$ref": "#/components/schemas/GeneroProcesso"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        }
+      },
+      "type": "object"
+    },
+    "EspecieTarefa": {
+      "required": [
+        "generoTarefa",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "generoTarefa": {
+          "$ref": "#/components/schemas/GeneroTarefa"
+        },
+        "evento": {
+          "type": "boolean",
+          "default": true
+        },
+        "corHexadecimalPrimaria": {
+          "type": "string"
+        },
+        "corHexadecimalSecundaria": {
+          "type": "string"
+        },
+        "valida": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "GeneroTarefa": {
+      "required": [
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Folder": {
+      "required": [
+        "usuario",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "modalidadeFolder": {
+          "$ref": "#/components/schemas/ModalidadeFolder"
+        },
+        "usuario": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeFolder": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "VinculacaoWorkflow": {
+      "required": [
+        "tarefaInicial",
+        "tarefaAtual",
+        "workflow"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "tarefaInicial": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "tarefaAtual": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "workflow": {
+          "$ref": "#/components/schemas/Workflow"
+        },
+        "concluido": {
+          "type": "boolean",
+          "default": false
+        },
+        "transicaoFinalWorkflow": {
+          "type": "boolean",
+          "default": false
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "EntityInterface": {
+      "type": "object"
+    },
+    "Modelo": {
+      "required": [
+        "template",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "modalidadeModelo": {
+          "$ref": "#/components/schemas/ModalidadeModelo"
+        },
+        "template": {
+          "$ref": "#/components/schemas/Template"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "documentoOrigem": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "highlights": {
+          "title": "Highlights.",
+          "type": "string"
+        },
+        "setor": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "usuario": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "modalidadeOrgaoCentral": {
+          "$ref": "#/components/schemas/ModalidadeOrgaoCentral"
+        },
+        "unidade": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeModelo": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Template": {
+      "required": [
+        "modalidadeTemplate",
+        "tipoDocumento",
+        "nome",
+        "descricao",
+        "sigla"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "modalidadeTemplate": {
+          "$ref": "#/components/schemas/ModalidadeTemplate"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "tipoDocumento": {
+          "$ref": "#/components/schemas/TipoDocumento"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "sigla": {
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 3,
+          "pattern": ".*[A-Z0-9]+.*"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeTemplate": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "TipoDocumento": {
+      "required": [
+        "especieDocumento",
+        "nome",
+        "sigla",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "especieDocumento": {
+          "$ref": "#/components/schemas/EspecieDocumento"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "sigla": {
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 3,
+          "pattern": ".*[A-Z0-9]+.*"
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "EspecieDocumento": {
+      "required": [
+        "generoDocumento",
+        "nome",
+        "descricao",
+        "sigla"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "generoDocumento": {
+          "$ref": "#/components/schemas/GeneroDocumento"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "sigla": {
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 3,
+          "pattern": ".*[A-Z0-9]+.*"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "GeneroDocumento": {
+      "required": [
+        "nome",
+        "descricao",
+        "sigla"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "sigla": {
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 3,
+          "pattern": ".*[A-Z0-9]+.*"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Documento": {
+      "required": [
+        "tipoDocumento"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "numeroFolhas": {
+          "type": "integer",
+          "default": 0
+        },
+        "dataHoraProducao": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "outroNumero": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "numeroUnicoDocumentoFormatado": {
+          "type": "string"
+        },
+        "semEfeito": {
+          "type": "boolean",
+          "default": false
+        },
+        "assinado": {
+          "type": "boolean"
+        },
+        "minhaAssinatura": {
+          "type": "boolean"
+        },
+        "temAnexos": {
+          "type": "boolean"
+        },
+        "estaVinculada": {
+          "type": "boolean"
+        },
+        "temEtiquetas": {
+          "type": "boolean"
+        },
+        "temComponentesDigitais": {
+          "type": "boolean"
+        },
+        "localizadorOriginal": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "documentoAvulsoRemessa": {
+          "$ref": "#/components/schemas/DocumentoAvulso"
+        },
+        "modelo": {
+          "$ref": "#/components/schemas/Modelo"
+        },
+        "repositorio": {
+          "$ref": "#/components/schemas/Repositorio"
+        },
+        "juntadaAtual": {
+          "$ref": "#/components/schemas/Juntada"
+        },
+        "localProducao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "autor": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "destinatario": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "processoOrigem": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "redator": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "procedencia": {
+          "$ref": "#/components/schemas/Pessoa"
+        },
+        "numeroUnicoDocumento": {
+          "$ref": "#/components/schemas/NumeroUnicoDocumento"
+        },
+        "tipoDocumento": {
+          "$ref": "#/components/schemas/TipoDocumento"
+        },
+        "documentoIAMetadata": {
+          "$ref": "#/components/schemas/DocumentoIAMetadata"
+        },
+        "descricaoOutros": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "observacao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "copia": {
+          "type": "boolean",
+          "default": false
+        },
+        "minuta": {
+          "type": "boolean",
+          "default": false
+        },
+        "setorOrigem": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "tarefaOrigem": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "documentoOrigem": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "vinculacaoDocumentoPrincipal": {
+          "$ref": "#/components/schemas/VinculacaoDocumento"
+        },
+        "documentoAvulsoComplementacaoResposta": {
+          "$ref": "#/components/schemas/DocumentoAvulso"
+        },
+        "dataHoraValidade": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "chaveAcesso": {
+          "type": "string"
+        },
+        "acessoRestrito": {
+          "title": "Usada na criação do documento, para que tenho acesso restrito no nascimento.",
+          "type": "boolean"
+        },
+        "acessoNegado": {
+          "type": "boolean"
+        },
+        "modalidadeCopia": {
+          "$ref": "#/components/schemas/ModalidadeCopia"
+        },
+        "dependenciaSoftware": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "dependenciaHardware": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "origemDados": {
+          "$ref": "#/components/schemas/OrigemDados"
+        }
+      },
+      "type": "object"
+    },
+    "Juntada": {
+      "required": [
+        "documento",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "numeracaoSequencial": {
+          "type": "integer"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "volume": {
+          "$ref": "#/components/schemas/Volume"
+        },
+        "tarefa": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "atividade": {
+          "$ref": "#/components/schemas/Atividade"
+        },
+        "documentoAvulso": {
+          "$ref": "#/components/schemas/DocumentoAvulso"
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 4000,
+          "minLength": 3
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "origemDados": {
+          "$ref": "#/components/schemas/OrigemDados"
+        }
+      },
+      "type": "object"
+    },
+    "Volume": {
+      "required": [
+        "modalidadeMeio",
+        "processo"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "numeracaoSequencial": {
+          "type": "integer"
+        },
+        "modalidadeMeio": {
+          "$ref": "#/components/schemas/ModalidadeMeio"
+        },
+        "encerrado": {
+          "type": "boolean",
+          "default": false
+        },
+        "processo": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "origemDados": {
+          "$ref": "#/components/schemas/OrigemDados"
+        }
+      },
+      "type": "object"
+    },
+    "Atividade": {
+      "required": [
+        "dataHoraConclusao",
+        "especieAtividade",
+        "usuario",
+        "tarefa"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "dataHoraConclusao": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "observacao": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "encerraTarefa": {
+          "type": "boolean"
+        },
+        "especieAtividade": {
+          "$ref": "#/components/schemas/EspecieAtividade"
+        },
+        "setor": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "usuario": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "tarefa": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "workflow": {
+          "$ref": "#/components/schemas/Workflow"
+        },
+        "distribuicaoAutomatica": {
+          "type": "boolean",
+          "default": false
+        },
+        "setorResponsavel": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "usuarioResponsavel": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "type": "object"
+    },
+    "EspecieAtividade": {
+      "required": [
+        "generoAtividade",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "generoAtividade": {
+          "$ref": "#/components/schemas/GeneroAtividade"
+        },
+        "valida": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "GeneroAtividade": {
+      "required": [
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeCopia": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Repositorio": {
+      "required": [
+        "modalidadeRepositorio",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "modalidadeRepositorio": {
+          "$ref": "#/components/schemas/ModalidadeRepositorio"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "usuario": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "setor": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "modalidadeOrgaoCentral": {
+          "$ref": "#/components/schemas/ModalidadeOrgaoCentral"
+        },
+        "unidade": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "highlights": {
+          "title": "Highlights.",
+          "type": "string"
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeRepositorio": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "DocumentoIAMetadata": {
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "statusExecucaoTrilhaTriagem": {
+          "title": "Método necessário para o jms serializer serializar o valor do enum e não o objeto.",
+          "type": "integer"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "tipoDocumentoPredito": {
+          "$ref": "#/components/schemas/TipoDocumento"
+        },
+        "dataExecucaoTrilhaTriagem": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "VinculacaoDocumento": {
+      "required": [
+        "documento",
+        "documentoVinculado",
+        "modalidadeVinculacaoDocumento"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "documentoVinculado": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "modalidadeVinculacaoDocumento": {
+          "$ref": "#/components/schemas/ModalidadeVinculacaoDocumento"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeVinculacaoDocumento": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "NumeroUnicoDocumento": {
+      "required": [
+        "sequencia",
+        "tipoDocumento",
+        "setor"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "sequencia": {
+          "type": "integer"
+        },
+        "ano": {
+          "type": "integer"
+        },
+        "tipoDocumento": {
+          "$ref": "#/components/schemas/TipoDocumento"
+        },
+        "setor": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "documento": {
+          "$ref": "#/components/schemas/Documento"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "EspecieDocumentoAvulso": {
+      "required": [
+        "generoDocumentoAvulso",
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "generoDocumentoAvulso": {
+          "$ref": "#/components/schemas/GeneroDocumentoAvulso"
+        },
+        "especieProcesso": {
+          "$ref": "#/components/schemas/EspecieProcesso"
+        },
+        "especieTarefa": {
+          "$ref": "#/components/schemas/EspecieTarefa"
+        },
+        "workflow": {
+          "$ref": "#/components/schemas/Workflow"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "GeneroDocumentoAvulso": {
+      "required": [
+        "nome",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "nome": {
+          "title": "Nome.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Compartilhamento": {
+      "required": [
+        "usuario"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "tarefa": {
+          "$ref": "#/components/schemas/Tarefa"
+        },
+        "processo": {
+          "$ref": "#/components/schemas/Processo"
+        },
+        "usuario": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "assessor": {
+          "type": "boolean",
+          "default": false
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeAlvoInibidor": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "ModalidadeTipoInibidor": {
+      "required": [
+        "valor",
+        "descricao"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "valor": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "descricao": {
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 3
+        },
+        "ativo": {
+          "type": "boolean",
+          "default": true
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "Coordenador": {
+      "required": [
+        "usuario"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "unidade": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "setor": {
+          "$ref": "#/components/schemas/Setor"
+        },
+        "orgaoCentral": {
+          "$ref": "#/components/schemas/ModalidadeOrgaoCentral"
+        },
+        "usuario": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "vinculacaoMenuCoordenador": {
+          "$ref": "#/components/schemas/VinculacaoMenuCoordenador"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    },
+    "VinculacaoMenuCoordenador": {
+      "required": [
+        "coordenador"
+      ],
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "coordenador": {
+          "$ref": "#/components/schemas/Coordenador"
+        },
+        "modelos": {
+          "type": "boolean",
+          "default": true
+        },
+        "repositorios": {
+          "type": "boolean",
+          "default": true
+        },
+        "etiquetas": {
+          "type": "boolean",
+          "default": true
+        },
+        "usuarios": {
+          "type": "boolean",
+          "default": true
+        },
+        "unidades": {
+          "type": "boolean",
+          "default": true
+        },
+        "avisos": {
+          "type": "boolean",
+          "default": true
+        },
+        "teses": {
+          "type": "boolean",
+          "default": true
+        },
+        "coordenadores": {
+          "type": "boolean",
+          "default": true
+        },
+        "setores": {
+          "type": "boolean",
+          "default": true
+        },
+        "contasEmails": {
+          "type": "boolean",
+          "default": true
+        },
+        "competencias": {
+          "type": "boolean",
+          "default": true
+        },
+        "dominios": {
+          "type": "boolean",
+          "default": true
+        },
+        "gerenciamentoTarefas": {
+          "type": "boolean",
+          "default": true
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "criadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "criadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "atualizadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        },
+        "apagadoEm": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "apagadoPor": {
+          "$ref": "#/components/schemas/Usuario"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

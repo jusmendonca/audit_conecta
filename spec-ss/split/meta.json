@@ -1,0 +1,1310 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sistema Único de Procuradorias Públicas",
+    "description": "Sistema Único de Procuradorias Públicas",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "1.31.2"
+  },
+  "securitySchemes": {
+    "Bearer": {
+      "type": "http",
+      "bearerFormat": "JWT",
+      "scheme": "bearer"
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication"
+    },
+    {
+      "name": "Default"
+    },
+    {
+      "name": "EmailClient"
+    },
+    {
+      "name": "Acao"
+    },
+    {
+      "name": "AcaoTransicaoWorkflow"
+    },
+    {
+      "name": "Afastamento"
+    },
+    {
+      "name": "ApiKey Management"
+    },
+    {
+      "name": "AreaTrabalho"
+    },
+    {
+      "name": "Assinatura"
+    },
+    {
+      "name": "AssuntoAdministrativo"
+    },
+    {
+      "name": "Assunto"
+    },
+    {
+      "name": "Atividade"
+    },
+    {
+      "name": "Avaliacao"
+    },
+    {
+      "name": "Aviso"
+    },
+    {
+      "name": "Bookmark"
+    },
+    {
+      "name": "Campo"
+    },
+    {
+      "name": "Cargo"
+    },
+    {
+      "name": "Chat"
+    },
+    {
+      "name": "ChatMensagem"
+    },
+    {
+      "name": "ChatParticipante"
+    },
+    {
+      "name": "Classificacao"
+    },
+    {
+      "name": "Colaborador"
+    },
+    {
+      "name": "Compartilhamento"
+    },
+    {
+      "name": "ComponenteDigital"
+    },
+    {
+      "name": "ConfigModulo"
+    },
+    {
+      "name": "ConfiguracaoNup"
+    },
+    {
+      "name": "ContaEmail"
+    },
+    {
+      "name": "Contato"
+    },
+    {
+      "name": "Coordenador"
+    },
+    {
+      "name": "Cronjob"
+    },
+    {
+      "name": "DadosFormularioAnonimo"
+    },
+    {
+      "name": "DadosFormulario"
+    },
+    {
+      "name": "Desentranhamento"
+    },
+    {
+      "name": "Distribuicacao"
+    },
+    {
+      "name": "DocumentoAvulso"
+    },
+    {
+      "name": "Documento"
+    },
+    {
+      "name": "DocumentoIAMetadata"
+    },
+    {
+      "name": "DocumentoIdentificador"
+    },
+    {
+      "name": "DominioAdministrativo"
+    },
+    {
+      "name": "Dossie"
+    },
+    {
+      "name": "Endereco"
+    },
+    {
+      "name": "EspecieAtividade"
+    },
+    {
+      "name": "EspecieDocumentoAvulso"
+    },
+    {
+      "name": "EspecieDocumento"
+    },
+    {
+      "name": "EspecieProcesso"
+    },
+    {
+      "name": "EspecieRelatorio"
+    },
+    {
+      "name": "EspecieRelevancia"
+    },
+    {
+      "name": "EspecieSetor"
+    },
+    {
+      "name": "EspecieTarefa"
+    },
+    {
+      "name": "Estado"
+    },
+    {
+      "name": "Etiqueta"
+    },
+    {
+      "name": "Favorito"
+    },
+    {
+      "name": "Feriado"
+    },
+    {
+      "name": "Folder"
+    },
+    {
+      "name": "FormularioAnonimo"
+    },
+    {
+      "name": "Formulario"
+    },
+    {
+      "name": "GeneroAtividade"
+    },
+    {
+      "name": "GeneroDocumentoAvulso"
+    },
+    {
+      "name": "GeneroDocumento"
+    },
+    {
+      "name": "GeneroProcesso"
+    },
+    {
+      "name": "GeneroRelatorio"
+    },
+    {
+      "name": "GeneroRelevancia"
+    },
+    {
+      "name": "GeneroSetor"
+    },
+    {
+      "name": "GeneroTarefa"
+    },
+    {
+      "name": "GrupoContato"
+    },
+    {
+      "name": "Historico"
+    },
+    {
+      "name": "DesempenhoIndividual"
+    },
+    {
+      "name": "Inteligência Artificial"
+    },
+    {
+      "name": "Interessado"
+    },
+    {
+      "name": "Juntada"
+    },
+    {
+      "name": "Lembrete"
+    },
+    {
+      "name": "Localizador"
+    },
+    {
+      "name": "LogEntry"
+    },
+    {
+      "name": "Lotacao"
+    },
+    {
+      "name": "ModalidadeAcaoEtiqueta"
+    },
+    {
+      "name": "ModalidadeAfastamento Management"
+    },
+    {
+      "name": "ModalidadeAlvoInibidor"
+    },
+    {
+      "name": "ModalidadeCategoriaSigilo"
+    },
+    {
+      "name": "ModalidadeColaborador Management"
+    },
+    {
+      "name": "ModalidadeCopia Management"
+    },
+    {
+      "name": "ModalidadeDestinacao"
+    },
+    {
+      "name": "ModalidadeDocumentoIdentificador Management"
+    },
+    {
+      "name": "ModalidadeEtiqueta Management"
+    },
+    {
+      "name": "ModalidadeFase"
+    },
+    {
+      "name": "ModalidadeFolder Management"
+    },
+    {
+      "name": "ModalidadeFundamentacao Management"
+    },
+    {
+      "name": "ModalidadeGeneroPessoa Management"
+    },
+    {
+      "name": "ModalidadeInteressado"
+    },
+    {
+      "name": "ModalidadeMeio"
+    },
+    {
+      "name": "ModalidadeModelo"
+    },
+    {
+      "name": "ModalidadeNaturezaJuridica"
+    },
+    {
+      "name": "ModalidadeNotificacao Management"
+    },
+    {
+      "name": "ModalidadeOrgaoCentral Management"
+    },
+    {
+      "name": "ModalidadeQualificacaoPessoa Management"
+    },
+    {
+      "name": "ModalidadeRelacionamentoPessoal Management"
+    },
+    {
+      "name": "ModalidadeRepositorio"
+    },
+    {
+      "name": "ModalidadeRepresentante"
+    },
+    {
+      "name": "ModalidadeTemplate"
+    },
+    {
+      "name": "ModalidadeTipoInibidor"
+    },
+    {
+      "name": "ModalidadeTransicao"
+    },
+    {
+      "name": "ModalidadeUrn"
+    },
+    {
+      "name": "ModalidadeVinculacaoDocumento"
+    },
+    {
+      "name": "ModalidadeVinculacaoProcesso"
+    },
+    {
+      "name": "Modelo"
+    },
+    {
+      "name": "Modulo"
+    },
+    {
+      "name": "MomentoDisparoRegraEtiqueta"
+    },
+    {
+      "name": "Municipio"
+    },
+    {
+      "name": "Nome"
+    },
+    {
+      "name": "Notificacao Management"
+    },
+    {
+      "name": "NumeroUnicoDocumento"
+    },
+    {
+      "name": "NumeroUnicoProtocolo"
+    },
+    {
+      "name": "ObjetoAvaliado"
+    },
+    {
+      "name": "OrigemDados"
+    },
+    {
+      "name": "Pais"
+    },
+    {
+      "name": "ParametroAdministrativo"
+    },
+    {
+      "name": "Pessoa"
+    },
+    {
+      "name": "PreferenciaResumoInteligente"
+    },
+    {
+      "name": "Processo"
+    },
+    {
+      "name": "RamoDireito"
+    },
+    {
+      "name": "RegraEtiqueta"
+    },
+    {
+      "name": "RelacionamentoPessoal"
+    },
+    {
+      "name": "Relatorio"
+    },
+    {
+      "name": "Relevancia"
+    },
+    {
+      "name": "Repositorio"
+    },
+    {
+      "name": "Representante"
+    },
+    {
+      "name": "ServidorEmail"
+    },
+    {
+      "name": "Setor"
+    },
+    {
+      "name": "Sigilo"
+    },
+    {
+      "name": "SolicitacaoAutomatizada"
+    },
+    {
+      "name": "StatusBarramento"
+    },
+    {
+      "name": "Tarefa"
+    },
+    {
+      "name": "Tema"
+    },
+    {
+      "name": "Template"
+    },
+    {
+      "name": "Tese"
+    },
+    {
+      "name": "TipoAcaoWorkflow"
+    },
+    {
+      "name": "TipoContato"
+    },
+    {
+      "name": "TipoDocumento"
+    },
+    {
+      "name": "TipoDossie"
+    },
+    {
+      "name": "TipoNotificacao"
+    },
+    {
+      "name": "TipoRelatorio"
+    },
+    {
+      "name": "TipoSigilo"
+    },
+    {
+      "name": "TipoSolicitacaoAutomatizada"
+    },
+    {
+      "name": "TipoValidacaoWorkflow"
+    },
+    {
+      "name": "Tramitacao"
+    },
+    {
+      "name": "Transicao"
+    },
+    {
+      "name": "TransicaoWorkflow"
+    },
+    {
+      "name": "Urn"
+    },
+    {
+      "name": "Usuario Management"
+    },
+    {
+      "name": "Utils"
+    },
+    {
+      "name": "ValidacaoTransicaoWorkflow"
+    },
+    {
+      "name": "VinculacaoAviso"
+    },
+    {
+      "name": "VinculacaoDocumentoAssinaturaExterna"
+    },
+    {
+      "name": "VinculacaoDocumento"
+    },
+    {
+      "name": "VinculacaoEspecieProcessoWorkflow"
+    },
+    {
+      "name": "VinculacaoEtiqueta"
+    },
+    {
+      "name": "VinculacaoMenuCoordenador"
+    },
+    {
+      "name": "VinculacaoMetadados"
+    },
+    {
+      "name": "VinculacaoModelo"
+    },
+    {
+      "name": "VinculacaoOrgaoCentralMetadados"
+    },
+    {
+      "name": "VinculacaoParametroAdministrativo"
+    },
+    {
+      "name": "VinculacaoPessoaBarramento"
+    },
+    {
+      "name": "VinculacaoPessoaUsuario"
+    },
+    {
+      "name": "VinculacaoProcesso"
+    },
+    {
+      "name": "VinculacaoRepositorio"
+    },
+    {
+      "name": "VinculacaoRole Management"
+    },
+    {
+      "name": "VinculacaoSetorMunicipio"
+    },
+    {
+      "name": "VinculacaoTese"
+    },
+    {
+      "name": "VinculacaoTransicaoWorkflow"
+    },
+    {
+      "name": "VinculacaoUsuario"
+    },
+    {
+      "name": "VinculacaoWorkflow"
+    },
+    {
+      "name": "Volume"
+    },
+    {
+      "name": "Workflow"
+    },
+    {
+      "name": "AtividadeConsultiva"
+    },
+    {
+      "name": "ComplementoConsultivo"
+    },
+    {
+      "name": "ModalidadeConsultivo Management"
+    },
+    {
+      "name": "PessoaFisica"
+    },
+    {
+      "name": "PessoaJuridica"
+    },
+    {
+      "name": "CausaPrescritiva"
+    },
+    {
+      "name": "Classe"
+    },
+    {
+      "name": "EspecieFase"
+    },
+    {
+      "name": "Fase"
+    },
+    {
+      "name": "Impedimento"
+    },
+    {
+      "name": "MembroComissao"
+    },
+    {
+      "name": "ModalidadeIniciativa"
+    },
+    {
+      "name": "ModalidadeSituacao"
+    },
+    {
+      "name": "Motivo"
+    },
+    {
+      "name": "OrigemRepresentacao"
+    },
+    {
+      "name": "ProcessoJuizo"
+    },
+    {
+      "name": "ProcessoPad"
+    },
+    {
+      "name": "Resultado"
+    },
+    {
+      "name": "ResultadoJuizo"
+    },
+    {
+      "name": "SetorResponsavel"
+    },
+    {
+      "name": "UnidadeRelacionada"
+    },
+    {
+      "name": "AssuntoNacional"
+    },
+    {
+      "name": "AtividadeJudicial"
+    },
+    {
+      "name": "AvisoComunicacaoJudicial"
+    },
+    {
+      "name": "ClasseNacional"
+    },
+    {
+      "name": "Comarca"
+    },
+    {
+      "name": "ComplementoJudicial"
+    },
+    {
+      "name": "ComunicacaoJudicial"
+    },
+    {
+      "name": "FonteDados"
+    },
+    {
+      "name": "MagistradoJudicial"
+    },
+    {
+      "name": "ModalidadeComarca"
+    },
+    {
+      "name": "ModalidadeComunicacaoJudicial"
+    },
+    {
+      "name": "ModalidadeInstancia"
+    },
+    {
+      "name": "ModalidadeRamoJustica"
+    },
+    {
+      "name": "ModalidadeRepercussao"
+    },
+    {
+      "name": "ModalidadeRisco"
+    },
+    {
+      "name": "ModalidadeValor"
+    },
+    {
+      "name": "ModalidadeVinculacaoProcessoJudicial"
+    },
+    {
+      "name": "MovimentoNacional"
+    },
+    {
+      "name": "OrgaoJulgador"
+    },
+    {
+      "name": "ParametroJudicial"
+    },
+    {
+      "name": "PessoaInteressada"
+    },
+    {
+      "name": "PessoaRepresentada"
+    },
+    {
+      "name": "PrioridadeJudicial"
+    },
+    {
+      "name": "ProcessoJudicial"
+    },
+    {
+      "name": "ReducaoLitigio"
+    },
+    {
+      "name": "Tribunal"
+    },
+    {
+      "name": "Valor"
+    },
+    {
+      "name": "VinculacaoDocumentoComunicacaoJudicial"
+    },
+    {
+      "name": "VinculacaoEtiquetaJudicial"
+    },
+    {
+      "name": "VinculacaoMagistradoJudicial"
+    },
+    {
+      "name": "VinculacaoParametroJudicial"
+    },
+    {
+      "name": "VinculacaoPrioridadeJudicial"
+    },
+    {
+      "name": "VinculacaoProcessoJudicial"
+    },
+    {
+      "name": "VinculacaoProcessoJudicialProcesso"
+    },
+    {
+      "name": "VinculacaoProcessoJudicialSetor"
+    },
+    {
+      "name": "VinculacaoSetorOrgaoJulgadorPessoa"
+    },
+    {
+      "name": "Arquivo"
+    },
+    {
+      "name": "BaixaRastreamento"
+    },
+    {
+      "name": "CancelamentoLote"
+    },
+    {
+      "name": "Carta"
+    },
+    {
+      "name": "DevolucaoAr"
+    },
+    {
+      "name": "Ecarta"
+    },
+    {
+      "name": "Inconsistencia"
+    },
+    {
+      "name": "Lote"
+    },
+    {
+      "name": "LoteDevolucaoAr"
+    },
+    {
+      "name": "ReciboServico"
+    },
+    {
+      "name": "RecusaRespostaAr"
+    },
+    {
+      "name": "RespostaAr"
+    },
+    {
+      "name": "RespostaCancelamentoLote"
+    },
+    {
+      "name": "RespostaNotificacao"
+    },
+    {
+      "name": "TipoInconsistencia"
+    },
+    {
+      "name": "TipoRespostaAr"
+    },
+    {
+      "name": "BoletoHonorarios"
+    },
+    {
+      "name": "PagamentoHonorariosSisGru"
+    },
+    {
+      "name": "BoletoHonorariosUsuarioExterno"
+    },
+    {
+      "name": "Bem"
+    },
+    {
+      "name": "ConfiguracaoPessoaDevedorOrgaoCentral"
+    },
+    {
+      "name": "Diligencia"
+    },
+    {
+      "name": "Garantia"
+    },
+    {
+      "name": "IndiceDevedor"
+    },
+    {
+      "name": "MedidaRestritiva"
+    },
+    {
+      "name": "ModalidadeBem"
+    },
+    {
+      "name": "ModalidadeDiligencia"
+    },
+    {
+      "name": "ModalidadeGarantia"
+    },
+    {
+      "name": "ModalidadeMedidaRestritiva"
+    },
+    {
+      "name": "ModalidadeQualificacaoSocio"
+    },
+    {
+      "name": "ModalidadeSituacaoEspecial"
+    },
+    {
+      "name": "ParticipacaoSocietaria"
+    },
+    {
+      "name": "PessoaDevedor"
+    },
+    {
+      "name": "SituacaoCadastral"
+    },
+    {
+      "name": "SituacaoEspecial"
+    },
+    {
+      "name": "TipoIndiceDevedor"
+    },
+    {
+      "name": "TipoSituacaoCadastral"
+    },
+    {
+      "name": "VinculacaoDocumentoGestaoDevedor"
+    },
+    {
+      "name": "Calculo"
+    },
+    {
+      "name": "ConfiguracaoTipoIndicador"
+    },
+    {
+      "name": "EspecieCalculo"
+    },
+    {
+      "name": "GeneroCalculo"
+    },
+    {
+      "name": "Indicador"
+    },
+    {
+      "name": "IndicadorPorPeriodoVigencia"
+    },
+    {
+      "name": "InteressadoCalculo"
+    },
+    {
+      "name": "ModalidadeElaboracaoCalculo"
+    },
+    {
+      "name": "ModalidadeIndicador"
+    },
+    {
+      "name": "ModalidadeIndicadorPorPeriodoVigencia"
+    },
+    {
+      "name": "ModalidadeIntegracaoTipoIndicador"
+    },
+    {
+      "name": "ModalidadeParametroCalculo"
+    },
+    {
+      "name": "ModalidadePreenchimentoParametroCalculo"
+    },
+    {
+      "name": "ModalidadeStatusCalculo"
+    },
+    {
+      "name": "ModalidadeValorReferencia"
+    },
+    {
+      "name": "Moeda"
+    },
+    {
+      "name": "ParametroCalculo"
+    },
+    {
+      "name": "ParametroPrePreenchidoCalculo"
+    },
+    {
+      "name": "TipoIndicador"
+    },
+    {
+      "name": "TipoParametroCalculo"
+    },
+    {
+      "name": "TipoParcelaCalculoAdicional"
+    },
+    {
+      "name": "ValorReferencia"
+    },
+    {
+      "name": "VinculacaoDocumentoCalculo"
+    },
+    {
+      "name": "VinculacaoEspecieCalculoTipoParametroCalculo"
+    },
+    {
+      "name": "VinculacaoTipoIndicador"
+    },
+    {
+      "name": "EspecieBeneficioPrevidenciario"
+    },
+    {
+      "name": "Anotacao"
+    },
+    {
+      "name": "ArquivoAnotacao"
+    },
+    {
+      "name": "ArquivoRetorno"
+    },
+    {
+      "name": "Boleto"
+    },
+    {
+      "name": "CausaPrescritivaCredito"
+    },
+    {
+      "name": "Certidao"
+    },
+    {
+      "name": "CertidaoDividaAtiva"
+    },
+    {
+      "name": "Chancela"
+    },
+    {
+      "name": "ChecklistCredito"
+    },
+    {
+      "name": "ChecklistParcelamento"
+    },
+    {
+      "name": "ConfiguracaoCalculoCredito"
+    },
+    {
+      "name": "ConfiguracaoModelo"
+    },
+    {
+      "name": "Credito"
+    },
+    {
+      "name": "Credor"
+    },
+    {
+      "name": "EspecieCredito"
+    },
+    {
+      "name": "EspecieStatus"
+    },
+    {
+      "name": "FundamentoLegal"
+    },
+    {
+      "name": "GeneroCredito"
+    },
+    {
+      "name": "GeneroStatus"
+    },
+    {
+      "name": "GrupoEconomico"
+    },
+    {
+      "name": "ImputacaoPagamento"
+    },
+    {
+      "name": "InteressadoCredito"
+    },
+    {
+      "name": "ItemArquivoAnotacao"
+    },
+    {
+      "name": "ItemArquivoRetornoSisGru"
+    },
+    {
+      "name": "ItemWebServiceSisGru"
+    },
+    {
+      "name": "MemoriaCalculo"
+    },
+    {
+      "name": "ModalidadeCalculoCredito"
+    },
+    {
+      "name": "ModalidadeCertidao"
+    },
+    {
+      "name": "ModalidadeCompetenciaExecucaoFiscal"
+    },
+    {
+      "name": "ModalidadeDocumentoOrigem"
+    },
+    {
+      "name": "ModalidadeEntidadeDivida"
+    },
+    {
+      "name": "ModalidadeFundamentoLegal"
+    },
+    {
+      "name": "ModalidadeIdentificador"
+    },
+    {
+      "name": "ModalidadeInteressadoCredito"
+    },
+    {
+      "name": "ModalidadeMemoriaCalculo"
+    },
+    {
+      "name": "ModalidadeParcela"
+    },
+    {
+      "name": "ModalidadePedidoBaixaProtesto"
+    },
+    {
+      "name": "ModalidadePeriodoCessacao"
+    },
+    {
+      "name": "ModalidadePoder"
+    },
+    {
+      "name": "ModalidadeReceita"
+    },
+    {
+      "name": "ModalidadeRetificacao"
+    },
+    {
+      "name": "ModalidadeVedacao"
+    },
+    {
+      "name": "NaturezaCredito"
+    },
+    {
+      "name": "NotificacaoExtrajdicial"
+    },
+    {
+      "name": "NumeroUnicoIdentificacao"
+    },
+    {
+      "name": "PagTesouro"
+    },
+    {
+      "name": "Pagamento"
+    },
+    {
+      "name": "ParametroConfiguracaoCalculoCredito"
+    },
+    {
+      "name": "Parcela"
+    },
+    {
+      "name": "ParcelaCredito"
+    },
+    {
+      "name": "Parcelamento"
+    },
+    {
+      "name": "PedidoBaixaProtesto"
+    },
+    {
+      "name": "PeticaoInicial"
+    },
+    {
+      "name": "Procuracao"
+    },
+    {
+      "name": "Protesto"
+    },
+    {
+      "name": "Receita"
+    },
+    {
+      "name": "RecursoAdministrativo"
+    },
+    {
+      "name": "Regional"
+    },
+    {
+      "name": "Retificacao"
+    },
+    {
+      "name": "SoapWebService"
+    },
+    {
+      "name": "TipoCausaPrescritiva"
+    },
+    {
+      "name": "TipoDestinoAnotacao"
+    },
+    {
+      "name": "TipoNotificacaoExtrajudicial"
+    },
+    {
+      "name": "TipoParcelamento"
+    },
+    {
+      "name": "CertidaoDividaAtivaUsuarioAutarquia"
+    },
+    {
+      "name": "CreditoUsuarioAutarquia"
+    },
+    {
+      "name": "CredorUsuarioAutarquia"
+    },
+    {
+      "name": "EspecieCreditoUsuarioAutarquia"
+    },
+    {
+      "name": "EspecieStatusUsuarioAutarquia"
+    },
+    {
+      "name": "FaseUsuarioAutarquia"
+    },
+    {
+      "name": "LoteUsuarioAutarquia"
+    },
+    {
+      "name": "ModalidadeDocumentoOrigemUsuarioAutarquia"
+    },
+    {
+      "name": "ParcelamentoUsuarioAutarquia"
+    },
+    {
+      "name": "ProtestoUsuarioAutarquia"
+    },
+    {
+      "name": "RegionalUsuarioAutarquia"
+    },
+    {
+      "name": "VinculacaoEtiquetaDividaUsuarioAutarquia"
+    },
+    {
+      "name": "AnotacaoUsuarioExterno"
+    },
+    {
+      "name": "BoletoUsuarioExterno"
+    },
+    {
+      "name": "CertidaoUsuarioExterno"
+    },
+    {
+      "name": "CertidaoDividaAtivaUsuarioExterno"
+    },
+    {
+      "name": "CreditoUsuarioExterno"
+    },
+    {
+      "name": "CredorUsuarioExterno"
+    },
+    {
+      "name": "EspecieCreditoUsuarioExterno"
+    },
+    {
+      "name": "EspecieStatusUsuarioExterno"
+    },
+    {
+      "name": "FaseUsuarioExterno"
+    },
+    {
+      "name": "FundamentoLegalUsuarioExterno"
+    },
+    {
+      "name": "GeneroCreditoUsuarioExterno"
+    },
+    {
+      "name": "GeneroStatusUsuarioExterno"
+    },
+    {
+      "name": "ImputacaoPagamentoUsuarioExterno"
+    },
+    {
+      "name": "InteressadoCreditoUsuarioExterno"
+    },
+    {
+      "name": "MemoriaCalculoUsuarioExterno"
+    },
+    {
+      "name": "ModalidadeDocumentoOrigemUsuarioExterno"
+    },
+    {
+      "name": "ModalidadeInteressadoCreditUsuarioExterno"
+    },
+    {
+      "name": "ModalidadeMemoriaCalculoUsuarioExterno"
+    },
+    {
+      "name": "ModalidadeParcelaUsuarioExterno"
+    },
+    {
+      "name": "ModalidadePedidoBaixaProtestoUsuarioExterno"
+    },
+    {
+      "name": "ModalidadePoderUsuarioExterno"
+    },
+    {
+      "name": "ModalidadeSolicitacaoUsuarioExterno"
+    },
+    {
+      "name": "NaturezaCreditoUsuarioExterno"
+    },
+    {
+      "name": "PagamentoUsuarioExterno"
+    },
+    {
+      "name": "ParcelaUsuarioExterno"
+    },
+    {
+      "name": "ParcelaCreditoUsuarioExterno"
+    },
+    {
+      "name": "ParcelamentoUsuarioExterno"
+    },
+    {
+      "name": "PedidoBaixaProtestoUsuarioExterno"
+    },
+    {
+      "name": "PeticaoInicialUsuarioExterno"
+    },
+    {
+      "name": "ProcuracaoUsuarioExterno"
+    },
+    {
+      "name": "ProtestoUsuarioExterno"
+    },
+    {
+      "name": "RecursoAdministrativoUsuarioExterno"
+    },
+    {
+      "name": "RelatorioUsuarioExterno"
+    },
+    {
+      "name": "SolicitacaoUsuarioExterno"
+    },
+    {
+      "name": "TipoDestinoAnotacaoUsuarioExterno"
+    },
+    {
+      "name": "TipoParcelamentoUsuarioExterno"
+    },
+    {
+      "name": "VinculacaoBoletoUsuarioExterno"
+    },
+    {
+      "name": "VinculacaoCreditoParcelamentoUsuarioExterno"
+    },
+    {
+      "name": "VinculacaoEspecieFundamentoLegalUsuarioExterno"
+    },
+    {
+      "name": "VinculacaoMemoriaCalculoUsuarioExterno"
+    },
+    {
+      "name": "PoderUsuarioExterno"
+    },
+    {
+      "name": "ComponenteDigitalUsuarioExterno"
+    },
+    {
+      "name": "PessoaUsuarioExterno"
+    },
+    {
+      "name": "VedacaoParcelamentoDevedor"
+    },
+    {
+      "name": "VinculacaoBoleto"
+    },
+    {
+      "name": "VinculacaoConfiguracaoModelo"
+    },
+    {
+      "name": "VinculacaoCreditoCertidaoDividaAtiva"
+    },
+    {
+      "name": "VinculacaoCreditoLote"
+    },
+    {
+      "name": "VinculacaoCreditoParcelamento"
+    },
+    {
+      "name": "VinculacaoCredorEspecieCredito"
+    },
+    {
+      "name": "VinculacaoCredorTarefa"
+    },
+    {
+      "name": "VinculacaoEspecieFundamentoLegal"
+    },
+    {
+      "name": "VinculacaoEtiquetaDivida"
+    },
+    {
+      "name": "VinculacaoGrupoEconomicoEstado"
+    },
+    {
+      "name": "VinculacaoGrupoEconomicoPessoa"
+    },
+    {
+      "name": "VinculacaoMemoriaCalculo"
+    },
+    {
+      "name": "Poder"
+    },
+    {
+      "name": "VinculacaoRole"
+    },
+    {
+      "name": "VinculacaoSetorRegional"
+    },
+    {
+      "name": "VinculacaoTemplateModalidadeEntidadeDivida"
+    },
+    {
+      "name": "VinculacaoUsuarioRegional"
+    }
+  ]
+}

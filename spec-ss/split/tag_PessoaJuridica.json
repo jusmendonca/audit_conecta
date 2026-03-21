@@ -1,0 +1,437 @@
+{
+  "tag": "PessoaJuridica",
+  "paths": {
+    "/v1/receita_federal/pessoa_juridica/downloadPdf": {
+      "post": {
+        "tags": [
+          "PessoaJuridica"
+        ],
+        "description": "",
+        "operationId": "post_suppcore_receitafederalbackend_api_v1_pessoajuridica_pdf",
+        "requestBody": {
+          "description": "Array de Objetos de Pessoa Jurídica",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "11111111111111",
+                  "identificadorMatrizFilial": "1",
+                  "razaoSocialNomeEmpresarial": "EXEMPLO LTDA",
+                  "nomeFantasia": "EXEMPLO",
+                  "situacaoCadastral": "02",
+                  "descricaoTipoLogradouro": "RUA",
+                  "logradouro": "EXEMPLO",
+                  "numero": "000",
+                  "complemento": "EXEMPLO",
+                  "bairro": "BAIRRO EXEMPLO",
+                  "cep": "11111111",
+                  "uf": "EX",
+                  "municipio": "EXEMPLO",
+                  "dddTelefone1": "00  11111111",
+                  "dddTelefone2": "00  22222222",
+                  "correioEletronico": "exemplo@exemplo.com.br",
+                  "cpfResponsavel": "11111111111",
+                  "nomeResponsavel": "Exemplo do Exemplo"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Arquivo PDF",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/receita_federal/pessoa_juridica/downloadHtml": {
+      "post": {
+        "tags": [
+          "PessoaJuridica"
+        ],
+        "description": "",
+        "operationId": "post_suppcore_receitafederalbackend_api_v1_pessoajuridica_html",
+        "requestBody": {
+          "description": "Array de Objetos de Pessoa Jurídica",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "id": "11111111111111",
+                  "identificadorMatrizFilial": "1",
+                  "razaoSocialNomeEmpresarial": "EXEMPLO LTDA",
+                  "nomeFantasia": "EXEMPLO",
+                  "situacaoCadastral": "02",
+                  "descricaoTipoLogradouro": "RUA",
+                  "logradouro": "EXEMPLO",
+                  "numero": "000",
+                  "complemento": "EXEMPLO",
+                  "bairro": "BAIRRO EXEMPLO",
+                  "cep": "11111111",
+                  "uf": "EX",
+                  "municipio": "EXEMPLO",
+                  "dddTelefone1": "00  11111111",
+                  "dddTelefone2": "00  22222222",
+                  "correioEletronico": "exemplo@exemplo.com.br",
+                  "cpfResponsavel": "11111111111",
+                  "nomeResponsavel": "Exemplo do Exemplo"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Arquivo HTML",
+            "content": {
+              "application/octet-stream": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/receita_federal/pessoa_juridica/search": {
+      "get": {
+        "tags": [
+          "PessoaJuridica"
+        ],
+        "operationId": "get_suppcore_receitafederalbackend_api_v1_pessoajuridica_search",
+        "parameters": [
+          {
+            "parameter": "order",
+            "name": "order",
+            "in": "query",
+            "description": "Used order in request.\n\n<p>Usage examples:</p>\n<pre><em>order: {\"principal\": \"ASC\"}      => ORDER BY entity.principal ASC<br />order: {\"criadoEm\": \"DESC\"}      => ORDER BY entity.criadoEm DESC </em></pre>\n\n<p>Advanced usage  examples:</p>\n<pre><em>order: {\"principal\": \"DESC\", \"criadoEm\": \"DESC\"}   => ORDER BY entity.principal ASC, entity.criadoEm DESC </em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "order",
+              "type": "string",
+              "default": "{\"id\":\"DESC\"}"
+            }
+          },
+          {
+            "parameter": "limit",
+            "name": "limit",
+            "in": "query",
+            "description": "Used limit option in request.\n\n<p>Usage examples:</p>\n<pre><em>limit: 10</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "limit",
+              "type": "string",
+              "default": "10"
+            }
+          },
+          {
+            "parameter": "offset",
+            "name": "offset",
+            "in": "query",
+            "description": "Used offset option in request.\n\n<p>Usage examples:</p>\n<pre><em>offset: 0</em></pre>\n",
+            "required": false,
+            "schema": {
+              "schema": "offset",
+              "type": "string",
+              "default": "0"
+            }
+          },
+          {
+            "name": "where",
+            "in": "query",
+            "description": "Used search criteria in request.\n\n<p>Usage examples:</p>\n<pre><em>where: {\"id\": \"eq:1\"}                                            => WHERE entity.id = 1<br />where: {\"id\": \"neq:1\"}                                           => WHERE entity.id != 1<br />where: {\"id\": \"like:1%}                                          => WHERE entity.id like (\"1%\")<br />where: {\"id\": \"notLike:1%\"}                                      => WHERE entity.id not like (\"1%\")<br />where: {\"id\": \"gt:1\"}                                            => WHERE entity.id > 1<br />where: {\"id\": \"gte:1\"}                                           => WHERE entity.id >= 1<br />where: {\"id\": \"lt:1\"}                                            => WHERE entity.id < 1<br />where: {\"id\": \"lte:1\"}                                           => WHERE entity.id <= 1<br />where: {\"id\": \"in:1,2,3,4\"}                                      => WHERE entity.id in (1,2,3,4)<br />where: {\"id\": \"notIn:1,2,3,4\"}                                   => WHERE entity.id not in (1,2,3,4)<br />where: {\"id\": \"isNull\"}                                          => WHERE entity.id isNull<br />where: {\"id\": \"isNotNull\"}                                       => WHERE entity.id isNotNull<br />where: {\"orX\": [\"id\": \"eq:1\"},{\"uuid\": \"eq:2\"}]}                 => WHERE entity.id = 1 or entity.id = 2</em></pre>\n",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "{\"id\": \"eq:1\"}"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/receita_federal/pessoa_juridica/{id}/sincronizar": {
+      "patch": {
+        "tags": [
+          "PessoaJuridica"
+        ],
+        "operationId": "patch_suppcore_receitafederalbackend_api_v1_pessoajuridica_sincronizar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "schemas": {}
+}

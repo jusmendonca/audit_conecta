@@ -1,0 +1,95 @@
+{
+  "tag": "Inteligência Artificial",
+  "paths": {
+    "/v1/administrativo/ia/chat": {
+      "post": {
+        "tags": [
+          "Inteligência Artificial"
+        ],
+        "summary": "Realiza uma interação síncrona com a LLM",
+        "operationId": "post_suppcore_administrativobackend_api_v1_inteligenciaartificial_chat",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteligenciaArtificialChatRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "Erro de Validação"
+          }
+        }
+      }
+    },
+    "/v1/administrativo/ia/batch/submit": {
+      "post": {
+        "tags": [
+          "Inteligência Artificial"
+        ],
+        "summary": "Envia requisição assíncrona para a IA (Batch)",
+        "operationId": "post_suppcore_administrativobackend_api_v1_inteligenciaartificial_submit",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/administrativo/ia/batch/{requestId}": {
+      "get": {
+        "tags": [
+          "Inteligência Artificial"
+        ],
+        "summary": "Verifica o status de um Job",
+        "operationId": "get_suppcore_administrativobackend_api_v1_inteligenciaartificial_status",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/administrativo/ia/batch/{requestId}/cancel": {
+      "post": {
+        "tags": [
+          "Inteligência Artificial"
+        ],
+        "summary": "Cancela um Job em andamento",
+        "operationId": "post_suppcore_administrativobackend_api_v1_inteligenciaartificial_cancel",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "schemas": {}
+}

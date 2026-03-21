@@ -41,68 +41,212 @@ init_state()
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
-    .block-container { padding-top: 1.2rem; padding-bottom: 1rem; }
-    div[data-testid="stSidebarNav"] { display: none; }
-    .periodo-box {
-        background: #eaf1fb;
-        border-left: 4px solid #1A3A6A;
-        border-radius: 4px;
-        padding: 0.5rem 1rem;
-        margin: 0.4rem 0 0.8rem 0;
-        font-size: 0.95rem;
-    }
+/* ═══════════════════════════════════════════════════════════════════
+   AUDITORIA CONECTA+ — DESIGN SYSTEM
+   Navy #1A3A6A · Blue #2d5fa0 · Ice #eaf1fb · Body #f7f9fc
+   Border #d0dcea · Muted #7a8fad · Text #1a2a4a
+   ═══════════════════════════════════════════════════════════════════ */
+
+.block-container { padding-top: 1.2rem; padding-bottom: 1rem; }
+div[data-testid="stSidebarNav"] { display: none; }
+
+/* ── Sidebar ──────────────────────────────────────────────────────── */
+div[data-testid="stSidebar"] {
+    background: #f0f4fa;
+    border-right: 1px solid #d0dcea;
+}
+div[data-testid="stSidebar"] hr { border-color: #c2d4ee; margin: 0.35rem 0; }
+
+/* ── Tipografia ───────────────────────────────────────────────────── */
+h1, h2, h3 { color: #1a2a4a !important; }
+
+/* ── Botões primários ─────────────────────────────────────────────── */
+button[kind="primary"] {
+    background-color: #1A3A6A !important;
+    border-color:     #1A3A6A !important;
+    color: #fff !important;
+}
+button[kind="primary"]:hover  { background-color: #142d54 !important; border-color: #142d54 !important; }
+button[kind="primary"]:active { background-color: #0f2240 !important; }
+
+/* ── Botões secundários ───────────────────────────────────────────── */
+button[kind="secondary"] {
+    border-color: #c2d4ee !important;
+    color: #2d5fa0 !important;
+}
+button[kind="secondary"]:hover {
+    border-color: #2d5fa0 !important;
+    background-color: #eaf1fb !important;
+    color: #1A3A6A !important;
+}
+button[kind="tertiary"] { color: #2d5fa0 !important; }
+
+/* ── Link buttons (st.link_button) ───────────────────────────────── */
+a[data-testid="stLinkButton"] > button,
+div[data-testid="stLinkButton"] > a {
+    border-color: #c2d4ee !important;
+    color: #2d5fa0 !important;
+    font-size: 0.82rem !important;
+}
+a[data-testid="stLinkButton"] > button:hover,
+div[data-testid="stLinkButton"] > a:hover {
+    border-color: #2d5fa0 !important;
+    background-color: #eaf1fb !important;
+}
+
+/* ── Barra de progresso ───────────────────────────────────────────── */
+div[data-testid="stProgress"] > div {
+    background-color: #dce8f5;
+    border-radius: 4px;
+}
+div[data-testid="stProgress"] > div > div {
+    background-color: #1A3A6A;
+    border-radius: 4px;
+}
+
+/* ── Metrics ──────────────────────────────────────────────────────── */
+div[data-testid="metric-container"] {
+    background: #f7f9fc;
+    border: 1px solid #d0dcea;
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+}
+[data-testid="stMetricLabel"] { color: #7a8fad !important; font-size: 0.78rem !important; }
+[data-testid="stMetricValue"] { color: #1a2a4a !important; }
+[data-testid="stMetricDelta"]  { font-size: 0.78rem !important; }
+
+/* ── Abas ─────────────────────────────────────────────────────────── */
+button[data-baseweb="tab"] { color: #7a8fad !important; }
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: #1A3A6A !important;
+    border-bottom-color: #1A3A6A !important;
+}
+button[data-baseweb="tab"]:hover { color: #2d5fa0 !important; }
+
+/* ── Expanders ────────────────────────────────────────────────────── */
+div[data-testid="stExpander"] details {
+    border-color: #d0dcea !important;
+    border-radius: 6px !important;
+    background: #f7f9fc;
+}
+div[data-testid="stExpander"] details summary { color: #2d5fa0; }
+
+/* ── Inputs / Selects / Textarea ──────────────────────────────────── */
+div[data-baseweb="select"] > div,
+div[data-baseweb="input"]  > div {
+    border-color: #c2d4ee !important;
+}
+div[data-baseweb="select"] > div:focus-within,
+div[data-baseweb="input"]  > div:focus-within {
+    border-color: #1A3A6A !important;
+    box-shadow: 0 0 0 2px rgba(26,58,106,.1) !important;
+}
+textarea {
+    border-color: #c2d4ee !important;
+    border-radius: 6px !important;
+}
+textarea:focus-visible {
+    border-color: #1A3A6A !important;
+    box-shadow: 0 0 0 2px rgba(26,58,106,.1) !important;
+    outline: none !important;
+}
+
+/* ── Multiselect tags ─────────────────────────────────────────────── */
+span[data-baseweb="tag"] {
+    background-color: #2d5fa0 !important;
+    border-radius: 4px !important;
+}
+
+/* ── Radio ────────────────────────────────────────────────────────── */
+div[data-testid="stRadio"] > label[data-checked="true"] > div:first-child {
+    background-color: #1A3A6A !important;
+    border-color:     #1A3A6A !important;
+}
+
+/* ── Alertas ──────────────────────────────────────────────────────── */
+div[data-testid="stAlert"] {
+    border-radius: 6px !important;
+}
+div[data-testid="stAlert"][data-type="info"],
+[data-baseweb="notification"][kind="info"] {
+    background-color: #eaf1fb !important;
+    border-left-color: #1A3A6A !important;
+    color: #1a2a4a !important;
+}
+div[data-testid="stAlert"][data-type="warning"] {
+    background-color: #fffbeb !important;
+    border-left-color: #d97706 !important;
+}
+div[data-testid="stAlert"][data-type="success"] {
+    background-color: #f0fdf4 !important;
+    border-left-color: #16a34a !important;
+}
+
+/* ── Spinner ──────────────────────────────────────────────────────── */
+div[data-testid="stSpinner"] svg { stroke: #1A3A6A; }
+
+/* ══════════════════════════════════════════════════════════════════
+   ac-* — componentes de card custom
+   ══════════════════════════════════════════════════════════════════ */
+.ac-card {
+    border: 1px solid #d0dcea;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    font-family: inherit;
+}
+.ac-card-header {
+    background: #1A3A6A;
+    color: #fff;
+    padding: 0.5rem 0.9rem;
+}
+.ac-card-header-light {
+    background: #eaf1fb;
+    color: #1A3A6A;
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid #d0dcea;
+}
+.ac-card-body {
+    background: #f7f9fc;
+    padding: 0.65rem 0.9rem 0.3rem;
+}
+.ac-label {
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7a8fad;
+    margin-bottom: 1px;
+}
+.ac-label-dark { color: #a8bcd4; }
+.ac-value {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #1a2a4a;
+    margin-bottom: 0.5rem;
+}
+.ac-value-mono { font-family: monospace; font-size: 0.82rem; }
+.ac-badge {
+    display: inline-block;
+    background: #1A3A6A;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-right: 4px;
+}
+.ac-badge-light {
+    background: #eaf1fb;
+    color: #1A3A6A;
+    border: 1px solid #c2d4ee;
+}
 </style>
 """, unsafe_allow_html=True)
 
 
-# ---------------------------------------------------------------------------
-# Auto-persistência: salva edições pendentes de data_editors ao navegar
-# ---------------------------------------------------------------------------
-
-def _persist_editor(df_key: str, editor_key: str, indices_key: str) -> None:
-    """
-    Lê o delta de edição do data_editor (session_state[editor_key]) e aplica
-    as mudanças de volta ao DataFrame completo (session_state[df_key]).
-
-    O delta usa índices POSICIONAIS (0, 1, 2…) relativos às linhas exibidas,
-    enquanto o DataFrame pode ter índices diferentes quando filtrado.
-    indices_key armazena o mapeamento posição → índice original.
-    """
-    edits = st.session_state.get(editor_key, {})
-    edited_rows = edits.get("edited_rows", {})
-
-    df = st.session_state.get(df_key)
-    if df is None:
-        return
-
-    if edited_rows:
-        indices = st.session_state.get(indices_key, list(range(len(df))))
-        df = df.copy()
-        for pos_str, changes in edited_rows.items():
-            pos = int(pos_str)
-            if pos < len(indices):
-                orig_idx = indices[pos]
-                for col, val in changes.items():
-                    if col in df.columns:
-                        df.at[orig_idx, col] = val
-        st.session_state[df_key] = df
-
-    # Limpar estado do editor para evitar mapeamento stale
-    if editor_key in st.session_state:
-        del st.session_state[editor_key]
-
-
-def _auto_persist_all() -> None:
-    """Persiste edições pendentes de TODOS os editors. Roda no topo de cada ciclo."""
-    for df_key, editor_key, indices_key in [
-        ("df_audit_triadas", "editor_triadas", "_idx_triadas"),
-        ("df_audit_nao_triadas", "editor_nao_triadas", "_idx_nao_triadas"),
-    ]:
-        if st.session_state.get(df_key) is not None:
-            _persist_editor(df_key, editor_key, indices_key)
-
-
-_auto_persist_all()
 
 
 # ---------------------------------------------------------------------------
@@ -126,6 +270,100 @@ def _check_icon(chave: str) -> str:
     return "  ✓" if checks.get(chave) else ""
 
 
+# ---------------------------------------------------------------------------
+# SUPP Login — helpers
+# ---------------------------------------------------------------------------
+
+def _supp_get_nome(client, fallback: str) -> str:
+    """Tenta obter o nome do usuário via payload do JWT."""
+    try:
+        payload = client.payload()
+        return (
+            payload.get("name")
+            or payload.get("username")
+            or payload.get("login")
+            or payload.get("sub")
+            or fallback
+        )
+    except Exception:
+        return fallback
+
+
+def _supp_logout_cleanup() -> None:
+    client = st.session_state.pop("supp_auth_client", None)
+    if client:
+        try:
+            client.close()
+        except Exception:
+            pass
+    for k in ("supp_logged_in", "supp_username", "supp_auth_client",
+              "supp_login_step", "supp_totp_challenge"):
+        st.session_state.pop(k, None)
+
+
+def _supp_do_login(base_url: str, usuario: str, senha: str) -> None:
+    """Autentica via LDAP e armazena o cliente na sessão."""
+    try:
+        from modules.auth import AuthClient, AuthError as _AE
+        client = AuthClient(base_url=base_url.rstrip("/"))
+        client.login_ldap(usuario, senha)
+        st.session_state["supp_auth_client"] = client
+        st.session_state["supp_logged_in"] = True
+        st.session_state["supp_username"] = _supp_get_nome(client, usuario)
+        st.session_state["supp_base_url"] = base_url.rstrip("/")
+        st.rerun()
+    except Exception as exc:
+        try:
+            from modules.auth import AuthError as _AE2
+            msg = exc.body if isinstance(exc, _AE2) else str(exc)
+        except Exception:
+            msg = str(exc)
+        st.error(f"Credenciais inválidas: {msg}")
+
+
+def _render_login_page() -> None:
+    """Tela de login SUPP via LDAP — exibida antes de qualquer outra coisa."""
+    st.markdown(
+        "<style>.block-container{padding-top:5rem;}</style>",
+        unsafe_allow_html=True,
+    )
+    _, col, _ = st.columns([1, 1.2, 1])
+    with col:
+        st.markdown(
+            "<div class='ac-card'>"
+            "<div class='ac-card-header' style='padding:1.4rem 1.4rem 1.1rem'>"
+            "<div style='font-size:1.4rem;font-weight:800;letter-spacing:0.01em;margin-bottom:3px'>"
+            "📋 Auditoria Conecta+</div>"
+            "<div style='font-size:0.78rem;opacity:0.72'>Procuradoria-Geral Federal · AGU</div>"
+            "</div>"
+            "<div class='ac-card-body' style='padding:1.4rem 1.4rem 0.5rem'>",
+            unsafe_allow_html=True,
+        )
+
+        SUPP_URL = "https://supersapiensbackend.agu.gov.br"
+
+        with st.form("login_page_form"):
+            usuario = st.text_input("Login (Rede AGU)", placeholder="login")
+            senha = st.text_input("Senha", type="password")
+            ok = st.form_submit_button(
+                "Entrar →", use_container_width=True, type="primary"
+            )
+
+        st.markdown("</div></div>", unsafe_allow_html=True)
+
+        if ok:
+            if not usuario.strip() or not senha:
+                st.error("Preencha usuário e senha.")
+            else:
+                _supp_do_login(SUPP_URL, usuario.strip(), senha)
+
+
+# ── Login gate: app só funciona após autenticação ──────────────────────────
+if not st.session_state.get("supp_logged_in"):
+    _render_login_page()
+    st.stop()
+
+
 with st.sidebar:
     st.markdown("### 📋 Auditoria Conecta+")
     st.caption("Procuradoria-Geral Federal / AGU")
@@ -146,14 +384,6 @@ with st.sidebar:
 
     ad = get_audit_data()
     if ad:
-        st.caption(f"📁 {ad.nome_arquivo}")
-        st.caption(
-            f"Total: **{ad.total_tarefas}** · "
-            f"Triadas: **{ad.total_triadas}** · "
-            f"Não triadas: **{ad.total_nao_triadas}**"
-        )
-
-        # Progresso geral
         df_tri = st.session_state.get("df_audit_triadas")
         df_nao = st.session_state.get("df_audit_nao_triadas")
         n_aud = n_total = 0
@@ -163,42 +393,98 @@ with st.sidebar:
         if df_nao is not None:
             n_total += len(df_nao)
             n_aud += len(df_nao[df_nao[COL_CONFORMIDADE] != OPCOES_CONFORMIDADE[0]])
-        if n_total > 0:
-            st.caption(f"Progresso: **{n_aud}/{n_total}** auditadas")
-            st.progress(n_aud / n_total)
 
+        pct_str = f"{n_aud/n_total*100:.0f}%" if n_total > 0 else "—"
+        prog_bar = (
+            f"<div style='background:#d0dcea;border-radius:4px;height:5px;margin-top:4px'>"
+            f"<div style='background:#1A3A6A;width:{n_aud/n_total*100 if n_total else 0:.1f}%;"
+            f"height:5px;border-radius:4px'></div></div>"
+            if n_total > 0 else ""
+        )
+        st.markdown(
+            f"<div class='ac-card'>"
+            f"<div class='ac-card-header' style='padding:0.4rem 0.75rem;font-size:0.78rem;"
+            f"white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>📁 {ad.nome_arquivo}</div>"
+            f"<div class='ac-card-body' style='padding:0.5rem 0.75rem'>"
+            f"<div style='display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.3rem'>"
+            f"<span><span class='ac-label'>Total</span><br><strong>{ad.total_tarefas}</strong></span>"
+            f"<span><span class='ac-label'>Triadas</span><br><strong>{ad.total_triadas}</strong></span>"
+            f"<span><span class='ac-label'>Não triadas</span><br><strong>{ad.total_nao_triadas}</strong></span>"
+            f"<span><span class='ac-label'>Auditadas</span><br><strong>{pct_str}</strong></span>"
+            f"</div>"
+            f"{prog_bar}"
+            f"</div></div>",
+            unsafe_allow_html=True,
+        )
         st.divider()
 
     if st.button("🔄 Nova Auditoria", use_container_width=True):
         # Limpar tudo
         for k in list(st.session_state.keys()):
-            if k.startswith(("editor_", "_idx_", "filtro_", "busca_")):
+            if k.startswith(("filtro_", "busca_", "tbl_",
+                             "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_",
+                             "_proc_id_cache_", "_supp_cache_")):
                 del st.session_state[k]
         reset_auditoria()
         st.session_state["pagina"] = "importacao"
         st.session_state["audit_data_merged"] = None
         st.rerun()
 
+    # ── Usuário SUPP ──────────────────────────────────────────────────────────
+    st.divider()
+    nome = st.session_state.get("supp_username", "")
+    st.markdown(
+        f"<div style='font-size:0.78rem;margin-bottom:0.4rem'>"
+        f"<span style='color:#2ecc71'>●</span> "
+        f"<span style='font-weight:600;color:#1a2a4a'>{nome}</span></div>",
+        unsafe_allow_html=True,
+    )
+    if st.button("Sair do SUPP", use_container_width=True, key="btn_supp_logout"):
+        _supp_logout_cleanup()
+        st.rerun()
+
 
 # ---------------------------------------------------------------------------
-# Editor compartilhado: tabela editável com filtro e salvamento
+# SUPP — Link para visualizar processo
 # ---------------------------------------------------------------------------
 
-def _render_editor(
+_SUPERSAPIENS_URL = "https://supersapiens.agu.gov.br/apps/processo/{proc_id}/visualizar/capa"
+
+
+
+def _render_processo_link() -> None:
+    """Placeholder exibido quando nenhuma linha está selecionada na tabela."""
+    if not st.session_state.get("supp_sel_tarefa_id"):
+        st.markdown(
+            "<div class='ac-card'>"
+            "<div class='ac-card-body' style='padding:1.2rem 0.9rem;text-align:center;"
+            "color:#7a8fad;font-size:0.85rem'>"
+            "← Selecione uma linha na tabela para auditar e abrir o processo no SuperSapiens."
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
+
+
+# ---------------------------------------------------------------------------
+# Tabela interativa + editor de linha
+# ---------------------------------------------------------------------------
+
+
+def _render_audit_table(
     df_key: str,
-    editor_key: str,
-    indices_key: str,
     filtro_key: str,
     busca_key: str,
     column_order: list[str],
-    disabled_cols: list[str],
-) -> None:
-    """Renderiza editor de auditoria com filtro, busca e botão de salvar."""
+    table_key: str,
+) -> tuple:
+    """
+    Tabela interativa com filtros e seleção de linha.
+    Retorna (orig_idx, row_dict) da linha selecionada, ou (None, None).
+    """
     df = st.session_state[df_key]
     total = len(df)
     s = stats_df(df)
 
-    # ── Progresso ──
     pct = s["auditadas"] / total if total > 0 else 0
     st.progress(
         pct,
@@ -208,104 +494,229 @@ def _render_editor(
         ),
     )
 
-    # ── Filtros ──
-    def _on_filter_change():
-        _persist_editor(df_key, editor_key, indices_key)
-
     col_f1, col_f2 = st.columns([1, 2])
     with col_f1:
         filtro = st.multiselect(
-            "Filtrar por conformidade:",
+            "Filtrar conformidade:",
             OPCOES_CONFORMIDADE,
             default=OPCOES_CONFORMIDADE,
             key=filtro_key,
-            on_change=_on_filter_change,
         )
     with col_f2:
-        busca = st.text_input(
-            "Buscar (Tarefa ou NUP):",
-            key=busca_key,
-            placeholder="Digite para filtrar…",
-            on_change=_on_filter_change,
+        has_config = COL_CONFIG in df.columns
+        busca_label = (
+            "Buscar (Tarefa, NUP ou Config.):" if has_config else "Buscar (Tarefa ou NUP):"
         )
+        busca = st.text_input(busca_label, key=busca_key, placeholder="Digite para filtrar…")
 
-    # Aplicar filtros
     mask = df[COL_CONFORMIDADE].isin(filtro)
     if busca.strip():
         txt = busca.strip()
-        mask = mask & (
+        search_mask = (
             df[COL_TAREFA].astype(str).str.contains(txt, case=False, na=False)
             | df[COL_NUP].astype(str).str.contains(txt, case=False, na=False)
         )
+        if has_config:
+            search_mask = search_mask | df[COL_CONFIG].astype(str).str.contains(txt, case=False, na=False)
+        mask = mask & search_mask
 
     df_view = df.loc[mask]
-    st.session_state[indices_key] = df_view.index.tolist()
+    col_order = [c for c in column_order if c in df_view.columns]
 
-    st.caption(f"Exibindo **{len(df_view)}** de {total} tarefas")
+    st.caption(f"Exibindo **{len(df_view)}** de {total} tarefas — clique em uma linha para auditar")
 
     if df_view.empty:
         st.info("Nenhuma tarefa corresponde ao filtro atual.")
-        return
+        return None, None
 
-    # ── Garantir que colunas existem no df_view (para column_order) ──
-    col_order = [c for c in column_order if c in df_view.columns]
-    disabled = [c for c in disabled_cols if c in df_view.columns]
-
-    # ── Editor ──
-    edited = st.data_editor(
-        df_view,
-        key=editor_key,
-        column_order=col_order,
+    event = st.dataframe(
+        df_view[col_order],
+        use_container_width=True,
+        hide_index=True,
+        on_select="rerun",
+        selection_mode="single-row",
+        key=table_key,
         column_config={
             COL_TAREFA: st.column_config.TextColumn("Tarefa", width="small"),
             COL_NUP: st.column_config.TextColumn("NUP", width="medium"),
             COL_USUARIO: st.column_config.TextColumn("Usuário", width="small"),
-            COL_CONFIG: st.column_config.TextColumn("Config. Encontradas", width="medium"),
+            COL_CONFIG: st.column_config.TextColumn("Config.", width="medium"),
             COL_STATUS: st.column_config.TextColumn("Status", width="small"),
-            COL_CONFORMIDADE: st.column_config.SelectboxColumn(
-                "Conformidade",
-                options=OPCOES_CONFORMIDADE,
-                required=True,
-                width="small",
-            ),
-            COL_MOTIVO: st.column_config.TextColumn(
-                "Motivo NC",
-                width="large",
-                help="Descreva o motivo da não conformidade",
-            ),
-            COL_ACAO: st.column_config.TextColumn(
-                "Ação Corretiva",
-                width="large",
-                help="Descreva a ação corretiva proposta",
-            ),
+            COL_CONFORMIDADE: st.column_config.TextColumn("Conformidade", width="small"),
+            COL_MOTIVO: st.column_config.TextColumn("Motivo NC", width="medium"),
+            COL_ACAO: st.column_config.TextColumn("Ação Corretiva", width="medium"),
         },
-        disabled=disabled,
-        hide_index=True,
-        use_container_width=True,
-        num_rows="fixed",
-        height=min(800, max(200, 37 + 35 * len(df_view))),
+        height=min(600, max(200, 37 + 35 * len(df_view))),
     )
 
-    # ── Salvar ──
-    col_save, col_info = st.columns([1, 3])
-    with col_save:
-        if st.button("💾 Salvar Alterações", type="primary", key=f"btn_save_{df_key}"):
-            # Usar o retorno do editor (que já tem os índices originais)
-            df_updated = st.session_state[df_key].copy()
-            for col in [COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO]:
-                if col in edited.columns:
-                    df_updated.loc[edited.index, col] = edited[col]
-            st.session_state[df_key] = df_updated
-            if editor_key in st.session_state:
-                del st.session_state[editor_key]
-            st.rerun()
-    with col_info:
-        s_new = stats_df(st.session_state[df_key])
-        pendentes = total - s_new["auditadas"]
-        if pendentes > 0:
-            st.caption(f"⏳ {pendentes} tarefa(s) ainda não auditada(s)")
+    rows = event.selection.rows
+    if rows:
+        orig_idx = df_view.index[rows[0]]
+        row = df.loc[orig_idx].to_dict()
+        st.session_state["supp_sel_tarefa_id"] = row.get(COL_TAREFA)
+        return orig_idx, row
+
+    return None, None
+
+
+def _render_row_editor(df_key: str, orig_idx, row: dict) -> None:
+    """Painel de edição dos campos de auditoria + link para o processo no SuperSapiens."""
+    tarefa_id = row.get(COL_TAREFA)
+    nup = row.get(COL_NUP)
+
+    # ── Busca dados do processo (com cache por tarefa) ────────────────────────
+    # Todos os dados estão embutidos na resposta da tarefa em processo.any
+    cache_key = f"_proc_id_cache_{tarefa_id}"
+    if cache_key not in st.session_state:
+        auth = st.session_state.get("supp_auth_client")
+        if auth:
+            with st.spinner("Buscando processo..."):
+                try:
+                    from modules.tarefa import TarefaClient
+                    tc = TarefaClient.from_auth(auth)
+                    tarefa = tc.buscar(tarefa_id, populate=[
+                        "processo", "especieTarefa", "usuarioResponsavel",
+                        "setorResponsavel", "setorOrigem", "vinculacaoWorkflow",
+                    ])
+                    proc = tarefa.get("processo") or {}
+                    proc_id = proc.get("id")
+                    nup_fmt = proc.get("NUPFormatado") or proc.get("NUP")
+
+                    # CNJ e classe nacional estão em processo.any.processoJudicial
+                    any_ = proc.get("any") or {}
+                    pj = any_.get("processoJudicial") or {}
+                    cnj = pj.get("numeroFormatado") or pj.get("numero")
+                    cn = pj.get("classeNacional") or {}
+                    classe_nacional = cn.get("nome") if isinstance(cn, dict) else None
+
+                    # Parte representada em processo.any.pessoaRepresentada.pessoa.nome
+                    pr = any_.get("pessoaRepresentada") or {}
+                    pessoa = pr.get("pessoa") or {}
+                    parte = pessoa.get("nome")
+
+                    st.session_state[cache_key] = {
+                        "proc_id": proc_id,
+                        "nup_fmt": nup_fmt,
+                        "cnj": cnj,
+                        "classe_nacional": classe_nacional,
+                        "parte": parte,
+                    }
+                except Exception as e:
+                    st.session_state[cache_key] = {"erro": str(e)}
         else:
-            st.caption("✅ Todas as tarefas foram auditadas")
+            st.session_state[cache_key] = {}
+
+    cached = st.session_state.get(cache_key, {})
+    proc_id = cached.get("proc_id")
+    nup_fmt = cached.get("nup_fmt") or nup
+    cnj = cached.get("cnj")
+    classe_nacional = cached.get("classe_nacional")
+    parte = cached.get("parte")
+
+    # ── Cabeçalho com dados identificadores ──────────────────────────────────
+    # ── Título + botões discretos alinhados à direita ────────────────────────
+    url = _SUPERSAPIENS_URL.format(proc_id=proc_id) if proc_id else None
+    _c_title, _c_open, _c_refresh = st.columns([4, 3, 1])
+    with _c_title:
+        st.markdown("#### ✏️ Auditoria")
+    with _c_open:
+        if url:
+            st.link_button("↗ SuperSapiens", url, use_container_width=True)
+    with _c_refresh:
+        if st.button("🔄", key=f"_refresh_proc_{tarefa_id}", help="Recarregar dados do processo"):
+            st.session_state.pop(cache_key, None)
+            st.rerun()
+
+    # ── Card de identificação ─────────────────────────────────────────────────
+    def _field(label: str, value, mono: bool = False) -> str:
+        if not value:
+            return ""
+        val_style = (
+            "font-family:monospace;font-size:0.82rem;color:#1a2a4a"
+            if mono else
+            "font-size:0.85rem;color:#1a2a4a"
+        )
+        return (
+            f"<div style='margin-bottom:0.55rem'>"
+            f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+            f"text-transform:uppercase;color:#7a8fad;margin-bottom:1px'>{label}</div>"
+            f"<div style='font-weight:600;{val_style}'>{value}</div>"
+            f"</div>"
+        )
+
+    ids_html = ""
+    if tarefa_id or proc_id:
+        id_t = (
+            f"<div style='flex:1'>"
+            f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+            f"text-transform:uppercase;color:#a8bcd4;margin-bottom:1px'>Id Tarefa</div>"
+            f"<div style='font-weight:700;font-size:0.92rem;font-family:monospace'>{tarefa_id or '—'}</div>"
+            f"</div>"
+        )
+        id_p = (
+            f"<div style='flex:1'>"
+            f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+            f"text-transform:uppercase;color:#a8bcd4;margin-bottom:1px'>Id Processo</div>"
+            f"<div style='font-weight:700;font-size:0.92rem;font-family:monospace'>{proc_id or '—'}</div>"
+            f"</div>"
+        )
+        ids_html = (
+            f"<div style='background:#1A3A6A;color:#fff;padding:0.55rem 0.9rem;"
+            f"display:flex;gap:1.5rem;border-radius:6px 6px 0 0'>{id_t}{id_p}</div>"
+        )
+
+    body_html = (
+        _field("NUP", nup_fmt, mono=True)
+        + _field("Número CNJ", cnj, mono=True)
+        + _field("Classe Nacional", classe_nacional)
+        + _field("Entidade Representada", parte)
+    )
+
+    st.markdown(
+        f"<div style='border:1px solid #d0dcea;border-radius:6px;"
+        f"overflow:hidden;margin-bottom:0.7rem'>"
+        f"{ids_html}"
+        f"<div style='background:#f7f9fc;padding:0.65rem 0.9rem 0.25rem'>{body_html}</div>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+    if cached.get("erro"):
+        st.caption(f"⚠️ Erro ao buscar processo: {cached['erro']}")
+
+    # ── Campos de auditoria ───────────────────────────────────────────────────
+    cur_conf = row.get(COL_CONFORMIDADE, OPCOES_CONFORMIDADE[0])
+    if cur_conf not in OPCOES_CONFORMIDADE:
+        cur_conf = OPCOES_CONFORMIDADE[0]
+
+    conf = st.selectbox(
+        "Conformidade:",
+        OPCOES_CONFORMIDADE,
+        index=OPCOES_CONFORMIDADE.index(cur_conf),
+        key=f"edit_conf_{orig_idx}_{df_key}",
+    )
+    motivo = st.text_area(
+        "Motivo NC:",
+        value=row.get(COL_MOTIVO, "") or "",
+        key=f"edit_motivo_{orig_idx}_{df_key}",
+        height=90,
+        placeholder="Descreva o motivo da não conformidade…",
+    )
+    acao = st.text_area(
+        "Ação Corretiva:",
+        value=row.get(COL_ACAO, "") or "",
+        key=f"edit_acao_{orig_idx}_{df_key}",
+        height=90,
+        placeholder="Descreva a ação corretiva proposta…",
+    )
+
+    if st.button("💾 Salvar", type="primary", key=f"btn_save_row_{orig_idx}_{df_key}",
+                 use_container_width=True):
+        df = st.session_state[df_key].copy()
+        df.at[orig_idx, COL_CONFORMIDADE] = conf
+        df.at[orig_idx, COL_MOTIVO] = motivo
+        df.at[orig_idx, COL_ACAO] = acao
+        st.session_state[df_key] = df
+        st.rerun()
 
 
 # ===========================================================================
@@ -327,15 +738,20 @@ def render_importacao() -> None:
             help="O arquivo deve conter as abas: Todas as Tarefas, Tarefas Triadas e Tarefas Não Triadas.",
         )
     with col_info:
-        st.markdown("""
-        **Formato esperado:**
-        - Aba 1: Todas as Tarefas
-        - Aba 2: Tarefas Triadas
-        - Aba 3: Tarefas Não Triadas
-
-        Colunas: ID, Tarefa, NUP, Usuário,
-        Datas, Status, Configurações Encontradas
-        """)
+        st.markdown(
+            "<div class='ac-card'>"
+            "<div class='ac-card-header-light'>"
+            "<span style='font-size:0.8rem;font-weight:700'>Formato esperado</span>"
+            "</div>"
+            "<div class='ac-card-body' style='font-size:0.82rem'>"
+            "<div class='ac-label' style='margin-bottom:4px'>Abas obrigatórias</div>"
+            "<div class='ac-value'>Todas as Tarefas<br>Tarefas Triadas<br>Tarefas Não Triadas</div>"
+            "<div class='ac-label' style='margin-bottom:4px'>Colunas</div>"
+            "<div class='ac-value' style='font-size:0.78rem'>ID · Tarefa · NUP · Usuário<br>"
+            "Datas · Status · Config. Encontradas</div>"
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
 
     if not uploaded:
         if get_audit_data() is not None:
@@ -388,7 +804,12 @@ def render_importacao() -> None:
         periodo_str = "Período não identificado"
 
     st.markdown(
-        f'<div class="periodo-box">📅 <strong>Período de triagem:</strong> {periodo_str}</div>',
+        f"<div class='ac-card'>"
+        f"<div class='ac-card-header' style='display:flex;align-items:center;gap:0.6rem'>"
+        f"<span style='font-size:1rem'>📅</span>"
+        f"<div><div class='ac-label ac-label-dark'>Período de triagem</div>"
+        f"<div style='font-weight:600;font-size:0.92rem'>{periodo_str}</div></div>"
+        f"</div></div>",
         unsafe_allow_html=True,
     )
 
@@ -397,7 +818,7 @@ def render_importacao() -> None:
     c2.metric("Tarefas Triadas", merged.total_triadas,
               delta=f"{merged.pct_triadas:.1f}% do total", delta_color="normal")
     c3.metric("Tarefas Não Triadas", merged.total_nao_triadas,
-              delta=f"{merged.pct_nao_triadas:.1f}% do total", delta_color="inverse")
+              delta=f"{merged.pct_nao_triadas:.1f}% do total", delta_color="off")
 
     st.divider()
     tab1, tab2 = st.tabs([
@@ -501,25 +922,28 @@ def render_auditoria_triadas() -> None:
         st.error("Estado inconsistente. Clique em 'Nova Auditoria' no menu lateral.")
         return
 
-    descr = f"Amostra: **{n_amostra}** tarefas" if n_amostra else f"Total: **{len(df)}** tarefas"
-    st.markdown(f"**Tipo:** {tipo_label} · {descr}")
-
-    st.info(
-        "Edite a coluna **Conformidade** para cada tarefa. "
-        "Para não conformidades, preencha também **Motivo NC** e **Ação Corretiva**. "
-        "Clique em **Salvar Alterações** para persistir.",
-        icon="ℹ️",
+    descr = f"Amostra: {n_amostra} tarefas" if n_amostra else f"Total: {len(df)} tarefas"
+    st.markdown(
+        f"<span class='ac-badge'>{tipo_label}</span>"
+        f"<span class='ac-badge ac-badge-light'>{descr}</span>",
+        unsafe_allow_html=True,
     )
 
-    _render_editor(
-        df_key="df_audit_triadas",
-        editor_key="editor_triadas",
-        indices_key="_idx_triadas",
-        filtro_key="filtro_conf_tri",
-        busca_key="busca_tri",
-        column_order=[COL_TAREFA, COL_NUP, COL_CONFIG, COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
-        disabled_cols=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_CONFIG, COL_STATUS],
-    )
+    col_left, col_right = st.columns([3, 2], gap="medium")
+    with col_left:
+        orig_idx, row = _render_audit_table(
+            df_key="df_audit_triadas",
+            filtro_key="filtro_conf_tri",
+            busca_key="busca_tri",
+            column_order=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_CONFIG, COL_STATUS,
+                          COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
+            table_key="tbl_triadas",
+        )
+    with col_right:
+        if orig_idx is not None and row is not None:
+            _render_row_editor("df_audit_triadas", orig_idx, row)
+        else:
+            _render_processo_link()
 
     st.divider()
     col1, col2 = st.columns([2, 1])
@@ -535,7 +959,8 @@ def render_auditoria_triadas() -> None:
             st.session_state["tamanho_amostra"] = None
             st.session_state["auditoria_triadas_concluida"] = False
             for k in list(st.session_state.keys()):
-                if k.startswith(("editor_triadas", "_idx_triadas", "filtro_conf_tri", "busca_tri")):
+                if k.startswith(("filtro_conf_tri", "busca_tri", "tbl_triadas",
+                                 "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
                     del st.session_state[k]
             st.rerun()
 
@@ -606,22 +1031,21 @@ def render_auditoria_nao_triadas() -> None:
         return
 
     # ── Editor ──
-    st.info(
-        "Edite a coluna **Conformidade** para cada tarefa. "
-        "Para não conformidades, preencha também **Motivo NC** e **Ação Corretiva**. "
-        "Clique em **Salvar Alterações** para persistir.",
-        icon="ℹ️",
-    )
-
-    _render_editor(
-        df_key="df_audit_nao_triadas",
-        editor_key="editor_nao_triadas",
-        indices_key="_idx_nao_triadas",
-        filtro_key="filtro_conf_nao",
-        busca_key="busca_nao",
-        column_order=[COL_TAREFA, COL_NUP, COL_STATUS, COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
-        disabled_cols=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_STATUS],
-    )
+    col_left, col_right = st.columns([3, 2], gap="medium")
+    with col_left:
+        orig_idx, row = _render_audit_table(
+            df_key="df_audit_nao_triadas",
+            filtro_key="filtro_conf_nao",
+            busca_key="busca_nao",
+            column_order=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_STATUS,
+                          COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
+            table_key="tbl_nao_triadas",
+        )
+    with col_right:
+        if orig_idx is not None and row is not None:
+            _render_row_editor("df_audit_nao_triadas", orig_idx, row)
+        else:
+            _render_processo_link()
 
     st.divider()
     col1, col2 = st.columns([2, 1])
@@ -635,8 +1059,8 @@ def render_auditoria_nao_triadas() -> None:
             st.session_state["df_audit_nao_triadas"] = None
             st.session_state["auditoria_nao_triadas_concluida"] = False
             for k in list(st.session_state.keys()):
-                if k.startswith(("editor_nao_triadas", "_idx_nao_triadas",
-                                 "filtro_conf_nao", "busca_nao")):
+                if k.startswith(("filtro_conf_nao", "busca_nao", "tbl_nao_triadas",
+                                 "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
                     del st.session_state[k]
             st.rerun()
 
@@ -711,16 +1135,16 @@ def render_relatorio() -> None:
             if s["conformes"] > 0:
                 labels_v.append(f"Conformes\n{s['conformes']}")
                 sizes_v.append(s["conformes"])
-                cores_v.append("#2ecc71")
+                cores_v.append("#16a34a")
             if s["nao_conformes"] > 0:
                 labels_v.append(f"Não Conformes\n{s['nao_conformes']}")
                 sizes_v.append(s["nao_conformes"])
-                cores_v.append("#e74c3c")
+                cores_v.append("#f59e0b")
             nao_aud = s["total"] - s["auditadas"]
             if nao_aud > 0:
                 labels_v.append(f"Não auditadas\n{nao_aud}")
                 sizes_v.append(nao_aud)
-                cores_v.append("#bbb")
+                cores_v.append("#c8d4e8")
             ax.pie(sizes_v, labels=labels_v, colors=cores_v,
                    autopct="%1.1f%%", startangle=90,
                    wedgeprops={"edgecolor": "white", "linewidth": 2})

@@ -1,0 +1,952 @@
+{
+  "tag": "Authentication",
+  "paths": {
+    "/auth/get_token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to get user Json Web Token (JWT) for authentication.",
+        "operationId": "post_suppcore_administrativobackend_auth_gettoken",
+        "requestBody": {
+          "description": "Credentials object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "username",
+                  "password": "password"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON Web Token for user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "token": {
+                      "description": "Json Web Token",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "token": "_json_web_token_"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh_token": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to refresh user Json Web Token (JWT) for authentication.",
+        "operationId": "get_suppcore_administrativobackend_auth_refreshtoken",
+        "responses": {
+          "200": {
+            "description": "JSON Web Token for user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "token": {
+                      "description": "Json Web Token",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "token": "_json_web_token_"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/payload_token": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to get payload from Json Web Token (JWT).",
+        "operationId": "get_suppcore_administrativobackend_auth_payloadtoken",
+        "responses": {
+          "200": {
+            "description": "JSON payload from Web Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "iat": {
+                      "description": "token creation",
+                      "type": "integer"
+                    },
+                    "username": {
+                      "description": "User name",
+                      "type": "string"
+                    },
+                    "roles": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "role": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "version": {
+                      "description": "Version API",
+                      "type": "string"
+                    },
+                    "exp": {
+                      "description": "Version API",
+                      "type": "string"
+                    },
+                    "checksum": {
+                      "description": "Hash of api key",
+                      "type": "string"
+                    },
+                    "id": {
+                      "description": "User id",
+                      "type": "integer"
+                    },
+                    "nome": {
+                      "description": "User name",
+                      "type": "string"
+                    },
+                    "email": {
+                      "description": "User email",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "iat": 1580837366,
+                    "roles": "",
+                    "username": "",
+                    "ip": "",
+                    "version": "",
+                    "exp": 1580823797,
+                    "checksum": "",
+                    "id": 0,
+                    "nome": "",
+                    "email": ""
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/recover_password": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint to validate token and reset password.",
+        "operationId": "get_suppcore_administrativobackend_auth_recoverpasswordreset",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Username CNPJ/CPF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Username E-Mail",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reset_token",
+            "in": "query",
+            "description": "reset_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Response"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint to get an e-mail to recover password.",
+        "operationId": "post_suppcore_administrativobackend_auth_recoverpassword",
+        "requestBody": {
+          "description": "Credentials object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "username": {
+                    "description": "Username CPF/CNPJ",
+                    "type": "string"
+                  },
+                  "email": {
+                    "description": "Username E-Mail",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success Response"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/x509_get_token": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to get user Json Web Token (JWT) for authentication with x509 cert.",
+        "operationId": "get_suppcore_administrativobackend_auth_gettokenx509",
+        "responses": {
+          "200": {
+            "description": "JSON Web Token for user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "token": {
+                      "description": "Json Web Token",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "token": "_json_web_token_"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/govbr_get_token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to authenticate user from GovBr.",
+        "operationId": "post_suppcore_administrativobackend_auth_ssogovbr",
+        "requestBody": {
+          "description": "Credentials object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "code": "code",
+                  "redirectUri": "redirectUri"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON Web Token for user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "token": {
+                      "description": "Json Web Token",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "token": "_json_web_token_"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/ldap_get_token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to authenticate user from LDAP.",
+        "operationId": "post_suppcore_administrativobackend_auth_gettokenldap",
+        "requestBody": {
+          "description": "Credentials object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "username",
+                  "password": "password"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON Web Token for user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "token": {
+                      "description": "Json Web Token",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "token": "_json_web_token_"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/totp/setup": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Setup do 2FA TOTP",
+        "operationId": "post_suppcore_administrativobackend_auth_totpsetup",
+        "requestBody": {
+          "description": "Challenge token e opções para exibir/regenerar o QR-Code do 2FA.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "challenge": "challenge-token",
+                  "regenerate": false
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dados para configuração do segundo fator."
+          }
+        }
+      }
+    },
+    "/auth/totp/sendMail": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Envia o e-mail com a configuração do segundo fator baseado no challenge.",
+        "operationId": "post_suppcore_administrativobackend_auth_totpsendmail",
+        "requestBody": {
+          "description": "Challenge token para envio da configuração do segundo fator por e-mail.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "challenge": "challenge-token"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmação do envio por e-mail."
+          }
+        }
+      }
+    },
+    "/auth/totp/verify": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Verificar se o \"challenge\" confere com o \"code\" informado",
+        "operationId": "post_suppcore_administrativobackend_auth_totpverify",
+        "requestBody": {
+          "description": "Challenge token e código TOTP informado pelo usuário.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "challenge": "challenge-token",
+                  "code": "123456"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token JWT emitido após validação do segundo fator."
+          }
+        }
+      }
+    },
+    "/auth/assinador_get_token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to get user's signer Json Web Token (JWT) for authentication.",
+        "operationId": "post_suppcore_administrativobackend_auth_getassinadortoken",
+        "requestBody": {
+          "description": "Credentials object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "username",
+                  "signature": "signature"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON Web Token for user's signer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "token": {
+                      "description": "Json Web Token",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "jwt": "_json_web_token_"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/update_password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint to alter password.",
+        "operationId": "post_suppcore_administrativobackend_auth_alterarsenha",
+        "requestBody": {
+          "description": "content",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "old_password": "old_password",
+                  "new_password": "new_password",
+                  "token": "token"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success Response"
+          }
+        }
+      }
+    },
+    "/auth/login_sapiens_pessoas": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Endpoint action to authenticate user from LDAP.",
+        "operationId": "post_suppcore_administrativobackend_auth_loginsapienspessoas",
+        "responses": {
+          "200": {
+            "description": "URL Sapiens Pessoas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "url": {
+                      "description": "URL Sapiens Pessoas",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "token": "https://sapienspessoas.agu.gov.br/oauth?email=email@agu.gov.br"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/generate_client_secret": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Gerar o client_secret para robô/automação",
+        "operationId": "get_suppcore_administrativobackend_auth_generateclientsecret",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "query",
+            "description": "Nome do robô (case sensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/generate_client_rate_limit_secret": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Gerar o client_rate_limit_secret para robô/automação utilizar no cabeçalho X-RateLimit-API",
+        "operationId": "get_suppcore_administrativobackend_auth_generateclientratelimitsecret",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "query",
+            "description": "Nome do robô (case sensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "schemas": {}
+}

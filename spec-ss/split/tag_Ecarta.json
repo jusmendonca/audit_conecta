@@ -1,0 +1,55 @@
+{
+  "tag": "Ecarta",
+  "paths": {
+    "/v1/ecarta/{hash}": {
+      "get": {
+        "tags": [
+          "Ecarta"
+        ],
+        "summary": "Endpoint para carregar ecarta",
+        "operationId": "get_suppcore_ecartabackend_api_v1_ecarta_getecarta",
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/ecarta/documento/{id}": {
+      "post": {
+        "tags": [
+          "Ecarta"
+        ],
+        "summary": "Endpoint para carregar documento",
+        "operationId": "post_suppcore_ecartabackend_api_v1_ecarta_getdocumento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "schemas": {}
+}

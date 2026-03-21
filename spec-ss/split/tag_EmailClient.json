@@ -1,0 +1,928 @@
+{
+  "tag": "EmailClient",
+  "paths": {
+    "/email_client/{id}/folders": {
+      "get": {
+        "tags": [
+          "EmailClient"
+        ],
+        "operationId": "get_suppcore_administrativobackend_emailclient_getfolders",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint action to fetch Folder entities ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "entities": {
+                        "description": "array of entities",
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "folder": {
+                              "$ref": "#/components/schemas/Folder2"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "total": {
+                        "description": "total os entities",
+                        "type": "integer",
+                        "example": 10
+                      }
+                    },
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 404,
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email_client/{id}/default_folders": {
+      "get": {
+        "tags": [
+          "EmailClient"
+        ],
+        "operationId": "get_suppcore_administrativobackend_emailclient_getdefaultfolders",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint action to fetch Default Folder entities ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "entities": {
+                        "description": "array of entities",
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "folder": {
+                              "$ref": "#/components/schemas/Folder2"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "total": {
+                        "description": "total os entities",
+                        "type": "integer",
+                        "example": 10
+                      }
+                    },
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 404,
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email_client/{id}/inbox_folder": {
+      "get": {
+        "tags": [
+          "EmailClient"
+        ],
+        "operationId": "get_suppcore_administrativobackend_emailclient_getinboxfolder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint action to returns Inbox Folder entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "folder": {
+                      "$ref": "#/components/schemas/Folder2"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 404,
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email_client/{id}/messages": {
+      "get": {
+        "tags": [
+          "EmailClient"
+        ],
+        "operationId": "get_suppcore_administrativobackend_emailclient_searchmessages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint action to fetch Messages entities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "entities": {
+                        "description": "array of entities",
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "message": {
+                              "$ref": "#/components/schemas/Message"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "total": {
+                        "description": "total os entities",
+                        "type": "integer",
+                        "example": 10
+                      }
+                    },
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 404,
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email_client/{id}/message/{folder}/{message}": {
+      "get": {
+        "tags": [
+          "EmailClient"
+        ],
+        "operationId": "get_suppcore_administrativobackend_emailclient_getmessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          },
+          {
+            "name": "folder",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "message",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint action to returns Message entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "$ref": "#/components/schemas/Message"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 404,
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email_client/{id}/message/{folder}/{message}/{attachment}": {
+      "get": {
+        "tags": [
+          "EmailClient"
+        ],
+        "operationId": "get_suppcore_administrativobackend_emailclient_getattachment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "\\d+"
+            }
+          },
+          {
+            "name": "folder",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "message",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint action to returns Attachment entity of message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "attachment": {
+                      "$ref": "#/components/schemas/Attachment"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 400,
+                    "message": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 401,
+                    "message": "Bad credentials"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "description": "Error code",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error description",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "example": {
+                    "code": 404,
+                    "message": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "schemas": {
+    "Attachment": {
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "content": {
+          "type": "string"
+        },
+        "mimetype": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "extension": {
+          "type": "string"
+        },
+        "imgSrc": {
+          "type": "string"
+        },
+        "disposition": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Folder2": {
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parsedName": {
+          "type": "string"
+        },
+        "fullname": {
+          "type": "string"
+        },
+        "hasChildren": {
+          "type": "boolean",
+          "default": false
+        },
+        "childrens": {
+          "$ref": "#/components/schemas/Folder2"
+        },
+        "totalMessages": {
+          "type": "integer"
+        },
+        "recentMessages": {
+          "type": "integer"
+        },
+        "unreadMessages": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Message": {
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "htmlBody": {
+          "type": "string"
+        },
+        "readed": {
+          "type": "boolean",
+          "default": false
+        },
+        "folder": {
+          "$ref": "#/components/schemas/Folder2"
+        },
+        "from": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "to": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "attachments": {
+          "$ref": "#/components/schemas/Attachment"
+        },
+        "cc": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "bcc": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Address": {
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "@id": {
+          "type": "string"
+        },
+        "@context": {
+          "type": "string"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "full": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "uuid": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "tag": "LogEntry",
+  "paths": {
+    "/v1/administrativo/logEntry/logentry": {
+      "get": {
+        "tags": [
+          "LogEntry"
+        ],
+        "summary": "Endpoint action para localizar um log no GEDMO.",
+        "operationId": "get_suppcore_administrativobackend_api_v1_logentry_getlog",
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "schemas": {}
+}

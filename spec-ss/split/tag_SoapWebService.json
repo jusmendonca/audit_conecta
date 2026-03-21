@@ -1,0 +1,186 @@
+{
+  "tag": "SoapWebService",
+  "paths": {
+    "/ws/divida_v1": {
+      "get": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "get_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "put_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "post_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "delete_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "options_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "head_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "patch_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "trace": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "trace_suppcore_dividabackend_api_v1_soapwebservice_indexdivida",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/ws/tcu_v1": {
+      "get": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "get_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "put_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "post_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "delete_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "options_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "head_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "patch_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "trace": {
+        "tags": [
+          "SoapWebService"
+        ],
+        "operationId": "trace_suppcore_dividabackend_api_v1_soapwebservice_indextcu",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "schemas": {}
+}

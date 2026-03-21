@@ -172,7 +172,7 @@ with st.sidebar:
     if st.button("🔄 Nova Auditoria", use_container_width=True):
         # Limpar tudo
         for k in list(st.session_state.keys()):
-            if k.startswith(("editor_", "_idx_", "filtro_", "busca_")):
+            if k.startswith(("editor_", "_idx_", "filtro_", "busca_", "sort_col_", "sort_dir_")):
                 del st.session_state[k]
         reset_auditoria()
         st.session_state["pagina"] = "importacao"
@@ -184,16 +184,30 @@ with st.sidebar:
 # Editor compartilhado: tabela editável com filtro e salvamento
 # ---------------------------------------------------------------------------
 
+_COL_LABELS: dict[str, str] = {
+    COL_TAREFA:       "Tarefa",
+    COL_NUP:          "NUP",
+    COL_USUARIO:      "Usuário",
+    COL_CONFIG:       "Config. Encontradas",
+    COL_STATUS:       "Status",
+    COL_CONFORMIDADE: "Conformidade",
+    COL_MOTIVO:       "Motivo NC",
+    COL_ACAO:         "Ação Corretiva",
+}
+
+
 def _render_editor(
     df_key: str,
     editor_key: str,
     indices_key: str,
     filtro_key: str,
     busca_key: str,
+    sort_col_key: str,
+    sort_dir_key: str,
     column_order: list[str],
     disabled_cols: list[str],
 ) -> None:
-    """Renderiza editor de auditoria com filtro, busca e botão de salvar."""
+    """Renderiza editor de auditoria com filtro, busca, ordenação e botão de salvar."""
     df = st.session_state[df_key]
     total = len(df)
     s = stats_df(df)
@@ -222,23 +236,71 @@ def _render_editor(
             on_change=_on_filter_change,
         )
     with col_f2:
+        has_config = COL_CONFIG in df.columns
+        busca_label = (
+            "Buscar (Tarefa, NUP ou Config. Encontradas):"
+            if has_config
+            else "Buscar (Tarefa ou NUP):"
+        )
         busca = st.text_input(
-            "Buscar (Tarefa ou NUP):",
+            busca_label,
             key=busca_key,
             placeholder="Digite para filtrar…",
             on_change=_on_filter_change,
         )
 
+    # ── Ordenação persistente ──
+    sortable_cols = [c for c in column_order if c in df.columns]
+    sortable_labels = [_COL_LABELS.get(c, c) for c in sortable_cols]
+
+    cur_sort_col = st.session_state.get(sort_col_key, sortable_cols[0] if sortable_cols else None)
+    if cur_sort_col not in sortable_cols:
+        cur_sort_col = sortable_cols[0] if sortable_cols else None
+    cur_sort_asc = st.session_state.get(sort_dir_key, True)
+
+    col_s1, col_s2 = st.columns([3, 1])
+    with col_s1:
+        default_idx = sortable_cols.index(cur_sort_col) if cur_sort_col in sortable_cols else 0
+        sort_label = st.selectbox(
+            "Ordenar por:",
+            sortable_labels,
+            index=default_idx,
+            key=f"{sort_col_key}_widget",
+            on_change=_on_filter_change,
+        )
+        st.session_state[sort_col_key] = sortable_cols[sortable_labels.index(sort_label)]
+    with col_s2:
+        sort_asc = st.toggle(
+            "Crescente",
+            value=cur_sort_asc,
+            key=f"{sort_dir_key}_widget",
+            on_change=_on_filter_change,
+        )
+        st.session_state[sort_dir_key] = sort_asc
+
     # Aplicar filtros
     mask = df[COL_CONFORMIDADE].isin(filtro)
     if busca.strip():
         txt = busca.strip()
-        mask = mask & (
+        search_mask = (
             df[COL_TAREFA].astype(str).str.contains(txt, case=False, na=False)
             | df[COL_NUP].astype(str).str.contains(txt, case=False, na=False)
         )
+        if has_config:
+            search_mask = search_mask | df[COL_CONFIG].astype(str).str.contains(txt, case=False, na=False)
+        mask = mask & search_mask
 
     df_view = df.loc[mask]
+
+    # Aplicar ordenação server-side (persiste após rerun)
+    active_sort_col = st.session_state.get(sort_col_key)
+    if active_sort_col and active_sort_col in df_view.columns:
+        df_view = df_view.sort_values(
+            active_sort_col,
+            ascending=st.session_state.get(sort_dir_key, True),
+            kind="stable",
+        )
+
     st.session_state[indices_key] = df_view.index.tolist()
 
     st.caption(f"Exibindo **{len(df_view)}** de {total} tarefas")
@@ -517,6 +579,8 @@ def render_auditoria_triadas() -> None:
         indices_key="_idx_triadas",
         filtro_key="filtro_conf_tri",
         busca_key="busca_tri",
+        sort_col_key="sort_col_tri",
+        sort_dir_key="sort_dir_tri",
         column_order=[COL_TAREFA, COL_NUP, COL_CONFIG, COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
         disabled_cols=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_CONFIG, COL_STATUS],
     )
@@ -535,7 +599,8 @@ def render_auditoria_triadas() -> None:
             st.session_state["tamanho_amostra"] = None
             st.session_state["auditoria_triadas_concluida"] = False
             for k in list(st.session_state.keys()):
-                if k.startswith(("editor_triadas", "_idx_triadas", "filtro_conf_tri", "busca_tri")):
+                if k.startswith(("editor_triadas", "_idx_triadas", "filtro_conf_tri",
+                                 "busca_tri", "sort_col_tri", "sort_dir_tri")):
                     del st.session_state[k]
             st.rerun()
 
@@ -619,6 +684,8 @@ def render_auditoria_nao_triadas() -> None:
         indices_key="_idx_nao_triadas",
         filtro_key="filtro_conf_nao",
         busca_key="busca_nao",
+        sort_col_key="sort_col_nao",
+        sort_dir_key="sort_dir_nao",
         column_order=[COL_TAREFA, COL_NUP, COL_STATUS, COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO],
         disabled_cols=[COL_TAREFA, COL_NUP, COL_USUARIO, COL_STATUS],
     )
@@ -636,7 +703,8 @@ def render_auditoria_nao_triadas() -> None:
             st.session_state["auditoria_nao_triadas_concluida"] = False
             for k in list(st.session_state.keys()):
                 if k.startswith(("editor_nao_triadas", "_idx_nao_triadas",
-                                 "filtro_conf_nao", "busca_nao")):
+                                 "filtro_conf_nao", "busca_nao",
+                                 "sort_col_nao", "sort_dir_nao")):
                     del st.session_state[k]
             st.rerun()
 

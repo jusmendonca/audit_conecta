@@ -1,0 +1,131 @@
+{
+  "tag": "PreferenciaResumoInteligente",
+  "paths": {
+    "/v1/administrativo/preferencia_resumo_inteligente/me": {
+      "get": {
+        "tags": [
+          "PreferenciaResumoInteligente"
+        ],
+        "summary": "Recupera as preferências do Resumo Inteligente do usuário logado.",
+        "operationId": "get_suppcore_administrativobackend_api_v1_preferenciaresumointeligente_getpreferencias",
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "PreferenciaResumoInteligente"
+        ],
+        "summary": "Persiste as preferências do usuário para o Resumo Inteligente.",
+        "description": "",
+        "operationId": "put_suppcore_administrativobackend_api_v1_preferenciaresumointeligente_atualizarpreferencias",
+        "responses": {
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Token not found": "{code: 401, message: JWT Token not found}",
+                    "Expired token": "{code: 401, message: Expired JWT Token}"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error description"
+                    }
+                  },
+                  "examples": {
+                    "Access denied": "{message: Access denied., code: 0, status: 403}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "schemas": {}
+}

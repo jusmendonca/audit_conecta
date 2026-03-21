@@ -41,16 +41,208 @@ init_state()
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
-    .block-container { padding-top: 1.2rem; padding-bottom: 1rem; }
-    div[data-testid="stSidebarNav"] { display: none; }
-    .periodo-box {
-        background: #eaf1fb;
-        border-left: 4px solid #1A3A6A;
-        border-radius: 4px;
-        padding: 0.5rem 1rem;
-        margin: 0.4rem 0 0.8rem 0;
-        font-size: 0.95rem;
-    }
+/* ═══════════════════════════════════════════════════════════════════
+   AUDITORIA CONECTA+ — DESIGN SYSTEM
+   Navy #1A3A6A · Blue #2d5fa0 · Ice #eaf1fb · Body #f7f9fc
+   Border #d0dcea · Muted #7a8fad · Text #1a2a4a
+   ═══════════════════════════════════════════════════════════════════ */
+
+.block-container { padding-top: 1.2rem; padding-bottom: 1rem; }
+div[data-testid="stSidebarNav"] { display: none; }
+
+/* ── Sidebar ──────────────────────────────────────────────────────── */
+div[data-testid="stSidebar"] {
+    background: #f0f4fa;
+    border-right: 1px solid #d0dcea;
+}
+div[data-testid="stSidebar"] hr { border-color: #c2d4ee; margin: 0.35rem 0; }
+
+/* ── Tipografia ───────────────────────────────────────────────────── */
+h1, h2, h3 { color: #1a2a4a !important; }
+
+/* ── Botões primários ─────────────────────────────────────────────── */
+button[kind="primary"] {
+    background-color: #1A3A6A !important;
+    border-color:     #1A3A6A !important;
+    color: #fff !important;
+}
+button[kind="primary"]:hover  { background-color: #142d54 !important; border-color: #142d54 !important; }
+button[kind="primary"]:active { background-color: #0f2240 !important; }
+
+/* ── Botões secundários ───────────────────────────────────────────── */
+button[kind="secondary"] {
+    border-color: #c2d4ee !important;
+    color: #2d5fa0 !important;
+}
+button[kind="secondary"]:hover {
+    border-color: #2d5fa0 !important;
+    background-color: #eaf1fb !important;
+    color: #1A3A6A !important;
+}
+button[kind="tertiary"] { color: #2d5fa0 !important; }
+
+/* ── Link buttons (st.link_button) ───────────────────────────────── */
+a[data-testid="stLinkButton"] > button,
+div[data-testid="stLinkButton"] > a {
+    border-color: #c2d4ee !important;
+    color: #2d5fa0 !important;
+    font-size: 0.82rem !important;
+}
+a[data-testid="stLinkButton"] > button:hover,
+div[data-testid="stLinkButton"] > a:hover {
+    border-color: #2d5fa0 !important;
+    background-color: #eaf1fb !important;
+}
+
+/* ── Barra de progresso ───────────────────────────────────────────── */
+div[data-testid="stProgress"] > div {
+    background-color: #dce8f5;
+    border-radius: 4px;
+}
+div[data-testid="stProgress"] > div > div {
+    background-color: #1A3A6A;
+    border-radius: 4px;
+}
+
+/* ── Metrics ──────────────────────────────────────────────────────── */
+div[data-testid="metric-container"] {
+    background: #f7f9fc;
+    border: 1px solid #d0dcea;
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+}
+[data-testid="stMetricLabel"] { color: #7a8fad !important; font-size: 0.78rem !important; }
+[data-testid="stMetricValue"] { color: #1a2a4a !important; }
+[data-testid="stMetricDelta"]  { font-size: 0.78rem !important; }
+
+/* ── Abas ─────────────────────────────────────────────────────────── */
+button[data-baseweb="tab"] { color: #7a8fad !important; }
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: #1A3A6A !important;
+    border-bottom-color: #1A3A6A !important;
+}
+button[data-baseweb="tab"]:hover { color: #2d5fa0 !important; }
+
+/* ── Expanders ────────────────────────────────────────────────────── */
+div[data-testid="stExpander"] details {
+    border-color: #d0dcea !important;
+    border-radius: 6px !important;
+    background: #f7f9fc;
+}
+div[data-testid="stExpander"] details summary { color: #2d5fa0; }
+
+/* ── Inputs / Selects / Textarea ──────────────────────────────────── */
+div[data-baseweb="select"] > div,
+div[data-baseweb="input"]  > div {
+    border-color: #c2d4ee !important;
+}
+div[data-baseweb="select"] > div:focus-within,
+div[data-baseweb="input"]  > div:focus-within {
+    border-color: #1A3A6A !important;
+    box-shadow: 0 0 0 2px rgba(26,58,106,.1) !important;
+}
+textarea {
+    border-color: #c2d4ee !important;
+    border-radius: 6px !important;
+}
+textarea:focus-visible {
+    border-color: #1A3A6A !important;
+    box-shadow: 0 0 0 2px rgba(26,58,106,.1) !important;
+    outline: none !important;
+}
+
+/* ── Multiselect tags ─────────────────────────────────────────────── */
+span[data-baseweb="tag"] {
+    background-color: #2d5fa0 !important;
+    border-radius: 4px !important;
+}
+
+/* ── Radio ────────────────────────────────────────────────────────── */
+div[data-testid="stRadio"] > label[data-checked="true"] > div:first-child {
+    background-color: #1A3A6A !important;
+    border-color:     #1A3A6A !important;
+}
+
+/* ── Alertas ──────────────────────────────────────────────────────── */
+div[data-testid="stAlert"] {
+    border-radius: 6px !important;
+}
+div[data-testid="stAlert"][data-type="info"],
+[data-baseweb="notification"][kind="info"] {
+    background-color: #eaf1fb !important;
+    border-left-color: #1A3A6A !important;
+    color: #1a2a4a !important;
+}
+div[data-testid="stAlert"][data-type="warning"] {
+    background-color: #fffbeb !important;
+    border-left-color: #d97706 !important;
+}
+div[data-testid="stAlert"][data-type="success"] {
+    background-color: #f0fdf4 !important;
+    border-left-color: #16a34a !important;
+}
+
+/* ── Spinner ──────────────────────────────────────────────────────── */
+div[data-testid="stSpinner"] svg { stroke: #1A3A6A; }
+
+/* ══════════════════════════════════════════════════════════════════
+   ac-* — componentes de card custom
+   ══════════════════════════════════════════════════════════════════ */
+.ac-card {
+    border: 1px solid #d0dcea;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    font-family: inherit;
+}
+.ac-card-header {
+    background: #1A3A6A;
+    color: #fff;
+    padding: 0.5rem 0.9rem;
+}
+.ac-card-header-light {
+    background: #eaf1fb;
+    color: #1A3A6A;
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid #d0dcea;
+}
+.ac-card-body {
+    background: #f7f9fc;
+    padding: 0.65rem 0.9rem 0.3rem;
+}
+.ac-label {
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7a8fad;
+    margin-bottom: 1px;
+}
+.ac-label-dark { color: #a8bcd4; }
+.ac-value {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #1a2a4a;
+    margin-bottom: 0.5rem;
+}
+.ac-value-mono { font-family: monospace; font-size: 0.82rem; }
+.ac-badge {
+    display: inline-block;
+    background: #1A3A6A;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-right: 4px;
+}
+.ac-badge-light {
+    background: #eaf1fb;
+    color: #1A3A6A;
+    border: 1px solid #c2d4ee;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -135,20 +327,29 @@ def _render_login_page() -> None:
         "<style>.block-container{padding-top:5rem;}</style>",
         unsafe_allow_html=True,
     )
-    _, col, _ = st.columns([1, 1.5, 1])
+    _, col, _ = st.columns([1, 1.2, 1])
     with col:
-        st.markdown("## 📋 Auditoria Conecta+")
-        st.markdown("##### Procuradoria-Geral Federal / AGU")
-        st.divider()
+        st.markdown(
+            "<div class='ac-card'>"
+            "<div class='ac-card-header' style='padding:1.4rem 1.4rem 1.1rem'>"
+            "<div style='font-size:1.4rem;font-weight:800;letter-spacing:0.01em;margin-bottom:3px'>"
+            "📋 Auditoria Conecta+</div>"
+            "<div style='font-size:0.78rem;opacity:0.72'>Procuradoria-Geral Federal · AGU</div>"
+            "</div>"
+            "<div class='ac-card-body' style='padding:1.4rem 1.4rem 0.5rem'>",
+            unsafe_allow_html=True,
+        )
 
         SUPP_URL = "https://supersapiensbackend.agu.gov.br"
 
         with st.form("login_page_form"):
-            usuario = st.text_input("Usuário (login LDAP)", placeholder="cpf ou login")
+            usuario = st.text_input("Login (Rede AGU)", placeholder="login")
             senha = st.text_input("Senha", type="password")
             ok = st.form_submit_button(
                 "Entrar →", use_container_width=True, type="primary"
             )
+
+        st.markdown("</div></div>", unsafe_allow_html=True)
 
         if ok:
             if not usuario.strip() or not senha:
@@ -183,14 +384,6 @@ with st.sidebar:
 
     ad = get_audit_data()
     if ad:
-        st.caption(f"📁 {ad.nome_arquivo}")
-        st.caption(
-            f"Total: **{ad.total_tarefas}** · "
-            f"Triadas: **{ad.total_triadas}** · "
-            f"Não triadas: **{ad.total_nao_triadas}**"
-        )
-
-        # Progresso geral
         df_tri = st.session_state.get("df_audit_triadas")
         df_nao = st.session_state.get("df_audit_nao_triadas")
         n_aud = n_total = 0
@@ -200,17 +393,37 @@ with st.sidebar:
         if df_nao is not None:
             n_total += len(df_nao)
             n_aud += len(df_nao[df_nao[COL_CONFORMIDADE] != OPCOES_CONFORMIDADE[0]])
-        if n_total > 0:
-            st.caption(f"Progresso: **{n_aud}/{n_total}** auditadas")
-            st.progress(n_aud / n_total)
 
+        pct_str = f"{n_aud/n_total*100:.0f}%" if n_total > 0 else "—"
+        prog_bar = (
+            f"<div style='background:#d0dcea;border-radius:4px;height:5px;margin-top:4px'>"
+            f"<div style='background:#1A3A6A;width:{n_aud/n_total*100 if n_total else 0:.1f}%;"
+            f"height:5px;border-radius:4px'></div></div>"
+            if n_total > 0 else ""
+        )
+        st.markdown(
+            f"<div class='ac-card'>"
+            f"<div class='ac-card-header' style='padding:0.4rem 0.75rem;font-size:0.78rem;"
+            f"white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>📁 {ad.nome_arquivo}</div>"
+            f"<div class='ac-card-body' style='padding:0.5rem 0.75rem'>"
+            f"<div style='display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.3rem'>"
+            f"<span><span class='ac-label'>Total</span><br><strong>{ad.total_tarefas}</strong></span>"
+            f"<span><span class='ac-label'>Triadas</span><br><strong>{ad.total_triadas}</strong></span>"
+            f"<span><span class='ac-label'>Não triadas</span><br><strong>{ad.total_nao_triadas}</strong></span>"
+            f"<span><span class='ac-label'>Auditadas</span><br><strong>{pct_str}</strong></span>"
+            f"</div>"
+            f"{prog_bar}"
+            f"</div></div>",
+            unsafe_allow_html=True,
+        )
         st.divider()
 
     if st.button("🔄 Nova Auditoria", use_container_width=True):
         # Limpar tudo
         for k in list(st.session_state.keys()):
             if k.startswith(("filtro_", "busca_", "tbl_",
-                             "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
+                             "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_",
+                             "_proc_id_cache_", "_supp_cache_")):
                 del st.session_state[k]
         reset_auditoria()
         st.session_state["pagina"] = "importacao"
@@ -220,304 +433,36 @@ with st.sidebar:
     # ── Usuário SUPP ──────────────────────────────────────────────────────────
     st.divider()
     nome = st.session_state.get("supp_username", "")
-    st.caption(f"🟢 **{nome}**")
+    st.markdown(
+        f"<div style='font-size:0.78rem;margin-bottom:0.4rem'>"
+        f"<span style='color:#2ecc71'>●</span> "
+        f"<span style='font-weight:600;color:#1a2a4a'>{nome}</span></div>",
+        unsafe_allow_html=True,
+    )
     if st.button("Sair do SUPP", use_container_width=True, key="btn_supp_logout"):
         _supp_logout_cleanup()
         st.rerun()
 
 
 # ---------------------------------------------------------------------------
-# SUPP — Painel de conferência
+# SUPP — Link para visualizar processo
 # ---------------------------------------------------------------------------
 
-def _get_nested(d: dict, path: str):
-    """Acessa valor aninhado por caminho dotted. Ex: 'setorAtual.nome'"""
-    val = d
-    for k in path.split("."):
-        if not isinstance(val, dict):
-            return None
-        val = val.get(k)
-    return val
-
-
-def _fmt_date(s) -> str:
-    """Formata ISO datetime para dd/mm/aaaa."""
-    if not s:
-        return "—"
-    try:
-        from datetime import datetime as _dt
-        dt = _dt.fromisoformat(str(s).replace("Z", "+00:00"))
-        return dt.strftime("%d/%m/%Y")
-    except Exception:
-        return str(s)[:10]
+_SUPERSAPIENS_URL = "https://supersapiens.agu.gov.br/apps/processo/{proc_id}/visualizar/capa"
 
 
 
-def _render_supp_panel() -> None:
-    """Painel lateral de conferência — exibe dados completos da tarefa e do processo."""
-    from datetime import datetime as _dt, timezone as _tz, timedelta as _td
-
-    nup = st.session_state.get("supp_sel_nup")
-    tarefa_id = st.session_state.get("supp_sel_tarefa_id")
-
-    st.markdown("#### 🔍 Conferência SUPP")
-
-    if not nup:
-        st.info("Selecione uma linha na tabela para consultar dados no sistema.")
-        return
-
-    # ── Configuração de período (persiste na sessão) ─────────────────────────
-    dias = st.slider(
-        "Eventos dos últimos (dias):",
-        min_value=7, max_value=365, step=7,
-        key="supp_dias_eventos",
-        value=st.session_state.get("supp_dias_eventos", 30),
-    )
-
-    cache_key = f"_supp_cache_{nup}"
-
-    if cache_key not in st.session_state:
-        auth = st.session_state.get("supp_auth_client")
-        cache: dict = {}
-        if auth:
-            with st.spinner("Consultando SUPP..."):
-                # 1. Tarefa
-                if tarefa_id:
-                    try:
-                        from modules.tarefa import TarefaClient
-                        tc = TarefaClient.from_auth(auth)
-                        cache["tarefa"] = tc.buscar(
-                            tarefa_id,
-                            populate=["processo", "vinculacaoWorkflow", "especieTarefa",
-                                      "usuarioResponsavel"],
-                        )
-                    except Exception as e:
-                        cache["tarefa_erro"] = str(e)
-
-                # 2. Processo — extraindo o ID da tarefa
-                proc_id = None
-                if "tarefa" in cache:
-                    proc_emb = cache["tarefa"].get("processo")
-                    if isinstance(proc_emb, dict):
-                        proc_id = proc_emb.get("id")
-
-                if proc_id:
-                    try:
-                        from modules.processo import ProcessoClient
-                        pc = ProcessoClient.from_auth(auth)
-                        cache["processo"] = pc.buscar(
-                            proc_id,
-                            populate=["especieProcesso", "setorAtual", "setorInicial",
-                                      "classificacao", "criadoPor", "processoJudicial"],
-                        )
-                    except Exception as e:
-                        cache["processo_erro"] = str(e)
-
-                    # 3. Etiquetas do processo
-                    try:
-                        from modules.etiqueta import EtiquetaClient
-                        ec = EtiquetaClient.from_auth(auth)
-                        cache["etiquetas_processo"] = ec.listar_por_processo(proc_id)
-                    except Exception as e:
-                        cache["etiquetas_processo_erro"] = str(e)
-
-                    # 4. Interessados do processo
-                    try:
-                        from modules.interessado import InteressadoClient
-                        ic = InteressadoClient.from_auth(auth)
-                        cache["interessados"] = ic.listar_por_processo(proc_id)
-                    except Exception as e:
-                        cache["interessados_erro"] = str(e)
-
-                    # 5. Timeline do processo (filtrada por dias na exibição)
-                    try:
-                        from modules.processo import ProcessoClient as _PC2
-                        cache["timeline"] = _PC2.from_auth(auth).timeline(proc_id)
-                    except Exception as e:
-                        cache["timeline_erro"] = str(e)
-
-                # 6. Etiquetas da tarefa
-                if tarefa_id:
-                    try:
-                        from modules.etiqueta import EtiquetaClient as _EC2
-                        cache["etiquetas_tarefa"] = _EC2.from_auth(auth).listar_por_tarefa(tarefa_id)
-                    except Exception as e:
-                        cache["etiquetas_tarefa_erro"] = str(e)
-
-        st.session_state[cache_key] = cache
-
-    cache = st.session_state[cache_key]
-
-    # Cabeçalho + botão atualizar
-    c_nup, c_btn = st.columns([4, 1])
-    with c_nup:
-        st.caption(f"`{nup}`")
-    with c_btn:
-        if st.button("🔄", key=f"_refresh_{nup}", help="Recarregar dados do SUPP"):
-            st.session_state.pop(cache_key, None)
-            st.rerun()
-
-    # ── Tarefa ────────────────────────────────────────────────────────────────
-    if "tarefa" in cache:
-        t = cache["tarefa"]
-        st.markdown("**📋 Tarefa**")
-
-        vw = t.get("vinculacaoWorkflow")
-        workflow_txt = None
-        if isinstance(vw, dict):
-            wf = vw.get("workflow")
-            workflow_txt = (
-                (_get_nested(wf, "nome") if isinstance(wf, dict) else None)
-                or f"ID {vw.get('id')}"
-                + (" (concluído)" if vw.get("concluido") else "")
-            )
-
-        campos_t = [
-            ("Espécie", _get_nested(t, "especieTarefa.nome") or t.get("especieTarefa")),
-            ("Responsável", _get_nested(t, "usuarioResponsavel.nome")),
-            ("Prazo", _fmt_date(t.get("dataHoraFinalPrazo"))),
-            ("Urgente", "Sim" if t.get("urgente") else "Não"),
-            ("Status", t.get("situacaoTarefa") or t.get("situacao") or t.get("status")),
-            ("Fluxo", workflow_txt),
-            ("Post-it", t.get("postIt")),
-        ]
-        for label, val in campos_t:
-            if val is not None and val != "":
-                st.markdown(f"**{label}:** {val}")
-
-        # Etiquetas da tarefa
-        et_t = cache.get("etiquetas_tarefa", [])
-        if et_t:
-            nomes_et_t = [
-                _get_nested(e, "etiqueta.nome") or str(e.get("etiqueta", ""))
-                for e in et_t if e
-            ]
-            nomes_et_t = [n for n in nomes_et_t if n]
-            if nomes_et_t:
-                st.markdown("**Etiquetas:** " + " · ".join(f"`{n}`" for n in nomes_et_t))
-        elif "etiquetas_tarefa_erro" in cache:
-            st.caption(f"⚠️ Etiquetas: {cache['etiquetas_tarefa_erro']}")
-
-    elif "tarefa_erro" in cache:
-        st.warning(f"Tarefa: {cache['tarefa_erro']}", icon="⚠️")
-
-    # ── Processo ──────────────────────────────────────────────────────────────
-    if "processo" in cache:
-        p = cache["processo"]
-        st.markdown("---")
-        st.markdown("**📁 Processo**")
-
-        # CNJ e classe: via processoJudicial se disponível
-        pj = p.get("processoJudicial")
-        cnj = None
-        classe_cnj = None
-        if isinstance(pj, dict):
-            cnj = pj.get("numero") or pj.get("numeroFormatado") or pj.get("numeroAlternativo")
-            classe_cnj = _get_nested(pj, "classeNacional.nome")
-        classe_proc = _get_nested(p, "classificacao.nome") or _get_nested(p, "classificacao.nomeCompleto")
-
-        campos_p = [
-            ("NUP", p.get("NUP") or p.get("nup")),
-            ("Espécie/Tipo", _get_nested(p, "especieProcesso.nome") or p.get("descricao") or p.get("assunto")),
-            ("Número CNJ", cnj),
-            ("Classe CNJ", classe_cnj),
-            ("Classe processual", classe_proc),
-            ("Setor responsável", _get_nested(p, "setorAtual.nome")),
-            ("Setor inicial", _get_nested(p, "setorInicial.nome")),
-            ("Status", p.get("status") or p.get("situacao")),
-            ("Autuado em", _fmt_date(p.get("dataHoraAbertura") or p.get("dataHoraCriacao"))),
-            ("Observação", p.get("observacao")),
-        ]
-        for label, val in campos_p:
-            if val is not None and val != "":
-                st.markdown(f"**{label}:** {val}")
-
-        # Etiquetas do processo
-        et_p = cache.get("etiquetas_processo", [])
-        if et_p:
-            nomes_et_p = [
-                _get_nested(e, "etiqueta.nome") or str(e.get("etiqueta", ""))
-                for e in et_p if e
-            ]
-            nomes_et_p = [n for n in nomes_et_p if n]
-            if nomes_et_p:
-                st.markdown("**Etiquetas:** " + " · ".join(f"`{n}`" for n in nomes_et_p))
-        elif "etiquetas_processo_erro" in cache:
-            st.caption(f"⚠️ Etiquetas: {cache['etiquetas_processo_erro']}")
-
-        # Interessados
-        interessados = cache.get("interessados", [])
-        label_int = f"👥 Interessados ({len(interessados)})"
-        if "interessados_erro" in cache:
-            label_int += " ⚠️"
-        with st.expander(label_int, expanded=False):
-            if interessados:
-                for intr in interessados:
-                    nome_p = (
-                        _get_nested(intr, "pessoa.nome")
-                        or _get_nested(intr, "pessoa.pessoaFisica.nome")
-                        or _get_nested(intr, "pessoa.pessoaJuridica.razaoSocial")
-                        or str(intr.get("pessoa", "—"))
-                    )
-                    modalidade = _get_nested(intr, "modalidadeInteressado.valor") or ""
-                    linha = f"- {nome_p}"
-                    if modalidade:
-                        linha += f" *({modalidade})*"
-                    st.markdown(linha)
-            elif "interessados_erro" in cache:
-                st.warning(cache["interessados_erro"])
-            else:
-                st.caption("Nenhum interessado registrado.")
-
-    elif "processo_erro" in cache:
-        st.warning(f"Processo: {cache['processo_erro']}", icon="⚠️")
-
-    # ── Timeline ──────────────────────────────────────────────────────────────
-    timeline_raw = cache.get("timeline", [])
-    corte = _dt.now(_tz.utc) - _td(days=dias)
-
-    def _parse_timeline_events(raw: list) -> list[dict]:
-        """Normaliza estrutura variável da timeline para lista de {data, msg}."""
-        events = []
-        for item in raw:
-            if isinstance(item, dict):
-                # Estrutura direta
-                evt_date = item.get("eventDate") or item.get("dataHora") or item.get("criadoEm")
-                msg = item.get("message") or item.get("mensagem") or item.get("descricao") or ""
-                # Estrutura aninhada em entities
-                if not evt_date and "entities" in item:
-                    for sub in item.get("entities", []):
-                        if isinstance(sub, dict):
-                            te = sub.get("timelineEvent") or sub
-                            evt_date = te.get("eventDate") or te.get("dataHora")
-                            msg = te.get("message") or te.get("mensagem") or msg
-                            break
-                if evt_date:
-                    events.append({"data": evt_date, "msg": str(msg)})
-        return events
-
-    eventos = _parse_timeline_events(timeline_raw)
-    eventos_filtrados = []
-    for ev in eventos:
-        try:
-            dt_ev = _dt.fromisoformat(str(ev["data"]).replace("Z", "+00:00"))
-            if dt_ev >= corte:
-                eventos_filtrados.append((dt_ev, ev["msg"]))
-        except Exception:
-            pass
-    eventos_filtrados.sort(key=lambda x: x[0], reverse=True)
-
-    label_tl = f"📅 Eventos — últimos {dias} dias ({len(eventos_filtrados)})"
-    if "timeline_erro" in cache:
-        label_tl += " ⚠️"
-    with st.expander(label_tl, expanded=len(eventos_filtrados) > 0 and len(eventos_filtrados) <= 5):
-        if eventos_filtrados:
-            for dt_ev, msg in eventos_filtrados:
-                st.markdown(f"- **{dt_ev.strftime('%d/%m/%Y')}** — {msg}")
-        elif "timeline_erro" in cache:
-            st.warning(cache["timeline_erro"])
-        elif timeline_raw is not None:
-            st.caption(f"Nenhum evento nos últimos {dias} dias.")
+def _render_processo_link() -> None:
+    """Placeholder exibido quando nenhuma linha está selecionada na tabela."""
+    if not st.session_state.get("supp_sel_tarefa_id"):
+        st.markdown(
+            "<div class='ac-card'>"
+            "<div class='ac-card-body' style='padding:1.2rem 0.9rem;text-align:center;"
+            "color:#7a8fad;font-size:0.85rem'>"
+            "← Selecione uma linha na tabela para auditar e abrir o processo no SuperSapiens."
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -608,7 +553,6 @@ def _render_audit_table(
     if rows:
         orig_idx = df_view.index[rows[0]]
         row = df.loc[orig_idx].to_dict()
-        st.session_state["supp_sel_nup"] = row.get(COL_NUP)
         st.session_state["supp_sel_tarefa_id"] = row.get(COL_TAREFA)
         return orig_idx, row
 
@@ -616,10 +560,130 @@ def _render_audit_table(
 
 
 def _render_row_editor(df_key: str, orig_idx, row: dict) -> None:
-    """Painel de edição dos campos de auditoria de uma linha selecionada."""
-    st.markdown("#### ✏️ Auditoria")
-    st.caption(f"Tarefa `{row.get(COL_TAREFA)}` · `{row.get(COL_NUP)}`")
+    """Painel de edição dos campos de auditoria + link para o processo no SuperSapiens."""
+    tarefa_id = row.get(COL_TAREFA)
+    nup = row.get(COL_NUP)
 
+    # ── Busca dados do processo (com cache por tarefa) ────────────────────────
+    # Todos os dados estão embutidos na resposta da tarefa em processo.any
+    cache_key = f"_proc_id_cache_{tarefa_id}"
+    if cache_key not in st.session_state:
+        auth = st.session_state.get("supp_auth_client")
+        if auth:
+            with st.spinner("Buscando processo..."):
+                try:
+                    from modules.tarefa import TarefaClient
+                    tc = TarefaClient.from_auth(auth)
+                    tarefa = tc.buscar(tarefa_id, populate=[
+                        "processo", "especieTarefa", "usuarioResponsavel",
+                        "setorResponsavel", "setorOrigem", "vinculacaoWorkflow",
+                    ])
+                    proc = tarefa.get("processo") or {}
+                    proc_id = proc.get("id")
+                    nup_fmt = proc.get("NUPFormatado") or proc.get("NUP")
+
+                    # CNJ e classe nacional estão em processo.any.processoJudicial
+                    any_ = proc.get("any") or {}
+                    pj = any_.get("processoJudicial") or {}
+                    cnj = pj.get("numeroFormatado") or pj.get("numero")
+                    cn = pj.get("classeNacional") or {}
+                    classe_nacional = cn.get("nome") if isinstance(cn, dict) else None
+
+                    # Parte representada em processo.any.pessoaRepresentada.pessoa.nome
+                    pr = any_.get("pessoaRepresentada") or {}
+                    pessoa = pr.get("pessoa") or {}
+                    parte = pessoa.get("nome")
+
+                    st.session_state[cache_key] = {
+                        "proc_id": proc_id,
+                        "nup_fmt": nup_fmt,
+                        "cnj": cnj,
+                        "classe_nacional": classe_nacional,
+                        "parte": parte,
+                    }
+                except Exception as e:
+                    st.session_state[cache_key] = {"erro": str(e)}
+        else:
+            st.session_state[cache_key] = {}
+
+    cached = st.session_state.get(cache_key, {})
+    proc_id = cached.get("proc_id")
+    nup_fmt = cached.get("nup_fmt") or nup
+    cnj = cached.get("cnj")
+    classe_nacional = cached.get("classe_nacional")
+    parte = cached.get("parte")
+
+    # ── Cabeçalho com dados identificadores ──────────────────────────────────
+    # ── Título + botões discretos alinhados à direita ────────────────────────
+    url = _SUPERSAPIENS_URL.format(proc_id=proc_id) if proc_id else None
+    _c_title, _c_open, _c_refresh = st.columns([4, 3, 1])
+    with _c_title:
+        st.markdown("#### ✏️ Auditoria")
+    with _c_open:
+        if url:
+            st.link_button("↗ SuperSapiens", url, use_container_width=True)
+    with _c_refresh:
+        if st.button("🔄", key=f"_refresh_proc_{tarefa_id}", help="Recarregar dados do processo"):
+            st.session_state.pop(cache_key, None)
+            st.rerun()
+
+    # ── Card de identificação ─────────────────────────────────────────────────
+    def _field(label: str, value, mono: bool = False) -> str:
+        if not value:
+            return ""
+        val_style = (
+            "font-family:monospace;font-size:0.82rem;color:#1a2a4a"
+            if mono else
+            "font-size:0.85rem;color:#1a2a4a"
+        )
+        return (
+            f"<div style='margin-bottom:0.55rem'>"
+            f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+            f"text-transform:uppercase;color:#7a8fad;margin-bottom:1px'>{label}</div>"
+            f"<div style='font-weight:600;{val_style}'>{value}</div>"
+            f"</div>"
+        )
+
+    ids_html = ""
+    if tarefa_id or proc_id:
+        id_t = (
+            f"<div style='flex:1'>"
+            f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+            f"text-transform:uppercase;color:#a8bcd4;margin-bottom:1px'>Id Tarefa</div>"
+            f"<div style='font-weight:700;font-size:0.92rem;font-family:monospace'>{tarefa_id or '—'}</div>"
+            f"</div>"
+        )
+        id_p = (
+            f"<div style='flex:1'>"
+            f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+            f"text-transform:uppercase;color:#a8bcd4;margin-bottom:1px'>Id Processo</div>"
+            f"<div style='font-weight:700;font-size:0.92rem;font-family:monospace'>{proc_id or '—'}</div>"
+            f"</div>"
+        )
+        ids_html = (
+            f"<div style='background:#1A3A6A;color:#fff;padding:0.55rem 0.9rem;"
+            f"display:flex;gap:1.5rem;border-radius:6px 6px 0 0'>{id_t}{id_p}</div>"
+        )
+
+    body_html = (
+        _field("NUP", nup_fmt, mono=True)
+        + _field("Número CNJ", cnj, mono=True)
+        + _field("Classe Nacional", classe_nacional)
+        + _field("Entidade Representada", parte)
+    )
+
+    st.markdown(
+        f"<div style='border:1px solid #d0dcea;border-radius:6px;"
+        f"overflow:hidden;margin-bottom:0.7rem'>"
+        f"{ids_html}"
+        f"<div style='background:#f7f9fc;padding:0.65rem 0.9rem 0.25rem'>{body_html}</div>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+    if cached.get("erro"):
+        st.caption(f"⚠️ Erro ao buscar processo: {cached['erro']}")
+
+    # ── Campos de auditoria ───────────────────────────────────────────────────
     cur_conf = row.get(COL_CONFORMIDADE, OPCOES_CONFORMIDADE[0])
     if cur_conf not in OPCOES_CONFORMIDADE:
         cur_conf = OPCOES_CONFORMIDADE[0]
@@ -674,15 +738,20 @@ def render_importacao() -> None:
             help="O arquivo deve conter as abas: Todas as Tarefas, Tarefas Triadas e Tarefas Não Triadas.",
         )
     with col_info:
-        st.markdown("""
-        **Formato esperado:**
-        - Aba 1: Todas as Tarefas
-        - Aba 2: Tarefas Triadas
-        - Aba 3: Tarefas Não Triadas
-
-        Colunas: ID, Tarefa, NUP, Usuário,
-        Datas, Status, Configurações Encontradas
-        """)
+        st.markdown(
+            "<div class='ac-card'>"
+            "<div class='ac-card-header-light'>"
+            "<span style='font-size:0.8rem;font-weight:700'>Formato esperado</span>"
+            "</div>"
+            "<div class='ac-card-body' style='font-size:0.82rem'>"
+            "<div class='ac-label' style='margin-bottom:4px'>Abas obrigatórias</div>"
+            "<div class='ac-value'>Todas as Tarefas<br>Tarefas Triadas<br>Tarefas Não Triadas</div>"
+            "<div class='ac-label' style='margin-bottom:4px'>Colunas</div>"
+            "<div class='ac-value' style='font-size:0.78rem'>ID · Tarefa · NUP · Usuário<br>"
+            "Datas · Status · Config. Encontradas</div>"
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
 
     if not uploaded:
         if get_audit_data() is not None:
@@ -735,7 +804,12 @@ def render_importacao() -> None:
         periodo_str = "Período não identificado"
 
     st.markdown(
-        f'<div class="periodo-box">📅 <strong>Período de triagem:</strong> {periodo_str}</div>',
+        f"<div class='ac-card'>"
+        f"<div class='ac-card-header' style='display:flex;align-items:center;gap:0.6rem'>"
+        f"<span style='font-size:1rem'>📅</span>"
+        f"<div><div class='ac-label ac-label-dark'>Período de triagem</div>"
+        f"<div style='font-weight:600;font-size:0.92rem'>{periodo_str}</div></div>"
+        f"</div></div>",
         unsafe_allow_html=True,
     )
 
@@ -744,7 +818,7 @@ def render_importacao() -> None:
     c2.metric("Tarefas Triadas", merged.total_triadas,
               delta=f"{merged.pct_triadas:.1f}% do total", delta_color="normal")
     c3.metric("Tarefas Não Triadas", merged.total_nao_triadas,
-              delta=f"{merged.pct_nao_triadas:.1f}% do total", delta_color="inverse")
+              delta=f"{merged.pct_nao_triadas:.1f}% do total", delta_color="off")
 
     st.divider()
     tab1, tab2 = st.tabs([
@@ -848,8 +922,12 @@ def render_auditoria_triadas() -> None:
         st.error("Estado inconsistente. Clique em 'Nova Auditoria' no menu lateral.")
         return
 
-    descr = f"Amostra: **{n_amostra}** tarefas" if n_amostra else f"Total: **{len(df)}** tarefas"
-    st.markdown(f"**Tipo:** {tipo_label} · {descr}")
+    descr = f"Amostra: {n_amostra} tarefas" if n_amostra else f"Total: {len(df)} tarefas"
+    st.markdown(
+        f"<span class='ac-badge'>{tipo_label}</span>"
+        f"<span class='ac-badge ac-badge-light'>{descr}</span>",
+        unsafe_allow_html=True,
+    )
 
     col_left, col_right = st.columns([3, 2], gap="medium")
     with col_left:
@@ -864,8 +942,8 @@ def render_auditoria_triadas() -> None:
     with col_right:
         if orig_idx is not None and row is not None:
             _render_row_editor("df_audit_triadas", orig_idx, row)
-            st.divider()
-        _render_supp_panel()
+        else:
+            _render_processo_link()
 
     st.divider()
     col1, col2 = st.columns([2, 1])
@@ -966,8 +1044,8 @@ def render_auditoria_nao_triadas() -> None:
     with col_right:
         if orig_idx is not None and row is not None:
             _render_row_editor("df_audit_nao_triadas", orig_idx, row)
-            st.divider()
-        _render_supp_panel()
+        else:
+            _render_processo_link()
 
     st.divider()
     col1, col2 = st.columns([2, 1])
@@ -1057,16 +1135,16 @@ def render_relatorio() -> None:
             if s["conformes"] > 0:
                 labels_v.append(f"Conformes\n{s['conformes']}")
                 sizes_v.append(s["conformes"])
-                cores_v.append("#2ecc71")
+                cores_v.append("#16a34a")
             if s["nao_conformes"] > 0:
                 labels_v.append(f"Não Conformes\n{s['nao_conformes']}")
                 sizes_v.append(s["nao_conformes"])
-                cores_v.append("#e74c3c")
+                cores_v.append("#f59e0b")
             nao_aud = s["total"] - s["auditadas"]
             if nao_aud > 0:
                 labels_v.append(f"Não auditadas\n{nao_aud}")
                 sizes_v.append(nao_aud)
-                cores_v.append("#bbb")
+                cores_v.append("#c8d4e8")
             ax.pie(sizes_v, labels=labels_v, colors=cores_v,
                    autopct="%1.1f%%", startangle=90,
                    wedgeprops={"edgecolor": "white", "linewidth": 2})

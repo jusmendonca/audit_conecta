@@ -14,14 +14,14 @@ Aplicação web desenvolvida em **Streamlit** para auditoria de triagem de taref
 - **Registro de conformidade** por tarefa (Conforme / Não Conforme / Não Avaliado), com campos de motivo e ação corretiva
 - **Relatório em Word (.docx)** com resumo executivo, gráficos e lista de não conformidades
 
-### v2 (planejadas)
+### v2 (implementadas)
 
 > A importação de dados permanece via planilhas Excel. A integração com o SUPP é exclusivamente para **conferência** dos dados durante a auditoria.
 
-- **Login no SUPP** — autenticação integrada ao Super Sapiens via JWT
-- **Links clicáveis nos NUPs** — cada NUP nas tabelas de auditoria abre os detalhes correspondentes
-- **Painel de conferência** — painel lateral direito para navegar por metadados e dados da tarefa, processo e documentos
-- **Visualização de metadados** — etiquetas, movimentos e eventos associados a tarefas e processos
+- **Login no SUPP** — autenticação integrada ao Super Sapiens via JWT (login na Rede AGU)
+- **Painel de conferência** — ao selecionar uma tarefa, busca automaticamente os metadados do processo via API: NUP formatado, número CNJ, classe nacional e entidade representada
+- **Link direto ao SuperSapiens** — botão para abrir o processo no Super Sapiens em nova aba, sem necessidade de copiar NUP
+- **Design system azul/cinza** — interface reformulada com paleta de cores frias (azul marinho `#1A3A6A` + cinza `#f7f9fc`), cards estruturados e uso restrito do vermelho a ações destrutivas
 
 ## Estrutura do Projeto
 
@@ -92,7 +92,7 @@ pip install -r requirements.txt
 Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-SUPP_BASE_URL=https://sua-instancia-supp.gov.br
+SUPP_BASE_URL=https://supersapiensbackend.agu.gov.br
 ```
 
 > O `.env` é necessário apenas para as funcionalidades v2 (conferência via API). A auditoria via planilhas funciona sem ele.
@@ -116,15 +116,6 @@ O arquivo Excel deve conter três abas:
 | `Tarefas Não Triadas` | Tarefas pendentes de triagem |
 
 Colunas esperadas: `ID`, `Tarefa`, `NUP`, `Usuário`, datas de criação/conclusão, `Status`, `Configurações Encontradas`.
-
-## Roadmap v2
-
-| Fase | Descrição | Status |
-|------|-----------|--------|
-| 1 | Login no SUPP via `modules/auth.py` | Planejado |
-| 2 | NUPs clicáveis nas tabelas de auditoria | Planejado |
-| 3 | Painel lateral de conferência (tarefa, processo, documentos) | Planejado |
-| 4 | Navegação por etiquetas, movimentos e eventos | Planejado |
 
 ## Contexto Normativo
 

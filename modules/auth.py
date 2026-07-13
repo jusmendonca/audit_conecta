@@ -34,6 +34,14 @@ class AuthError(Exception):
         super().__init__(f"HTTP {status_code}: {body}")
 
 
+class TotpChallenge(Exception):
+    """O backend exigiu 2FA — contém o challenge JWT para continuar."""
+
+    def __init__(self, challenge: str) -> None:
+        self.challenge = challenge
+        super().__init__("2FA obrigatório")
+
+
 def _check(response: httpx.Response) -> dict:
     """Levanta AuthError se a resposta não for 2xx, caso contrário retorna o JSON."""
     if not response.is_success:
@@ -88,51 +96,38 @@ class AuthClient:
 
     # ── login / obtenção de token ─────────────────────────────────────────────
 
-    def login_step1(self, username: str, password: str) -> dict:
+    def login(self, username: str, password: str) -> str:
         """
-        POST /auth/get_token com detecção de TOTP.
+        POST /auth/get_token
+        Login com usuário (CPF/CNPJ) e senha. Retorna o JWT e o armazena
+        internamente para uso automático nos demais métodos.
 
-        Retorna:
-          {"status": "ok"}                         — login direto; token em self.token
-          {"status": "totp", "challenge": "..."}   — 2FA necessário; chame totp_verify()
+        Levanta TotpChallenge se o backend exigir o segundo fator.
         """
         resp = self._http.post(
             "/auth/get_token",
             json={"username": username, "password": password},
         )
         data = _check(resp)
-        token = data.get("token") or data.get("access_token") or data.get("jwt")
-        if token:
-            self.token = token
-            return {"status": "ok"}
-        challenge = (
-            data.get("challenge")
-            or data.get("challengeToken")
-            or data.get("tempToken")
-        )
-        if challenge:
-            return {"status": "totp", "challenge": challenge}
-        raise AuthError(200, f"Resposta inesperada do servidor: {data}")
-
-    def login(self, username: str, password: str) -> str:
-        """
-        POST /auth/get_token
-        Login com usuário (CPF/CNPJ) e senha. Retorna o JWT e o armazena
-        internamente para uso automático nos demais métodos.
-        """
-        resp = self._http.post(
-            "/auth/get_token",
-            json={"username": username, "password": password},
-        )
-        return self._store(_check(resp))
+        if data.get("totpRequired"):
+            raise TotpChallenge(data["challenge"])
+        return self._store(data)
 
     def login_ldap(self, username: str, password: str) -> str:
-        """POST /auth/ldap_get_token — Login via LDAP."""
+        """
+        POST /auth/ldap_get_token — Login via LDAP.
+
+        Levanta TotpChallenge se o backend exigir o segundo fator; o fluxo
+        continua com totp_send_mail() e totp_verify().
+        """
         resp = self._http.post(
             "/auth/ldap_get_token",
             json={"username": username, "password": password},
         )
-        return self._store(_check(resp))
+        data = _check(resp)
+        if data.get("totpRequired"):
+            raise TotpChallenge(data["challenge"])
+        return self._store(data)
 
     def login_govbr(self, code: str, redirect_uri: str) -> str:
         """POST /auth/govbr_get_token — Login via Gov.BR (OAuth callback)."""

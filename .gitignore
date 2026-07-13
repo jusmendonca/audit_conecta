@@ -22,5 +22,16 @@ Thumbs.db
 # Variáveis de ambiente
 .env
 
-# Dados sensíveis / planilhas pessoais (opcional — remover se quiser versionar)
-# planilhas/
+# Dados sensíveis — NUNCA versionar.
+# Planilhas de auditoria contêm NUPs, nomes de usuários e dados de processos
+# reais; a sessão serializada contém a auditoria inteira.
+planilhas/
+*.pkl
+
+# Ferramentas locais
+.serena/
+
+# Artefatos da build distribuível
+dist/
+build/
+vendor/

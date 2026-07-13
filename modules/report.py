@@ -18,7 +18,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import parse_xml
 from docx.shared import Inches, Pt, RGBColor
 
-from modules.excel_loader import AuditData
+from modules.excel_loader import AuditData, DistribuicaoData
 from modules.state import COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO
 
 # ---------------------------------------------------------------------------
@@ -104,6 +104,62 @@ def _tabela_conformidade_header(table) -> None:
 # ---------------------------------------------------------------------------
 # Gráficos matplotlib
 # ---------------------------------------------------------------------------
+
+def _grafico_barras_setores(df: pd.DataFrame, col_setor: str, total: int) -> io.BytesIO | None:
+    """
+    Gera gráfico de barras horizontal com a contagem e proporção por setor de destino.
+    Retorna None se o DataFrame estiver vazio ou a coluna ausente.
+    """
+    if df is None or df.empty or col_setor not in df.columns:
+        return None
+
+    contagem = (
+        df[col_setor]
+        .fillna("(não informado)")
+        .value_counts()
+        .sort_values(ascending=True)
+    )
+    if contagem.empty:
+        return None
+
+    n = len(contagem)
+    fig_height = max(3.5, n * 0.45)
+    fig, ax = plt.subplots(figsize=(7.5, fig_height))
+
+    bars = ax.barh(
+        contagem.index.tolist(),
+        contagem.values,
+        color="#3498db",
+        edgecolor="white",
+        linewidth=1.2,
+    )
+
+    for bar, val in zip(bars, contagem.values):
+        pct = val / total * 100 if total > 0 else 0.0
+        ax.text(
+            bar.get_width() + max(contagem.values) * 0.01,
+            bar.get_y() + bar.get_height() / 2,
+            f"{val} ({pct:.1f}%)",
+            va="center",
+            ha="left",
+            fontsize=9,
+        )
+
+    ax.set_xlabel("Quantidade de tarefas distribuídas", fontsize=9)
+    ax.set_title("Distribuição de Tarefas por Setor de Destino", fontsize=11,
+                 fontweight="bold", color="#1A3A6A")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.set_xlim(0, max(contagem.values) * 1.2)
+    ax.tick_params(axis="y", labelsize=9)
+    plt.tight_layout()
+
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    buf.seek(0)
+    return buf
+
 
 def _grafico_pizza(
     n_conf: int,
@@ -236,20 +292,33 @@ def _tabela_relacao_auditadas(
     df: pd.DataFrame,
     colunas_extras: list[str],
 ) -> None:
-    """Lista completa das tarefas auditadas (Conformidade != 'Não auditada')."""
-    from modules.excel_loader import COL_TAREFA, COL_NUP
+    """Lista completa das entradas auditadas (Conformidade != 'Não auditada')."""
+    from modules.excel_loader import (
+        COL_TAREFA, COL_NUP,
+        COL_DIST_ID, COL_DIST_NUP, COL_DIST_SETOR_ORIGEM, COL_DIST_SETOR_DESTINO,
+    )
 
     df_aud = df[df[COL_CONFORMIDADE] != "Não auditada"].copy()
     if df_aud.empty:
-        _para(doc, "Nenhuma tarefa auditada.")
+        _para(doc, "Nenhuma entrada auditada.")
         return
 
-    # Monta colunas: Tarefa, NUP, [extras], Conformidade
-    cols_base = [COL_TAREFA, COL_NUP] + [c for c in colunas_extras if c in df.columns]
-    cols_show = cols_base + [COL_CONFORMIDADE]
+    # Monta colunas: base (existentes, sem duplicatas) + extras + Conformidade
+    seen: set = set()
+    cols_base = []
+    for c in [COL_TAREFA, COL_NUP, COL_DIST_ID, COL_DIST_NUP]:
+        if c in df.columns and c not in seen:
+            cols_base.append(c)
+            seen.add(c)
+    extra_cols = [c for c in colunas_extras if c in df.columns and c not in cols_base]
+    cols_show = cols_base + extra_cols + [COL_CONFORMIDADE]
     headers_map = {
         COL_TAREFA: "Tarefa",
         COL_NUP: "NUP",
+        COL_DIST_ID: "Id",
+        COL_DIST_NUP: "NUP",
+        COL_DIST_SETOR_ORIGEM: "Setor Origem",
+        COL_DIST_SETOR_DESTINO: "Setor Destino",
         COL_CONFORMIDADE: "Conformidade",
     }
     headers = [headers_map.get(c, c) for c in cols_show]
@@ -553,6 +622,264 @@ def gerar_relatorio(
     # -----------------------------------------------------------------------
     # Salvar em memória
     # -----------------------------------------------------------------------
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    return buf.read()
+
+
+# ---------------------------------------------------------------------------
+# Relatório de Auditoria de Distribuição
+# ---------------------------------------------------------------------------
+
+def gerar_relatorio_distribuicao(
+    dist_data: DistribuicaoData,
+    df_distribuicao: pd.DataFrame | None,
+    tipo_controle: str | None,
+    tamanho_amostra: int | None,
+    responsavel: str,
+    data_auditoria: date,
+) -> bytes:
+    """
+    Gera o relatório de auditoria de Distribuição SS e retorna bytes do .docx.
+    """
+    from modules.excel_loader import (
+        COL_DIST_ID, COL_DIST_NUP, COL_DIST_SETOR_DESTINO,
+        COL_DIST_SETOR_ORIGEM, COL_DIST_FONTE_DADOS, COL_DIST_USUARIO_DESTINO,
+    )
+    from modules.state import stats_df
+
+    doc = Document()
+    for section in doc.sections:
+        section.top_margin = Inches(0.9)
+        section.bottom_margin = Inches(0.9)
+        section.left_margin = Inches(1.2)
+        section.right_margin = Inches(1.2)
+
+    _titulo(doc, "RELATÓRIO DE AUDITORIA")
+    _subtitulo(doc, "Super Sapiens — Controle de Conformidade da Distribuição de Tarefas")
+    _subtitulo(doc, "Procuradoria-Geral Federal / Advocacia-Geral da União")
+    doc.add_paragraph()
+
+    # 1. Identificação
+    _heading(doc, "1. IDENTIFICAÇÃO")
+    periodo = (
+        f"{_fmt_date(dist_data.periodo_inicio)} a {_fmt_date(dist_data.periodo_fim)}"
+        if dist_data.periodo_inicio else "N/D"
+    )
+    _tabela_2col(doc, [
+        ("Período Auditado", periodo),
+        ("Data de Emissão do Relatório", _fmt_date(data_auditoria)),
+        ("Responsável pela Auditoria", responsavel or "Não informado"),
+        ("Sistema Auditado", "Super Sapiens — Distribuição de Tarefas Judiciais"),
+        ("Arquivo Analisado", dist_data.nome_arquivo),
+        ("Usuário Distribuidor", dist_data.usuario_distribuidor or "N/D"),
+        ("Base Normativa", "Portaria PGF/AGU n. 541/2025 — Manual de Gerenciamento Estratégico"),
+    ])
+    doc.add_paragraph()
+
+    # 2. Estatísticas Gerais
+    _heading(doc, "2. ESTATÍSTICAS GERAIS DA DISTRIBUIÇÃO")
+    s = stats_df(df_distribuicao)
+    n_amostra_real = s["total"]
+    _tabela_2col(doc, [
+        ("Total de Distribuições no Relatório", str(dist_data.total_distribuicoes)),
+        ("Distribuições na Amostra Auditada", str(n_amostra_real)),
+        ("Distribuições Auditadas", str(s["auditadas"])),
+        ("Distribuições Não Auditadas (excluídas das estatísticas)", str(s["total"] - s["auditadas"])),
+        ("Conformes (Setor Destino correto)", f"{s['conformes']} ({s['pct_conf']:.1f}%)"),
+        ("Não Conformes", f"{s['nao_conformes']} ({s['pct_nc']:.1f}%)"),
+    ])
+    doc.add_paragraph()
+
+    # Gráfico de conformidade
+    grafico = _grafico_pizza(s["conformes"], s["nao_conformes"], s["total"] - s["auditadas"],
+                             "Conformidade — Setor de Destino")
+    if grafico:
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.add_run().add_picture(grafico, width=Inches(4.0))
+    doc.add_paragraph()
+
+    # 2.1 Distribuição por Setor
+    _heading(doc, "2.1 Distribuição de Tarefas por Setor", level=2)
+    _para(doc, (
+        "A tabela e o gráfico a seguir apresentam a proporção de tarefas distribuídas "
+        "para cada Setor de Destino em relação ao total de distribuições constantes do "
+        "relatório exportado do Super Sapiens."
+    ))
+    doc.add_paragraph()
+
+    df_full = dist_data.df
+    total_dist = dist_data.total_distribuicoes
+    if not df_full.empty and COL_DIST_SETOR_DESTINO in df_full.columns:
+        contagem_setores = (
+            df_full[COL_DIST_SETOR_DESTINO]
+            .fillna("(não informado)")
+            .value_counts()
+            .reset_index()
+        )
+        contagem_setores.columns = ["Setor de Destino", "Quantidade"]
+        contagem_setores["Proporção (%)"] = contagem_setores["Quantidade"].apply(
+            lambda v: f"{v / total_dist * 100:.1f}%" if total_dist > 0 else "—"
+        )
+
+        # Tabela de setores
+        n_rows = len(contagem_setores) + 1
+        tbl = doc.add_table(rows=n_rows, cols=3)
+        tbl.style = "Table Grid"
+        headers_set = ["Setor de Destino", "Quantidade", "Proporção (%)"]
+        for i, h in enumerate(headers_set):
+            cell = tbl.rows[0].cells[i]
+            cell.text = h
+            _set_cell_bg(cell, COR_HEADER_HEX)
+            if cell.paragraphs[0].runs:
+                cell.paragraphs[0].runs[0].bold = True
+                cell.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+        for row_idx, row_data in enumerate(contagem_setores.itertuples(index=False), start=1):
+            r = tbl.rows[row_idx]
+            r.cells[0].text = str(row_data[0])
+            r.cells[1].text = str(row_data[1])
+            r.cells[2].text = str(row_data[2])
+        for row in tbl.rows:
+            row.cells[0].width = Inches(3.5)
+            row.cells[1].width = Inches(1.2)
+            row.cells[2].width = Inches(1.5)
+        doc.add_paragraph()
+
+        # Gráfico de barras por setor
+        grafico_setores = _grafico_barras_setores(df_full, COL_DIST_SETOR_DESTINO, total_dist)
+        if grafico_setores:
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p.add_run().add_picture(grafico_setores, width=Inches(6.0))
+    else:
+        _para(doc, "Dados de setor de destino não disponíveis.")
+    doc.add_paragraph()
+
+    # 3. Metodologia
+    _heading(doc, "3. METODOLOGIA DO CONTROLE DE QUALIDADE")
+    tipo_label = {
+        "simplificado": "Controle Simplificado",
+        "detalhado": "Controle Detalhado (Amostragem Estatística)",
+    }.get(tipo_controle or "", tipo_controle or "Não informado")
+    linhas_met = [
+        ("Objeto de Auditoria", "Conformidade do Setor de Destino da Distribuição"),
+        ("Tipo de Controle", tipo_label),
+        ("Nível de Confiança", "95%"),
+        ("Margem de Erro", "5%"),
+    ]
+    if tipo_controle == "detalhado" and tamanho_amostra:
+        linhas_met += [
+            ("Universo Amostral", f"{dist_data.total_distribuicoes} distribuições"),
+            ("Tamanho da Amostra (fórmula)", f"{tamanho_amostra} distribuições"),
+            ("Fórmula Aplicada", "n = n₀ / (1 + (n₀ - 1) / N), onde n₀ = Z² · p · (1-p) / E²"),
+            ("Parâmetros", "Z = 1,96 | p = 0,50 | E = 0,05"),
+            ("Seleção", "Aleatória simples sem reposição"),
+        ]
+    _tabela_2col(doc, linhas_met)
+    doc.add_paragraph()
+
+    _para(doc, (
+        "Todas as tarefas incluídas na amostra auditada foram conferidas manualmente "
+        "mediante consulta direta ao sistema Super Sapiens. O procedimento consistiu em "
+        "verificar, para cada tarefa distribuída, se ela foi efetivamente encerrada no "
+        "próprio setor para o qual foi distribuída ou se foi redistribuída para outro setor, "
+        "o que indica erro na distribuição inicial. Consideram-se desconformidades tanto as "
+        "redistribuições decorrentes de erro no setor de destino quanto os etiquetamentos "
+        "equivocados ou duplicados identificados na tarefa."
+    ))
+    doc.add_paragraph()
+
+    # 4. Não Conformidades
+    _heading(doc, "4. DETALHAMENTO DAS NÃO CONFORMIDADES")
+    _para(doc, (
+        "São consideradas não conformidades: (a) redistribuições — tarefas distribuídas "
+        "a um setor que não era o adequado e posteriormente redistribuídas a outro setor; "
+        "e (b) etiquetamentos equivocados ou duplicados — tarefas com etiqueta incorreta "
+        "ou com mais de uma etiqueta da mesma categoria atribuída."
+    ))
+    doc.add_paragraph()
+    if df_distribuicao is not None:
+        df_nc = df_distribuicao[df_distribuicao[COL_CONFORMIDADE] == "Não Conforme"].copy()
+        if df_nc.empty:
+            _para(doc, "Nenhuma não conformidade identificada nas distribuições auditadas.")
+        else:
+            cols_nc = [c for c in [COL_DIST_ID, COL_DIST_NUP, COL_DIST_SETOR_DESTINO,
+                                   COL_MOTIVO, COL_ACAO] if c in df_nc.columns]
+            headers_nc = {
+                COL_DIST_ID: "Id",
+                COL_DIST_NUP: "NUP",
+                COL_DIST_SETOR_DESTINO: "Setor Destino",
+                COL_MOTIVO: "Motivo da Não Conformidade",
+                COL_ACAO: "Ação Corretiva",
+            }
+            table = doc.add_table(rows=1 + len(df_nc), cols=len(cols_nc))
+            table.style = "Table Grid"
+            for i, c in enumerate(cols_nc):
+                cell = table.rows[0].cells[i]
+                cell.text = headers_nc.get(c, c)
+                _set_cell_bg(cell, COR_HEADER_HEX)
+                if cell.paragraphs[0].runs:
+                    cell.paragraphs[0].runs[0].bold = True
+                    cell.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+            for row_idx, (_, row) in enumerate(df_nc.iterrows(), start=1):
+                r = table.rows[row_idx]
+                for col_idx, c in enumerate(cols_nc):
+                    r.cells[col_idx].text = str(row.get(c, "") or "")
+    doc.add_paragraph()
+
+    # 5. Relação de auditadas
+    _heading(doc, "5. RELAÇÃO DE DISTRIBUIÇÕES AUDITADAS")
+    if df_distribuicao is not None:
+        _tabela_relacao_auditadas(
+            doc, df_distribuicao,
+            colunas_extras=[COL_DIST_SETOR_ORIGEM, COL_DIST_SETOR_DESTINO],
+        )
+    doc.add_paragraph()
+
+    # 6. Conclusão
+    _heading(doc, "6. CONCLUSÃO")
+    if s["auditadas"] == 0:
+        _para(doc, "Nenhuma distribuição foi auditada neste ciclo.")
+    else:
+        total_nc = s["nao_conformes"]
+        pct_conf = s["pct_conf"]
+        if total_nc == 0:
+            texto_conclusao = (
+                f"No presente ciclo de auditoria foram examinadas {s['auditadas']} distribuição(ões), "
+                f"todas com o Setor de Destino em conformidade. "
+                "Não foram identificadas não conformidades."
+            )
+        else:
+            texto_conclusao = (
+                f"No presente ciclo de auditoria foram examinadas {s['auditadas']} distribuição(ões). "
+                f"Foram identificadas {total_nc} não conformidade(s) ({100 - pct_conf:.1f}% do total auditado), "
+                "compreendendo redistribuições decorrentes de erro no setor de destino e/ou "
+                "etiquetamentos equivocados ou duplicados. "
+                "As ações corretivas foram registradas na seção 4 e devem ser "
+                "implementadas e verificadas no próximo ciclo de auditoria."
+            )
+        texto_conclusao += (
+            " Recomenda-se a manutenção do controle periódico da conformidade das distribuições, "
+            "o registro dos resultados em NUP próprio e a revisão contínua dos critérios de "
+            "encaminhamento, conforme o Manual de Gerenciamento Estratégico de Contencioso "
+            "(Portaria PGF/AGU n. 541/2025, seção 5)."
+        )
+        _para(doc, texto_conclusao)
+    doc.add_paragraph()
+
+    doc.add_paragraph()
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.add_run(f"Brasília, {_fmt_date(data_auditoria)}").italic = True
+    p2 = doc.add_paragraph()
+    p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p2.add_run("_" * 50)
+    p3 = doc.add_paragraph()
+    p3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p3.add_run(responsavel or "Responsável pela Auditoria").bold = True
+
     buf = io.BytesIO()
     doc.save(buf)
     buf.seek(0)

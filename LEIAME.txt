@@ -1,0 +1,59 @@
+AUDITORIA CONECTA+
+Procuradoria-Geral Federal / AGU
+Auditoria de triagem de tarefas — Portaria PGF/AGU n. 541/2025
+
+-------------------------------------------------------------------
+COMO USAR
+-------------------------------------------------------------------
+
+1. Descompacte esta pasta em algum lugar do seu computador
+   (por exemplo, a Area de Trabalho). Nao e preciso instalar nada,
+   nem ter Python: tudo o que a aplicacao precisa ja vai junto.
+
+2. De dois cliques em "Auditoria Conecta+.bat".
+
+3. Uma janela preta abrira e o navegador subira sozinho na tela de
+   login. NAO FECHE a janela preta enquanto estiver usando o sistema:
+   e ela que mantem a aplicacao no ar.
+
+4. Faca login com seu usuario e senha da rede AGU. O sistema pedira,
+   em seguida, o codigo de 6 digitos do seu aplicativo autenticador
+   (o mesmo do Super Sapiens); ele tambem e enviado por e-mail.
+
+5. Para encerrar, feche a janela preta.
+
+-------------------------------------------------------------------
+IMPORTAR AS PLANILHAS
+-------------------------------------------------------------------
+
+Na primeira etapa, envie o relatorio de Triagem Avancada exportado
+pelo Conecta+ Automacao (.xlsx). Ele deve conter as abas
+"Todas as Tarefas", "Tarefas Triadas" e "Tarefas Nao Triadas".
+
+Importante: FECHE a planilha no Excel antes de envia-la. Enviar um
+arquivo aberto pode resultar em leitura incompleta.
+
+-------------------------------------------------------------------
+PROTECAO DE DADOS
+-------------------------------------------------------------------
+
+A aplicacao roda inteiramente na sua maquina. As planilhas e os dados
+dos processos nao sao enviados a nenhum servidor externo; a unica
+comunicacao pela rede e com o proprio Super Sapiens, para autenticar
+e consultar as tarefas que voce mandar conferir.
+
+Os relatorios gerados contem NUPs e nomes de usuarios. Trate-os como
+documentos internos.
+
+-------------------------------------------------------------------
+PROBLEMAS
+-------------------------------------------------------------------
+
+- O Windows pode exibir um aviso do SmartScreen na primeira execucao
+  ("Mais informacoes" > "Executar assim mesmo").
+
+- Se o antivirus corporativo bloquear, informe a TI que se trata de um
+  Python embutido rodando um aplicativo local.
+
+- Se a janela preta fechar sozinha com erro, copie a mensagem exibida
+  e envie ao responsavel pela ferramenta.

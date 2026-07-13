@@ -1254,6 +1254,17 @@ def _render_importacao_triagem() -> None:
 
     merged = merge_audit_data(audit_files) if len(audit_files) > 1 else audit_files[0]
 
+    if merged.datas_corrigidas:
+        st.warning(
+            f"**{merged.datas_corrigidas} datas foram corrigidas na importação.** "
+            "A planilha traz parte das datas invertidas no padrão americano "
+            "(mês/dia) — por exemplo, 1º de julho gravado como 7 de janeiro. "
+            "O app desfez a inversão com base nas datas não ambíguas do próprio "
+            "arquivo. Confira o período abaixo antes de prosseguir; se ele não "
+            "corresponder ao que você exportou, gere um novo relatório no "
+            "Conecta+ e reimporte."
+        )
+
     if len(audit_files) > 1:
         st.info(
             f"{len(audit_files)} arquivos consolidados. "

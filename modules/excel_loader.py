@@ -29,7 +29,16 @@ COL_STATUS = "Status"
 COL_CONFIG = "Configurações Encontradas"
 
 DATE_COLS = [COL_DATA_INCLUSAO, COL_DATA_INICIO, COL_DATA_FIM]
-DATE_FORMAT = "%d/%m/%Y, %H:%M:%S"
+# Um mesmo arquivo do Conecta+ mistura formatos na mesma coluna: as células
+# gravadas como texto vêm em dd/mm/aaaa (com ou sem vírgula antes da hora,
+# conforme a versão do export) e as gravadas como data real chegam em ISO.
+# Todos os formatos são aplicados e os resultados, combinados linha a linha.
+DATE_FORMATS = [
+    "%d/%m/%Y, %H:%M:%S",
+    "%d/%m/%Y %H:%M:%S",
+    "%Y-%m-%d %H:%M:%S",
+    "%d/%m/%Y",
+]
 
 REQUIRED_SHEETS = ["Todas as Tarefas", "Tarefas Triadas", "Tarefas Não Triadas"]
 REQUIRED_COLS = [COL_ID, COL_TAREFA, COL_NUP, COL_USUARIO,
@@ -82,6 +91,8 @@ class AuditData:
     total_nao_triadas: int
     pct_triadas: float
     pct_nao_triadas: float
+    # Células de data cuja inversão dia/mês foi desfeita na importação.
+    datas_corrigidas: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -101,12 +112,73 @@ def _resolver(alvos: list[str], disponiveis: list[str]) -> dict[str, str]:
     return {a: indice[_norm(a)] for a in alvos if _norm(a) in indice}
 
 
-def _parse_dates(df: pd.DataFrame) -> pd.DataFrame:
+def _to_datetime(serie: pd.Series) -> tuple[pd.Series, int]:
+    """
+    Converte a coluna e corrige a inversão dia/mês das células ISO.
+
+    O gerador da planilha grava parte das datas como texto dd/mm/aaaa e parte
+    como data já convertida (que chega em ISO). Nessa conversão, as datas cujo
+    dia é ≤ 12 são lidas no padrão americano mm/dd: '01/07/2026' (1º de julho)
+    vira '2026-01-07' (7 de janeiro). As de dia ≥ 13 não são ambíguas e ficam
+    intactas em texto — é essa população confiável que usamos como referência.
+
+    A troca só é aplicada quando as datas em texto comprovam a inversão, isto
+    é, quando inverter aproxima os meses das células ISO dos meses reais. Se o
+    arquivo não tiver datas em texto, nada é alterado.
+
+    Retorna a série convertida e o número de células corrigidas.
+    """
+    bruto = serie.astype(str).str.strip().replace({"": None, "nan": None, "NaT": None})
+    is_iso = bruto.str.match(r"^\d{4}-\d{2}-\d{2}", na=False)
+
+    resultado = pd.Series(pd.NaT, index=serie.index, dtype="datetime64[ns]")
+    for fmt in DATE_FORMATS:
+        pendentes = resultado.isna() & bruto.notna()
+        if not pendentes.any():
+            break
+        resultado[pendentes] = pd.to_datetime(
+            bruto[pendentes], format=fmt, errors="coerce"
+        )
+
+    iso = resultado[is_iso & resultado.notna()]
+    texto = resultado[~is_iso & resultado.notna()]
+    if iso.empty or texto.empty:
+        return resultado, 0
+
+    # Só invertemos onde a troca é possível (dia ≤ 12) e apenas se ela aumentar
+    # a coerência com os meses observados nas datas confiáveis.
+    meses_reais = set(texto.dt.month.unique())
+    invertivel = iso[iso.dt.day <= 12]
+    if invertivel.empty:
+        return resultado, 0
+
+    trocado = pd.to_datetime(
+        {
+            "year": invertivel.dt.year,
+            "month": invertivel.dt.day,
+            "day": invertivel.dt.month,
+            "hour": invertivel.dt.hour,
+            "minute": invertivel.dt.minute,
+            "second": invertivel.dt.second,
+        }
+    )
+    coerencia_atual = invertivel.dt.month.isin(meses_reais).mean()
+    coerencia_trocada = trocado.dt.month.isin(meses_reais).mean()
+    if coerencia_trocada <= coerencia_atual:
+        return resultado, 0
+
+    resultado[invertivel.index] = trocado
+    return resultado, len(invertivel)
+
+
+def _parse_dates(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     df = df.copy()
+    corrigidas = 0
     for col in DATE_COLS:
         if col in df.columns:
-            df[col] = pd.to_datetime(df[col], format=DATE_FORMAT, errors="coerce")
-    return df
+            df[col], n = _to_datetime(df[col])
+            corrigidas += n
+    return df, corrigidas
 
 
 def _detect_period(df: pd.DataFrame) -> tuple[datetime | None, datetime | None]:
@@ -175,9 +247,11 @@ def load_file(uploaded_file: IO, nome_arquivo: str = "") -> AuditData:
 
     abas = _validate(sheets, nome)
 
-    todas = _parse_dates(abas["Todas as Tarefas"])
-    triadas = _parse_dates(abas["Tarefas Triadas"])
-    nao_triadas = _parse_dates(abas["Tarefas Não Triadas"])
+    # As abas de triadas/não triadas repetem linhas de "Todas as Tarefas"; só
+    # esta última entra na contagem, para não multiplicar o número exibido.
+    todas, corrigidas = _parse_dates(abas["Todas as Tarefas"])
+    triadas, _ = _parse_dates(abas["Tarefas Triadas"])
+    nao_triadas, _ = _parse_dates(abas["Tarefas Não Triadas"])
 
     periodo_inicio, periodo_fim = _detect_period(todas)
 
@@ -197,6 +271,7 @@ def load_file(uploaded_file: IO, nome_arquivo: str = "") -> AuditData:
         total_nao_triadas=n_nao,
         pct_triadas=(n_tri / total * 100) if total > 0 else 0.0,
         pct_nao_triadas=(n_nao / total * 100) if total > 0 else 0.0,
+        datas_corrigidas=corrigidas,
     )
 
 
@@ -332,4 +407,5 @@ def merge_audit_data(files: list[AuditData]) -> AuditData:
         total_nao_triadas=n_nao,
         pct_triadas=(n_tri / total * 100) if total > 0 else 0.0,
         pct_nao_triadas=(n_nao / total * 100) if total > 0 else 0.0,
+        datas_corrigidas=sum(f.datas_corrigidas for f in files),
     )

@@ -62,6 +62,25 @@ COL_DIST_DATA_HORA = "DataHoraDistribuicao"
 DIST_DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
 DIST_REQUIRED_COLS = [COL_DIST_ID, COL_DIST_NUP, COL_DIST_SETOR_DESTINO]
 
+# ---------------------------------------------------------------------------
+# Constantes de colunas — Detalhamento Individual PGF (Power BI)
+# ---------------------------------------------------------------------------
+
+COL_DET_NUP = "NUP"
+COL_DET_RESPONSAVEL = "Responsável"
+COL_DET_USUARIO = "Usuário que realizou a atividade"
+COL_DET_ATIVIDADES = "Atividades"
+
+DET_REQUIRED_COLS = [COL_DET_NUP, COL_DET_RESPONSAVEL, COL_DET_USUARIO, COL_DET_ATIVIDADES]
+
+# Chaves do bloco "Filtros aplicados:" da primeira célula, na forma "<chave> é <valor>".
+DET_FILTROS = {
+    "meses": "Mês",
+    "regiao": "unidades.regiao",
+    "unidade": "unidades.nome",
+    "usuario": "USUARIO",
+}
+
 
 # ---------------------------------------------------------------------------
 # Dataclasses
@@ -93,6 +112,20 @@ class AuditData:
     pct_nao_triadas: float
     # Células de data cuja inversão dia/mês foi desfeita na importação.
     datas_corrigidas: int = 0
+
+
+@dataclass
+class DetalhamentoData:
+    nome_arquivo: str
+    usuario: str | None
+    unidade: str | None
+    regiao: str | None
+    meses: str | None
+    filtros_raw: str | None
+    df: pd.DataFrame            # uma linha por NUP
+    total_nups: int
+    total_atividades: int
+    total_responsaveis: int
 
 
 # ---------------------------------------------------------------------------
@@ -179,6 +212,26 @@ def _parse_dates(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
             df[col], n = _to_datetime(df[col])
             corrigidas += n
     return df, corrigidas
+
+
+def _parse_filtros_detalhamento(linhas: list[str]) -> dict[str, str | None]:
+    """
+    Lê o bloco 'Filtros aplicados:' e devolve {'usuario', 'unidade', 'regiao', 'meses'}.
+
+    Cada filtro vem numa linha da forma '<chave> é <valor>'. A comparação da
+    chave é tolerante a acento e caixa; valores ausentes ficam None.
+    """
+    achados: dict[str, str | None] = {campo: None for campo in DET_FILTROS}
+    indice = {_norm(chave): campo for campo, chave in DET_FILTROS.items()}
+    for linha in linhas:
+        for sep in (" é ", " e "):
+            if sep in linha:
+                chave, valor = linha.split(sep, 1)
+                campo = indice.get(_norm(chave))
+                if campo and achados[campo] is None:
+                    achados[campo] = valor.strip()
+                break
+    return achados
 
 
 def _detect_period(df: pd.DataFrame) -> tuple[datetime | None, datetime | None]:
@@ -348,6 +401,101 @@ def load_distribution_file(uploaded_file: IO, nome_arquivo: str = "") -> Distrib
         total_distribuicoes=len(df_data),
         usuario_distribuidor=usuario_distribuidor,
         params_raw="\n".join(params_lines) if params_lines else None,
+    )
+
+
+def load_detalhamento_file(uploaded_file: IO, nome_arquivo: str = "") -> DetalhamentoData:
+    """
+    Lê a planilha 'Detalhamento Individual PGF' exportada do Power BI.
+
+    A primeira célula traz o bloco 'Filtros aplicados:' e o cabeçalho real está
+    na primeira linha cuja coluna A seja 'NUP'. Como a população auditada é o
+    NUP, as linhas são agregadas por NUP: as atividades são somadas e os
+    responsáveis distintos, concatenados.
+
+    Raises ValueError com mensagem em português se o arquivo for inválido.
+    """
+    nome = nome_arquivo or getattr(uploaded_file, "name", "arquivo.xlsx")
+    if hasattr(uploaded_file, "seek"):
+        uploaded_file.seek(0)
+    try:
+        df_raw: pd.DataFrame = pd.read_excel(
+            uploaded_file, sheet_name=0, header=None, engine="openpyxl", dtype=str
+        )
+    except Exception as e:
+        raise ValueError(f"Não foi possível ler o arquivo '{nome}': {e}") from e
+
+    # Localiza a linha de cabeçalho (primeira coluna == "NUP")
+    header_row: int | None = None
+    for idx in df_raw.index:
+        if _norm(df_raw.iloc[idx, 0]) == _norm(COL_DET_NUP):
+            header_row = idx
+            break
+
+    if header_row is None:
+        raise ValueError(
+            f"Arquivo '{nome}' não parece ser um relatório de Detalhamento Individual "
+            "do Power BI. Não foi encontrado o cabeçalho 'NUP, Responsável, …' "
+            "esperado nas primeiras linhas."
+        )
+
+    # Bloco de filtros: tudo o que vem antes do cabeçalho, na coluna A.
+    linhas_filtro: list[str] = []
+    for i in range(header_row):
+        val = df_raw.iloc[i, 0]
+        if val is None or (isinstance(val, float) and pd.isna(val)):
+            continue
+        linhas_filtro.extend(
+            parte.strip() for parte in str(val).split("\n") if parte.strip()
+        )
+    filtros = _parse_filtros_detalhamento(linhas_filtro)
+    filtros_raw = "\n".join(linhas_filtro) if linhas_filtro else None
+
+    cols = [str(c).strip() for c in df_raw.iloc[header_row]]
+    df_data = df_raw.iloc[header_row + 1:].copy()
+    df_data.columns = cols
+    df_data = df_data.dropna(how="all").reset_index(drop=True)
+
+    resolvidas = _resolver(DET_REQUIRED_COLS, list(df_data.columns))
+    missing = [c for c in DET_REQUIRED_COLS if c not in resolvidas]
+    if missing:
+        raise ValueError(
+            f"Arquivo '{nome}' não contém as colunas esperadas: {missing}. "
+            f"Colunas encontradas: {', '.join(str(c) for c in df_data.columns)}. "
+            "Verifique se é a planilha 'Detalhamento Individual PGF' exportada do Power BI."
+        )
+    df_data = df_data.rename(columns={real: alvo for alvo, real in resolvidas.items()})
+    df_data = df_data[DET_REQUIRED_COLS]
+
+    df_data[COL_DET_NUP] = df_data[COL_DET_NUP].astype(str).str.strip()
+    df_data[COL_DET_ATIVIDADES] = (
+        pd.to_numeric(df_data[COL_DET_ATIVIDADES], errors="coerce").fillna(0).astype(int)
+    )
+    total_responsaveis = df_data[COL_DET_RESPONSAVEL].dropna().nunique()
+
+    # Uma linha por NUP: soma as atividades e junta os responsáveis distintos.
+    agregado = (
+        df_data.groupby(COL_DET_NUP, as_index=False, sort=False)
+        .agg({
+            COL_DET_RESPONSAVEL: lambda s: "; ".join(
+                dict.fromkeys(v for v in s.dropna().astype(str) if v.strip())
+            ),
+            COL_DET_USUARIO: "first",
+            COL_DET_ATIVIDADES: "sum",
+        })
+    )
+
+    return DetalhamentoData(
+        nome_arquivo=nome,
+        usuario=filtros["usuario"],
+        unidade=filtros["unidade"],
+        regiao=filtros["regiao"],
+        meses=filtros["meses"],
+        filtros_raw=filtros_raw,
+        df=agregado,
+        total_nups=len(agregado),
+        total_atividades=int(agregado[COL_DET_ATIVIDADES].sum()),
+        total_responsaveis=int(total_responsaveis),
     )
 
 

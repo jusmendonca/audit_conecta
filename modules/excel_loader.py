@@ -502,7 +502,7 @@ def load_detalhamento_file(uploaded_file: IO, nome_arquivo: str = "") -> Detalha
 def detect_file_type(uploaded_file: IO, nome_arquivo: str = "") -> str:
     """
     Detecta o tipo de arquivo Excel sem consumir o objeto de arquivo.
-    Retorna "conecta_triagem" ou "supp_distribuicao".
+    Retorna "conecta_triagem", "detalhamento_individual" ou "supp_distribuicao".
     """
     if hasattr(uploaded_file, "seek"):
         uploaded_file.seek(0)
@@ -517,6 +517,23 @@ def detect_file_type(uploaded_file: IO, nome_arquivo: str = "") -> str:
 
     if _resolver(REQUIRED_SHEETS, list(sheet_names)):
         return "conecta_triagem"
+
+    # Detalhamento Individual: cabeçalho 'NUP' na coluna A e coluna 'Atividades'.
+    try:
+        amostra = pd.read_excel(
+            uploaded_file, sheet_name=0, header=None, engine="openpyxl",
+            dtype=str, nrows=15,
+        )
+        for idx in amostra.index:
+            linha = [_norm(v) for v in amostra.iloc[idx].tolist() if v is not None]
+            if linha and linha[0] == _norm(COL_DET_NUP) and _norm(COL_DET_ATIVIDADES) in linha:
+                return "detalhamento_individual"
+    except Exception:
+        pass
+    finally:
+        if hasattr(uploaded_file, "seek"):
+            uploaded_file.seek(0)
+
     return "supp_distribuicao"
 
 

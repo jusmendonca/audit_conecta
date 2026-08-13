@@ -115,3 +115,16 @@ def test_filtros_ausentes_nao_quebram_a_leitura():
     assert data.total_nups == 3
     assert data.usuario is None
     assert data.unidade is None
+
+
+def test_detect_file_type_reconhece_detalhamento():
+    from modules.excel_loader import detect_file_type
+
+    assert detect_file_type(_planilha(), "detalhamento.xlsx") == "detalhamento_individual"
+
+
+def test_detect_file_type_nao_confunde_com_distribuicao():
+    from modules.excel_loader import detect_file_type
+
+    cabecalho = ["Id", "NUP", "Setor_destino", "DataHoraDistribuicao"]
+    assert detect_file_type(_planilha(cabecalho=cabecalho), "dist.xlsx") == "supp_distribuicao"

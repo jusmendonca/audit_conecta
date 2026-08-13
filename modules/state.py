@@ -28,6 +28,7 @@ _PERSIST_KEYS = [
     "pagina",
     "audit_data_merged",
     "dist_data",
+    "det_data",
     "tipo_controle",
     "tamanho_amostra",
     "df_audit_triadas",
@@ -36,6 +37,8 @@ _PERSIST_KEYS = [
     "auditoria_nao_triadas_concluida",
     "df_audit_distribuicao",
     "auditoria_distribuicao_concluida",
+    "df_audit_detalhamento",
+    "auditoria_detalhamento_concluida",
     "responsavel",
     "data_auditoria",
 ]
@@ -60,6 +63,10 @@ _DEFAULTS: dict = {
     "dist_data": None,               # DistribuicaoData
     "df_audit_distribuicao": None,   # pd.DataFrame com colunas de auditoria
     "auditoria_distribuicao_concluida": False,
+    # detalhamento individual
+    "det_data": None,
+    "df_audit_detalhamento": None,
+    "auditoria_detalhamento_concluida": False,
     # relatório
     "responsavel": "",
     "data_auditoria": date.today(),
@@ -84,6 +91,7 @@ def reset_auditoria() -> None:
         "df_audit_triadas", "auditoria_triadas_concluida",
         "df_audit_nao_triadas", "auditoria_nao_triadas_concluida",
         "df_audit_distribuicao", "auditoria_distribuicao_concluida",
+        "df_audit_detalhamento", "auditoria_detalhamento_concluida",
         "relatorio_gerado",
     ]
     for key in resetar:
@@ -146,11 +154,14 @@ def get_session_info() -> dict | None:
             data = pickle.load(f)
         ad = data.get("audit_data_merged")
         dd = data.get("dist_data")
+        det = data.get("det_data")
         nome = None
         if ad is not None:
             nome = getattr(ad, "nome_arquivo", None)
         elif dd is not None:
             nome = getattr(dd, "nome_arquivo", None)
+        elif det is not None:
+            nome = getattr(det, "nome_arquivo", None)
         return {
             "nome_arquivo": nome,
             "pagina": data.get("pagina", "importacao"),
@@ -189,6 +200,10 @@ def get_dist_data():
     return st.session_state.get("dist_data")
 
 
+def get_det_data():
+    return st.session_state.get("det_data")
+
+
 def get_df_triadas() -> pd.DataFrame | None:
     return st.session_state.get("df_audit_triadas")
 
@@ -199,6 +214,10 @@ def get_df_nao_triadas() -> pd.DataFrame | None:
 
 def get_df_distribuicao() -> pd.DataFrame | None:
     return st.session_state.get("df_audit_distribuicao")
+
+
+def get_df_detalhamento() -> pd.DataFrame | None:
+    return st.session_state.get("df_audit_detalhamento")
 
 
 def stats_df(df: pd.DataFrame | None) -> dict:

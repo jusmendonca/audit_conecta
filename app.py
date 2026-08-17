@@ -633,7 +633,12 @@ def _render_audit_table(
     s = stats_df(df)
 
     pct = s["auditadas"] / total if total > 0 else 0
-    entidade = "distribuições" if id_col == COL_DIST_ID else "tarefas"
+    if id_col == COL_DIST_ID:
+        entidade = "distribuições"
+    elif id_col == COL_DET_NUP:
+        entidade = "NUPs"
+    else:
+        entidade = "tarefas"
     st.progress(
         pct,
         text=(
@@ -657,6 +662,8 @@ def _render_audit_table(
             busca_label = "Buscar (Id, NUP ou Setor Destino):"
         elif has_config:
             busca_label = "Buscar (Tarefa, NUP ou Config.):"
+        elif id_col == COL_DET_NUP:
+            busca_label = "Buscar (NUP):"
         else:
             busca_label = "Buscar (Tarefa ou NUP):"
         busca = st.text_input(busca_label, key=busca_key, placeholder="Digite para filtrar…")
@@ -680,8 +687,7 @@ def _render_audit_table(
     df_view = df.loc[mask]
     col_order = [c for c in column_order if c in df_view.columns]
 
-    label_entidade = "distribuições" if id_col == COL_DIST_ID else "tarefas"
-    st.caption(f"Exibindo **{len(df_view)}** de {total} {label_entidade} — clique em uma linha para auditar")
+    st.caption(f"Exibindo **{len(df_view)}** de {total} {entidade} — clique em uma linha para auditar")
 
     if df_view.empty:
         st.info("Nenhum registro corresponde ao filtro atual.")
@@ -2051,6 +2057,154 @@ def _render_dist_row_editor(df_key: str, orig_idx, row: dict) -> None:
 
 
 # ===========================================================================
+# PÁGINA 2 (Detalhamento) — AUDITORIA DE ATIVIDADES POR NUP
+# ===========================================================================
+
+def render_auditoria_detalhamento() -> None:
+    det_data = get_det_data()
+    if det_data is None:
+        st.warning("Nenhum arquivo carregado. Volte à página de Importação.")
+        return
+
+    st.title("📊 Auditoria de Atividades por NUP")
+    st.caption(
+        "Verifique, em cada NUP sorteado, se as atividades lançadas no Super Sapiens "
+        "correspondem ao que consta do processo."
+    )
+
+    # ── Seleção do tipo de controle ──────────────────────────────────────────
+    if st.session_state.get("tipo_controle") is None:
+        total = det_data.total_nups
+        st.markdown(
+            f"**{total}** NUPs com atividades lançadas por "
+            f"**{det_data.usuario or 'usuário não identificado'}** "
+            f"({det_data.total_atividades} atividades no total). "
+            "Selecione o tipo de controle conforme o Manual de Gerenciamento Estratégico "
+            "(Portaria PGF/AGU n. 541/2025, seção 5)."
+        )
+        st.divider()
+
+        col_esq, col_dir = st.columns([1, 1])
+        with col_esq:
+            st.markdown("#### Tipo de Controle")
+            tipo = st.radio(
+                "Selecione:",
+                ["Controle Simplificado", "Controle Detalhado (Amostragem Estatística)"],
+                key="radio_tipo_det",
+                label_visibility="collapsed",
+            )
+            st.markdown("""
+            **Controle Simplificado** — Verificação de todos os NUPs (ou seleção manual).
+
+            **Controle Detalhado** — Amostragem estatística com seleção aleatória.
+            Nível de confiança **95%**, margem de erro **±5%**.
+            """)
+        with col_dir:
+            st.markdown("#### Tamanho da Amostra (Controle Detalhado)")
+            if total > 0:
+                n = calcular_amostra(total)
+                st.metric("NUPs a auditar", n, delta=f"{n / total * 100:.1f}% do universo")
+                st.markdown(formula_descricao(total))
+                with st.expander("📊 Tabela de Referência — Anexo III do Manual"):
+                    df_ref = pd.DataFrame(
+                        tabela_referencia(), columns=["Universo (N)", "Amostra (n)"]
+                    )
+                    df_ref["Calculado pela fórmula"] = df_ref["Universo (N)"].apply(calcular_amostra)
+                    st.dataframe(df_ref, hide_index=True, use_container_width=True)
+
+        st.divider()
+        if st.button("Confirmar e Iniciar Auditoria →", type="primary"):
+            chave = "simplificado" if tipo.startswith("Controle S") else "detalhado"
+            st.session_state["tipo_controle"] = chave
+
+            if chave == "detalhado":
+                n = calcular_amostra(total)
+                st.session_state["tamanho_amostra"] = n
+                df_base = selecionar_amostra(det_data.df, n)
+            else:
+                st.session_state["tamanho_amostra"] = None
+                df_base = det_data.df.copy()
+
+            colunas = [
+                COL_DET_NUP, COL_DET_RESPONSAVEL, COL_DET_USUARIO, COL_DET_ATIVIDADES,
+            ]
+            st.session_state["df_audit_detalhamento"] = preparar_df_auditoria(df_base, colunas)
+            save_session()
+            st.rerun()
+        return
+
+    # ── Editor ──────────────────────────────────────────────────────────────
+    tipo_controle = st.session_state["tipo_controle"]
+    tipo_label = "Controle Simplificado" if tipo_controle == "simplificado" else "Controle Detalhado"
+    n_amostra = st.session_state.get("tamanho_amostra")
+    df = st.session_state.get("df_audit_detalhamento")
+
+    if df is None:
+        st.error("Estado inconsistente. Clique em 'Nova Auditoria' no menu lateral.")
+        return
+
+    descr = f"Amostra: {n_amostra} NUPs" if n_amostra else f"Total: {len(df)} NUPs"
+    st.markdown(
+        f"<span class='ac-badge'>{tipo_label}</span>"
+        f"<span class='ac-badge ac-badge-light'>{descr}</span>",
+        unsafe_allow_html=True,
+    )
+
+    col_left, col_right = st.columns([3, 2], gap="medium")
+    with col_left:
+        orig_idx, row = _render_audit_table(
+            df_key="df_audit_detalhamento",
+            filtro_key="filtro_conf_det",
+            busca_key="busca_det",
+            column_order=[
+                COL_DET_NUP, COL_DET_RESPONSAVEL, COL_DET_USUARIO, COL_DET_ATIVIDADES,
+                COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO,
+            ],
+            table_key="tbl_detalhamento",
+            id_col=COL_DET_NUP,
+            nup_col=COL_DET_NUP,
+        )
+    with col_right:
+        if orig_idx is not None and row is not None:
+            _render_det_row_editor("df_audit_detalhamento", orig_idx, row)
+        else:
+            st.markdown(
+                "<div class='ac-card'>"
+                "<div class='ac-card-body' style='padding:1.2rem 0.9rem;text-align:center;"
+                "color:#7a8fad;font-size:0.85rem'>"
+                "← Selecione uma linha na tabela para auditar as atividades do NUP."
+                "</div></div>",
+                unsafe_allow_html=True,
+            )
+
+    st.divider()
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        if st.button("Concluir e Ir para Relatório →", type="primary"):
+            st.session_state["auditoria_detalhamento_concluida"] = True
+            st.session_state["pagina"] = "relatorio"
+            save_session()
+            st.rerun()
+    with col2:
+        if st.button("↩ Trocar Tipo de Controle"):
+            st.session_state["tipo_controle"] = None
+            st.session_state["df_audit_detalhamento"] = None
+            st.session_state["tamanho_amostra"] = None
+            st.session_state["auditoria_detalhamento_concluida"] = False
+            for k in list(st.session_state.keys()):
+                if k.startswith(("filtro_conf_det", "busca_det", "tbl_detalhamento",
+                                 "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
+                    del st.session_state[k]
+            st.rerun()
+
+
+def _render_det_row_editor(df_key: str, orig_idx, row: dict) -> None:
+    """Stub provisório — substituído pelo painel de conferência na Task 5."""
+    st.markdown("#### ✏️ Auditoria")
+    st.write(row)
+
+
+# ===========================================================================
 # PÁGINA 4 — RELATÓRIO
 # ===========================================================================
 
@@ -2310,5 +2464,7 @@ elif pagina == "nao_triadas":
     render_auditoria_nao_triadas()
 elif pagina == "distribuicao":
     render_auditoria_distribuicao()
+elif pagina == "detalhamento":
+    render_auditoria_detalhamento()
 elif pagina == "relatorio":
     render_relatorio()

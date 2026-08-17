@@ -2236,6 +2236,9 @@ def _det_norm_atividade(raw: dict) -> dict:
     em `.atividade`.
     """
     base = raw.get("atividade") or raw
+    if not isinstance(base, dict):
+        # `atividade` pode vir como FK escalar (id) quando não populada.
+        base = raw
     ea = raw.get("especieAtividade") or base.get("especieAtividade") or {}
     au = raw.get("usuario") or base.get("usuario") or {}
     se = raw.get("setor") or base.get("setor") or {}
@@ -2261,11 +2264,16 @@ def _det_norm_atividade(raw: dict) -> dict:
     }
 
 
-def _det_listar_atividades(auth, tarefa_id) -> list[dict]:
+def _det_listar_atividades(auth, tarefa_id, memo: dict | None = None) -> list[dict]:
     """
     Lista as atividades de uma tarefa tentando os três endpoints do SUPP
     (judicial → consultivo → administrativo). Erros em um endpoint apenas
     fazem passar para o próximo; se todos falharem, retorna lista vazia.
+
+    `memo` é um dicionário compartilhado pelo drill-down de um mesmo processo:
+    assim que um endpoint responde com atividades, ele fica memorizado em
+    `memo["path"]` e as tarefas seguintes consultam apenas esse endpoint,
+    evitando repetir até 3 tentativas (cada uma paginada) por tarefa.
     """
     from modules.atividade import (
         AtividadeClient,
@@ -2279,7 +2287,15 @@ def _det_listar_atividades(auth, tarefa_id) -> list[dict]:
     except (TypeError, ValueError):
         return []
 
-    for _path in (BASE_PATH_JUDICIAL, BASE_PATH_CONSULTIVO, BASE_PATH_ADMINISTRATIVO):
+    memo = memo if isinstance(memo, dict) else {}
+    conhecido = memo.get("path")
+    caminhos = (
+        (conhecido,)
+        if conhecido
+        else (BASE_PATH_JUDICIAL, BASE_PATH_CONSULTIVO, BASE_PATH_ADMINISTRATIVO)
+    )
+
+    for _path in caminhos:
         try:
             with AtividadeClient.from_auth(auth, base_path=_path) as _ac:
                 brutas = _ac.listar_por_tarefa(
@@ -2289,6 +2305,7 @@ def _det_listar_atividades(auth, tarefa_id) -> list[dict]:
         except Exception:
             continue
         if brutas:
+            memo["path"] = _path
             return [_det_norm_atividade(a) for a in brutas]
     return []
 
@@ -2341,13 +2358,16 @@ def _det_carregar_nup(auth, nup: str) -> dict:
             populate=["especieTarefa", "usuarioResponsavel", "setorResponsavel"],
             limit=100,
         )
+        # Memoiza qual endpoint de atividade respondeu para este processo, para
+        # não repetir as 3 tentativas (cada uma paginada) em cada tarefa.
+        memo_path: dict = {}
         for tarefa in tarefas:
             tarefas_info.append({
                 "id": tarefa.get("id"),
                 "especie": _det_obj_nome(tarefa.get("especieTarefa")) or "Tarefa",
                 "setor": _det_obj_nome(tarefa.get("setorResponsavel")),
                 "usuario": _det_obj_nome(tarefa.get("usuarioResponsavel")),
-                "atividades": _det_listar_atividades(auth, tarefa.get("id")),
+                "atividades": _det_listar_atividades(auth, tarefa.get("id"), memo_path),
             })
 
     return {
@@ -2370,8 +2390,13 @@ def _render_det_row_editor(df_key: str, orig_idx, row: dict) -> None:
 
     # ── Drill-down NUP → processo → tarefas → atividades (com cache) ─────────
     cache_key = f"_det_cache_{nup}"
-    if cache_key not in st.session_state:
-        auth = st.session_state.get("supp_auth_client")
+    auth = st.session_state.get("supp_auth_client")
+    autenticado = bool(auth)
+    # Sem login grava-se um cache vazio; ao autenticar depois é preciso refazer a
+    # busca, senão o painel exibiria "processo não localizado" indevidamente.
+    if cache_key not in st.session_state or (
+        autenticado and not st.session_state.get(cache_key)
+    ):
         if auth and nup:
             with st.spinner("Buscando processo, tarefas e atividades…"):
                 try:
@@ -2385,7 +2410,6 @@ def _render_det_row_editor(df_key: str, orig_idx, row: dict) -> None:
     proc_id = cached.get("proc_id")
     nup_fmt = cached.get("nup_fmt") or nup
     tarefas_info = cached.get("tarefas") or []
-    autenticado = bool(st.session_state.get("supp_auth_client"))
 
     # ── Cabeçalho ────────────────────────────────────────────────────────────
     url = _SUPERSAPIENS_URL.format(proc_id=proc_id) if proc_id else None

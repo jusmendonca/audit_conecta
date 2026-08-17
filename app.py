@@ -2235,6 +2235,10 @@ def _det_norm_atividade(raw: dict) -> dict:
     Em atividade_judicial/atividade_consultiva os dados podem vir aninhados
     em `.atividade`.
     """
+    if not isinstance(raw, dict):
+        # Item da listagem vindo como escalar (id) em vez de objeto.
+        return {"especie": "Atividade", "usuario": "", "setor": "", "setor_nome": "",
+                "data": "", "descricao": "", "encerra_tarefa": False}
     base = raw.get("atividade") or raw
     if not isinstance(base, dict):
         # `atividade` pode vir como FK escalar (id) quando não populada.
@@ -2288,11 +2292,13 @@ def _det_listar_atividades(auth, tarefa_id, memo: dict | None = None) -> list[di
         return []
 
     memo = memo if isinstance(memo, dict) else {}
+    padrao = (BASE_PATH_JUDICIAL, BASE_PATH_CONSULTIVO, BASE_PATH_ADMINISTRATIVO)
     conhecido = memo.get("path")
+    # O endpoint memoizado é apenas uma prioridade, não uma exclusividade: os
+    # demais continuam como fallback para não perder atividades de tarefas que
+    # respondam por outro caminho.
     caminhos = (
-        (conhecido,)
-        if conhecido
-        else (BASE_PATH_JUDICIAL, BASE_PATH_CONSULTIVO, BASE_PATH_ADMINISTRATIVO)
+        (conhecido, *(p for p in padrao if p != conhecido)) if conhecido else padrao
     )
 
     for _path in caminhos:

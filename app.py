@@ -1498,7 +1498,13 @@ def _render_importacao_detalhamento() -> None:
         st.error(str(e))
         return
 
+    atual_det = st.session_state.get("det_data")
+    if atual_det is not None and getattr(atual_det, "nome_arquivo", None) != det_data.nome_arquivo:
+        reset_auditoria()
+
     st.session_state["det_data"] = det_data
+    st.session_state["tipo_relatorio"] = "detalhamento_individual"
+    save_session()
     st.success(f"Arquivo lido: **{det_data.nome_arquivo}**")
     _render_resumo_detalhamento(det_data)
 

@@ -971,11 +971,17 @@ def gerar_relatorio_detalhamento(
     _tabela_2col(doc, linhas_metodo)
     doc.add_paragraph()
 
-    if detalhado:
+    if detalhado and tamanho_amostra:
         _para(doc, (
             f"Aplicou-se controle detalhado, com amostragem aleatória simples de "
             f"{tamanho_amostra} NUPs, para nível de confiança de 95% e margem de erro "
             "de ±5%, conforme o Anexo III do Manual."
+        ))
+    elif detalhado:
+        _para(doc, (
+            "Aplicou-se controle detalhado, com amostragem aleatória simples para "
+            "nível de confiança de 95% e margem de erro de ±5%, conforme o Anexo III "
+            "do Manual."
         ))
     else:
         _para(doc, (

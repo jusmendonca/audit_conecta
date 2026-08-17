@@ -122,6 +122,23 @@ class AtividadeClient:
             headers={"Authorization": f"Bearer {token}"},
         )
 
+    @classmethod
+    def from_auth(
+        cls,
+        auth_client: Any,
+        base_path: str = BASE_PATH_ADMINISTRATIVO,
+        timeout: float = 120.0,
+    ) -> "AtividadeClient":
+        """Cria AtividadeClient a partir de um AuthClient já autenticado."""
+        if not auth_client.token:
+            raise RuntimeError("AuthClient sem token. Faça login primeiro.")
+        return cls(
+            token=auth_client.token,
+            base_url=auth_client.base_url,
+            timeout=timeout,
+            base_path=base_path,
+        )
+
     def __enter__(self) -> "AtividadeClient":
         return self
 

@@ -2198,10 +2198,364 @@ def render_auditoria_detalhamento() -> None:
             st.rerun()
 
 
+def _norm_txt(valor) -> str:
+    """Normaliza texto para comparação: sem acento, sem caixa, sem espaços extras."""
+    import unicodedata
+
+    texto = unicodedata.normalize("NFKD", str(valor or ""))
+    texto = "".join(c for c in texto if not unicodedata.combining(c))
+    return " ".join(texto.split()).casefold()
+
+
+def _det_fmt_dt(valor) -> str:
+    """Formata data/hora ISO 8601 da API em dd/mm/aaaa hh:mm."""
+    if not valor:
+        return ""
+    try:
+        from datetime import datetime as _dt
+
+        return _dt.fromisoformat(str(valor).replace("Z", "+00:00")).strftime("%d/%m/%Y %H:%M")
+    except Exception:
+        return str(valor)[:16]
+
+
+def _det_obj_nome(obj) -> str:
+    """Extrai nome/username/sigla de um objeto populado da API."""
+    if isinstance(obj, dict):
+        return obj.get("nome") or obj.get("username") or obj.get("sigla") or ""
+    return ""
+
+
+def _det_norm_atividade(raw: dict) -> dict:
+    """
+    Normaliza uma atividade da API para o formato usado no painel.
+
+    Campos conferidos contra spec-ss/split/tag_Atividade.json (/schemas/Atividade):
+    especieAtividade, usuario, setor, dataHoraConclusao, observacao, encerraTarefa.
+    Em atividade_judicial/atividade_consultiva os dados podem vir aninhados
+    em `.atividade`.
+    """
+    base = raw.get("atividade") or raw
+    ea = raw.get("especieAtividade") or base.get("especieAtividade") or {}
+    au = raw.get("usuario") or base.get("usuario") or {}
+    se = raw.get("setor") or base.get("setor") or {}
+    if not isinstance(se, dict):
+        se = {}
+    return {
+        "especie": _det_obj_nome(ea) or "Atividade",
+        "usuario": _det_obj_nome(au) or "—",
+        "setor": se.get("sigla") or se.get("nome") or "",
+        "setor_nome": se.get("nome") or "",
+        "data": _det_fmt_dt(
+            raw.get("dataHoraConclusao")
+            or raw.get("criadoEm")
+            or base.get("dataHoraConclusao")
+            or base.get("criadoEm")
+        ),
+        "descricao": (
+            raw.get("observacao")
+            or base.get("observacao")
+            or ""
+        ),
+        "encerra_tarefa": bool(raw.get("encerraTarefa") or base.get("encerraTarefa")),
+    }
+
+
+def _det_listar_atividades(auth, tarefa_id) -> list[dict]:
+    """
+    Lista as atividades de uma tarefa tentando os três endpoints do SUPP
+    (judicial → consultivo → administrativo). Erros em um endpoint apenas
+    fazem passar para o próximo; se todos falharem, retorna lista vazia.
+    """
+    from modules.atividade import (
+        AtividadeClient,
+        BASE_PATH_ADMINISTRATIVO,
+        BASE_PATH_CONSULTIVO,
+        BASE_PATH_JUDICIAL,
+    )
+
+    try:
+        _tid = int(float(tarefa_id))
+    except (TypeError, ValueError):
+        return []
+
+    for _path in (BASE_PATH_JUDICIAL, BASE_PATH_CONSULTIVO, BASE_PATH_ADMINISTRATIVO):
+        try:
+            with AtividadeClient.from_auth(auth, base_path=_path) as _ac:
+                brutas = _ac.listar_por_tarefa(
+                    _tid,
+                    populate=["especieAtividade", "usuario", "setor", "tarefa"],
+                )
+        except Exception:
+            continue
+        if brutas:
+            return [_det_norm_atividade(a) for a in brutas]
+    return []
+
+
+def _det_carregar_nup(auth, nup: str) -> dict:
+    """
+    Drill-down NUP → processo → tarefas → atividades.
+
+    Retorna um dicionário com `proc_id`, `nup_fmt` e `tarefas`
+    (lista de {"id", "especie", "setor", "usuario", "atividades"}).
+    """
+    from modules.processo import ProcessoClient
+    from modules.tarefa import TarefaClient
+
+    pc = ProcessoClient.from_auth(auth)
+
+    proc: dict = {}
+    try:
+        bruto = pc.buscar_por_nup(nup)
+        if isinstance(bruto, dict):
+            if bruto.get("id"):
+                proc = bruto
+            else:
+                for chave in ("entity", "data", "processo"):
+                    if isinstance(bruto.get(chave), dict):
+                        proc = bruto[chave]
+                        break
+    except Exception:
+        proc = {}
+
+    # Fallback: o endpoint /processo/nup/{nup} não aceita o NUP mascarado em
+    # alguns ambientes — tenta então a listagem filtrando pelo campo NUP.
+    if not proc.get("id"):
+        digitos = "".join(c for c in str(nup) if c.isdigit())
+        for candidato in filter(None, [digitos, str(nup).strip()]):
+            try:
+                achados = pc.listar(where={"NUP": f"eq:{candidato}"}, limit=1)
+            except Exception:
+                continue
+            if achados:
+                proc = achados[0]
+                break
+
+    proc_id = proc.get("id")
+    tarefas_info: list[dict] = []
+    if proc_id:
+        tc = TarefaClient.from_auth(auth)
+        tarefas = tc.listar(
+            where={"processo.id": f"eq:{proc_id}"},
+            populate=["especieTarefa", "usuarioResponsavel", "setorResponsavel"],
+            limit=100,
+        )
+        for tarefa in tarefas:
+            tarefas_info.append({
+                "id": tarefa.get("id"),
+                "especie": _det_obj_nome(tarefa.get("especieTarefa")) or "Tarefa",
+                "setor": _det_obj_nome(tarefa.get("setorResponsavel")),
+                "usuario": _det_obj_nome(tarefa.get("usuarioResponsavel")),
+                "atividades": _det_listar_atividades(auth, tarefa.get("id")),
+            })
+
+    return {
+        "proc_id": proc_id,
+        "nup_fmt": proc.get("NUPFormatado") or proc.get("NUP") or nup,
+        "tarefas": tarefas_info,
+    }
+
+
 def _render_det_row_editor(df_key: str, orig_idx, row: dict) -> None:
-    """Stub provisório — substituído pelo painel de conferência na Task 5."""
-    st.markdown("#### ✏️ Auditoria")
-    st.write(row)
+    """
+    Painel de conferência de um NUP: dados da planilha, metadados do processo,
+    tarefas e atividades lançadas no Super Sapiens, seguidos do formulário
+    de julgamento (idêntico aos demais fluxos de auditoria).
+    """
+    nup = str(row.get(COL_DET_NUP) or "").strip()
+    responsavel = row.get(COL_DET_RESPONSAVEL)
+    usuario_planilha = str(row.get(COL_DET_USUARIO) or "").strip()
+    qtd_planilha = row.get(COL_DET_ATIVIDADES)
+
+    # ── Drill-down NUP → processo → tarefas → atividades (com cache) ─────────
+    cache_key = f"_det_cache_{nup}"
+    if cache_key not in st.session_state:
+        auth = st.session_state.get("supp_auth_client")
+        if auth and nup:
+            with st.spinner("Buscando processo, tarefas e atividades…"):
+                try:
+                    st.session_state[cache_key] = _det_carregar_nup(auth, nup)
+                except Exception as e:
+                    st.session_state[cache_key] = {"erro": str(e)}
+        else:
+            st.session_state[cache_key] = {}
+
+    cached = st.session_state.get(cache_key, {}) or {}
+    proc_id = cached.get("proc_id")
+    nup_fmt = cached.get("nup_fmt") or nup
+    tarefas_info = cached.get("tarefas") or []
+    autenticado = bool(st.session_state.get("supp_auth_client"))
+
+    # ── Cabeçalho ────────────────────────────────────────────────────────────
+    url = _SUPERSAPIENS_URL.format(proc_id=proc_id) if proc_id else None
+    _c_title, _c_open, _c_refresh = st.columns([4, 3, 1])
+    with _c_title:
+        st.markdown("#### ✏️ Auditoria")
+    with _c_open:
+        if url:
+            st.link_button("↗ SuperSapiens", url, use_container_width=True)
+    with _c_refresh:
+        if st.button("🔄", key=f"_refresh_det_{orig_idx}", help="Recarregar dados"):
+            st.session_state.pop(cache_key, None)
+            st.rerun()
+
+    def _field(label: str, value, mono: bool = False, highlight: bool = False) -> str:
+        if not value:
+            return ""
+        val_style = "font-family:monospace;font-size:0.82rem" if mono else "font-size:0.85rem"
+        if highlight:
+            val_style += ";color:#1A3A6A;font-weight:800"
+        else:
+            val_style += ";color:#1a2a4a"
+        return (
+            f"<div style='margin-bottom:0.55rem'>"
+            f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+            f"text-transform:uppercase;color:#7a8fad;margin-bottom:1px'>{label}</div>"
+            f"<div style='font-weight:600;{val_style}'>{value}</div>"
+            f"</div>"
+        )
+
+    # ── Card de identificação ────────────────────────────────────────────────
+    id_html = (
+        f"<div style='background:#1A3A6A;color:#fff;padding:0.55rem 0.9rem;"
+        f"display:flex;gap:1.5rem;border-radius:6px 6px 0 0'>"
+        f"<div style='flex:2'>"
+        f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+        f"text-transform:uppercase;color:#a8bcd4;margin-bottom:1px'>NUP</div>"
+        f"<div style='font-weight:700;font-size:0.92rem;font-family:monospace'>{nup_fmt or '—'}</div>"
+        f"</div>"
+        f"<div style='flex:1'>"
+        f"<div style='font-size:0.67rem;font-weight:700;letter-spacing:0.08em;"
+        f"text-transform:uppercase;color:#a8bcd4;margin-bottom:1px'>Id Processo</div>"
+        f"<div style='font-weight:700;font-size:0.92rem;font-family:monospace'>{proc_id or '—'}</div>"
+        f"</div>"
+        f"</div>"
+    )
+    body_html = (
+        _field("Responsável", responsavel)
+        + _field("Usuário Auditado", usuario_planilha, highlight=True)
+        + _field("Atividades na Planilha", qtd_planilha)
+    )
+    st.markdown(
+        f"<div style='border:1px solid #d0dcea;border-radius:6px;"
+        f"overflow:hidden;margin-bottom:0.7rem'>"
+        f"{id_html}"
+        f"<div style='background:#f7f9fc;padding:0.65rem 0.9rem 0.25rem'>{body_html}</div>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+    # ── Atividades lançadas no Super Sapiens ─────────────────────────────────
+    if cached.get("erro"):
+        st.warning(
+            "Não foi possível consultar o Super Sapiens para este NUP: "
+            f"{cached['erro']}"
+        )
+    elif not autenticado:
+        st.info(
+            "Faça login no Super Sapiens (menu lateral) para conferir as "
+            "atividades lançadas neste processo."
+        )
+    elif not proc_id:
+        st.warning("Processo não localizado no Super Sapiens a partir deste NUP.")
+    elif not tarefas_info:
+        st.warning("Nenhuma tarefa encontrada para este NUP no Super Sapiens.")
+    else:
+        total_ss = sum(len(t["atividades"]) for t in tarefas_info)
+        do_usuario = sum(
+            1
+            for t in tarefas_info
+            for a in t["atividades"]
+            if usuario_planilha and _norm_txt(a["usuario"]) == _norm_txt(usuario_planilha)
+        )
+        st.markdown(
+            f"<div style='font-size:0.8rem;color:#1a2a4a;margin-bottom:0.5rem'>"
+            f"<b>{total_ss}</b> atividade(s) em <b>{len(tarefas_info)}</b> tarefa(s) — "
+            f"<b>{do_usuario}</b> do usuário auditado."
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+        for i_t, info in enumerate(tarefas_info):
+            titulo = f"{info['especie']} — {len(info['atividades'])} atividade(s)"
+            if info.get("setor"):
+                titulo += f" · {info['setor']}"
+            with st.expander(titulo, expanded=len(tarefas_info) == 1):
+                if not info["atividades"]:
+                    st.caption("Sem atividades registradas nesta tarefa.")
+                    continue
+                itens = ""
+                for a in info["atividades"]:
+                    do_aud = bool(
+                        usuario_planilha
+                        and _norm_txt(a["usuario"]) == _norm_txt(usuario_planilha)
+                    )
+                    borda = "#1A3A6A" if do_aud else "#d0dcea"
+                    marca = (
+                        "<span style='display:inline-block;background:#1A3A6A;color:#fff;"
+                        "font-size:0.58rem;padding:0 4px;border-radius:3px;margin-left:5px;"
+                        "font-weight:700;vertical-align:middle'>AUDITADO</span>"
+                        if do_aud else ""
+                    )
+                    encerra = (
+                        "<span style='display:inline-block;background:#dc2626;color:#fff;"
+                        "font-size:0.58rem;padding:0 4px;border-radius:3px;margin-left:5px;"
+                        "font-weight:700;vertical-align:middle'>ENCERRA</span>"
+                        if a["encerra_tarefa"] else ""
+                    )
+                    meta = " · ".join(filter(None, [a["usuario"], a["setor"], a["data"]]))
+                    desc = (
+                        f"<div style='font-size:0.72rem;color:#7a8fad;margin-top:1px'>"
+                        f"{a['descricao']}</div>"
+                        if a["descricao"] else ""
+                    )
+                    itens += (
+                        f"<div style='border-left:3px solid {borda};"
+                        f"padding:0.15rem 0 0.25rem 0.65rem;margin-bottom:0.45rem'>"
+                        f"<div style='font-size:0.8rem;font-weight:700;color:#1a2a4a'>"
+                        f"{a['especie']}{marca}{encerra}</div>"
+                        f"<div style='font-size:0.72rem;color:#7a8fad'>{meta}</div>"
+                        f"{desc}</div>"
+                    )
+                st.markdown(itens, unsafe_allow_html=True)
+
+    st.divider()
+
+    # ── Campos de auditoria ──────────────────────────────────────────────────
+    cur_conf = row.get(COL_CONFORMIDADE, OPCOES_CONFORMIDADE[0])
+    if cur_conf not in OPCOES_CONFORMIDADE:
+        cur_conf = OPCOES_CONFORMIDADE[0]
+
+    conf = st.selectbox(
+        "Conformidade:",
+        OPCOES_CONFORMIDADE,
+        index=OPCOES_CONFORMIDADE.index(cur_conf),
+        key=f"edit_conf_{orig_idx}_{df_key}",
+    )
+    motivo = st.text_area(
+        "Motivo NC:",
+        value=row.get(COL_MOTIVO, "") or "",
+        key=f"edit_motivo_{orig_idx}_{df_key}",
+        height=90,
+        placeholder="Ex.: atividade lançada em NUP alheio ao objeto do processo",
+    )
+    acao = st.text_area(
+        "Ação Corretiva:",
+        value=row.get(COL_ACAO, "") or "",
+        key=f"edit_acao_{orig_idx}_{df_key}",
+        height=90,
+        placeholder="Ex.: solicitar retificação do lançamento ao setor responsável",
+    )
+
+    if st.button("💾 Salvar", type="primary", key=f"btn_save_row_{orig_idx}_{df_key}",
+                 use_container_width=True):
+        df = st.session_state[df_key].copy()
+        df.at[orig_idx, COL_CONFORMIDADE] = conf
+        df.at[orig_idx, COL_MOTIVO] = motivo
+        df.at[orig_idx, COL_ACAO] = acao
+        st.session_state[df_key] = df
+        save_session()
+        st.rerun()
 
 
 # ===========================================================================

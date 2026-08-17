@@ -23,6 +23,18 @@ Aplicação web desenvolvida em **Streamlit** para auditoria de triagem de taref
 - **Link direto ao SuperSapiens** — botão para abrir o processo no Super Sapiens em nova aba, sem necessidade de copiar NUP
 - **Design system azul/cinza** — interface reformulada com paleta de cores frias (azul marinho `#1A3A6A` + cinza `#f7f9fc`), cards estruturados e uso restrito do vermelho a ações destrutivas
 
+### Auditoria de Atividades por NUP (Detalhamento Individual PGF)
+
+Terceiro formato de entrada aceito pelo app, além da planilha do Conecta+ e do relatório de Distribuição de Tarefas do Super Sapiens. O tipo é reconhecido automaticamente na importação.
+
+- **Importação de um arquivo por auditoria** — a planilha corresponde a um usuário; não há consolidação de múltiplos arquivos, ao contrário do fluxo do Conecta+
+- **Leitura dos filtros da extração** — usuário, unidade, região e meses são lidos do bloco "Filtros aplicados:" da planilha e exibidos antes de iniciar a auditoria
+- **Amostragem pelo NUP** — a unidade amostral é o NUP, não a atividade, porque o relatório de origem não identifica cada atividade individualmente. As linhas da planilha são agregadas em uma por NUP (atividades somadas, responsáveis distintos concatenados)
+- **Controle Simplificado ou Detalhado** — o Detalhado usa a mesma amostragem estatística dos demais fluxos (95% de confiança, ±5%)
+- **Painel de conferência com drill-down** — para cada NUP sorteado, o app localiza o processo no Super Sapiens e percorre NUP → processo → tarefas → atividades, mostrando quantas atividades foram lançadas e quantas são do usuário auditado, para comparação com a quantidade informada na planilha
+- **Registro de conformidade por NUP** — Conforme ou Não Conforme, com motivo e ação corretiva em texto livre
+- **Relatório em Word (.docx)** — Identificação, Metodologia, Resultados, Não Conformidades Identificadas e Conclusão
+
 ## Estrutura do Projeto
 
 ```
@@ -35,6 +47,8 @@ audit_conecta/
 │   ├── auth.py                   # Autenticação JWT (login, refresh, TOTP)
 │   ├── processo.py               # Processos (CRUD, timeline, NUP)
 │   ├── tarefa.py                 # Tarefas (listagem, filtros, workflow)
+│   ├── atividade.py              # Atividades lançadas nas tarefas
+│   ├── interessado.py            # Interessados do processo
 │   ├── documento.py              # Documentos e componentes digitais
 │   ├── componente_digital.py     # Arquivos binários (upload/download)
 │   ├── etiqueta.py               # Vinculação de etiquetas
@@ -46,7 +60,7 @@ audit_conecta/
 │   ├── bookmark.py               # Destaques/anotações em documentos
 │   ├── formulario_ia.py          # Formulários IA e triagem
 │   ├── tipo_documento.py         # Tipos de documento
-│   ├── excel_loader.py           # Importação e consolidação de planilhas
+│   ├── excel_loader.py           # Importação das planilhas (três formatos)
 │   ├── sampling.py               # Amostragem estatística
 │   ├── state.py                  # Gerenciamento de estado da sessão
 │   └── report.py                 # Geração do relatório Word
@@ -105,7 +119,11 @@ streamlit run app.py
 
 A aplicação estará disponível em `http://localhost:8501`.
 
-## Formato da Planilha de Entrada
+## Formatos de Planilha de Entrada
+
+O app reconhece o formato do arquivo automaticamente na importação.
+
+### Conecta+ Triagem Avançada
 
 O arquivo Excel deve conter três abas:
 
@@ -116,6 +134,27 @@ O arquivo Excel deve conter três abas:
 | `Tarefas Não Triadas` | Tarefas pendentes de triagem |
 
 Colunas esperadas: `ID`, `Tarefa`, `NUP`, `Usuário`, datas de criação/conclusão, `Status`, `Configurações Encontradas`.
+
+### Detalhamento Individual PGF (Power BI)
+
+Relatório exportado do Power BI Report Server, em Página Inicial → PGF → PGF - Painéis Estratégicos → 2025 → Detalhamento Individual PGF 2025.
+
+As primeiras linhas trazem o bloco "Filtros aplicados:" (usuário, unidade, região e meses da extração). O cabeçalho começa na primeira linha cuja coluna A seja `NUP`, com as colunas:
+
+| Coluna | Descrição |
+|--------|-----------|
+| `NUP` | Número único de protocolo do processo |
+| `Responsável` | Responsável pelo processo |
+| `Usuário que realizou a atividade` | Usuário auditado |
+| `Atividades` | Quantidade de atividades lançadas |
+
+O arquivo traz uma linha por combinação de NUP e responsável; a importação agrega em uma linha por NUP. Cada auditoria usa um único arquivo, correspondente a um usuário.
+
+Exemplos em `planilhas/2026/`: `detalhamento_individual_2025.xlsx` (12.731 NUPs, 14.036 atividades — amostra de 373) e `detalhamento_individual_2026.xlsx` (10.275 NUPs, 12.107 atividades — amostra de 371).
+
+### Super Sapiens — Distribuição de Tarefas
+
+Relatório de distribuição exportado do Super Sapiens, com as colunas `Id`, `NUP` e os campos de usuário/setor de origem e destino.
 
 ## Contexto Normativo
 

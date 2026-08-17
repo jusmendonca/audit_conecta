@@ -49,7 +49,7 @@ _PERSIST_KEYS = [
 
 _DEFAULTS: dict = {
     "pagina": "importacao",
-    "tipo_relatorio": None,          # "conecta_triagem" | "supp_distribuicao"
+    "tipo_relatorio": None,          # "conecta_triagem" | "supp_distribuicao" | "detalhamento_individual"
     "audit_data_merged": None,
     # auditoria de triadas
     "tipo_controle": None,           # "simplificado" | "detalhado"

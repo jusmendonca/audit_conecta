@@ -14,7 +14,10 @@ from modules.excel_loader import (
     COL_DIST_ID, COL_DIST_NUP, COL_DIST_PROCESSO_JUDICIAL,
     COL_DIST_FONTE_DADOS, COL_DIST_USUARIO_ORIGEM, COL_DIST_SETOR_ORIGEM,
     COL_DIST_USUARIO_DESTINO, COL_DIST_SETOR_DESTINO, COL_DIST_DATA_HORA,
-    load_file, merge_audit_data, load_distribution_file, detect_file_type,
+    COL_DET_ATIVIDADES, COL_DET_NUP, COL_DET_RESPONSAVEL, COL_DET_USUARIO,
+    DetalhamentoData,
+    load_file, merge_audit_data, load_distribution_file, load_detalhamento_file,
+    detect_file_type,
 )
 from modules.sampling import (
     calcular_amostra, formula_descricao, selecionar_amostra, tabela_referencia,
@@ -22,7 +25,8 @@ from modules.sampling import (
 from modules.state import (
     COL_ACAO, COL_CONFORMIDADE, COL_MOTIVO,
     OPCOES_CONFORMIDADE,
-    get_audit_data, get_dist_data, get_df_nao_triadas, get_df_triadas, get_df_distribuicao,
+    get_audit_data, get_dist_data, get_det_data, get_df_nao_triadas, get_df_triadas,
+    get_df_distribuicao, get_df_detalhamento,
     init_state, preparar_df_auditoria, reset_auditoria, stats_df,
     save_session, load_session, has_saved_session, clear_saved_session, get_session_info,
 )
@@ -270,11 +274,19 @@ PAGINAS_DISTRIBUICAO = {
     "relatorio":     ("📄", "3. Relatório"),
 }
 
+PAGINAS_DETALHAMENTO = {
+    "importacao":    ("📂", "1. Importação"),
+    "detalhamento":  ("📊", "2. Auditoria de Atividades"),
+    "relatorio":     ("📄", "3. Relatório"),
+}
+
 
 def _get_paginas() -> dict:
     tipo = st.session_state.get("tipo_relatorio")
     if tipo == "supp_distribuicao":
         return PAGINAS_DISTRIBUICAO
+    if tipo == "detalhamento_individual":
+        return PAGINAS_DETALHAMENTO
     return PAGINAS_TRIAGEM
 
 
@@ -283,10 +295,12 @@ def _check_icon(chave: str) -> str:
         "importacao": (
             st.session_state.get("audit_data_merged") is not None
             or st.session_state.get("dist_data") is not None
+            or st.session_state.get("det_data") is not None
         ),
         "triadas":       st.session_state.get("auditoria_triadas_concluida", False),
         "nao_triadas":   st.session_state.get("auditoria_nao_triadas_concluida", False),
         "distribuicao":  st.session_state.get("auditoria_distribuicao_concluida", False),
+        "detalhamento":  st.session_state.get("auditoria_detalhamento_concluida", False),
         "relatorio":     False,
     }
     return "  ✓" if checks.get(chave) else ""
@@ -557,6 +571,7 @@ with st.sidebar:
         st.session_state["pagina"] = "importacao"
         st.session_state["audit_data_merged"] = None
         st.session_state["dist_data"] = None
+        st.session_state["det_data"] = None
         st.rerun()
 
     # ── Usuário SUPP ──────────────────────────────────────────────────────────
@@ -1152,10 +1167,10 @@ def render_importacao() -> None:
     if has_saved_session() and not st.session_state.get("session_restore_offered"):
         info = get_session_info()
         if info and info.get("nome_arquivo"):
-            tipo_label = (
-                "Distribuição SS" if info.get("tipo_relatorio") == "supp_distribuicao"
-                else "Triagem Conecta+"
-            )
+            tipo_label = {
+                "supp_distribuicao": "Distribuição SS",
+                "detalhamento_individual": "Detalhamento Individual",
+            }.get(info.get("tipo_relatorio"), "Triagem Conecta+")
             st.info(
                 f"**Sessão salva encontrada** — {tipo_label}: _{info['nome_arquivo']}_  \n"
                 "Deseja continuar de onde parou?"
@@ -1178,8 +1193,10 @@ def render_importacao() -> None:
     tipo_opcoes = [
         "Conecta+ — Triagem Avançada",
         "Super Sapiens — Distribuição de Tarefas",
+        "Power BI — Detalhamento Individual PGF",
     ]
-    tipo_idx = 1 if tipo_rel_atual == "supp_distribuicao" else 0
+    _TIPOS = ["conecta_triagem", "supp_distribuicao", "detalhamento_individual"]
+    tipo_idx = _TIPOS.index(tipo_rel_atual) if tipo_rel_atual in _TIPOS else 0
     tipo_sel = st.radio(
         "Tipo de relatório:",
         tipo_opcoes,
@@ -1187,19 +1204,22 @@ def render_importacao() -> None:
         horizontal=True,
         key="radio_tipo_rel",
     )
-    novo_tipo = "supp_distribuicao" if tipo_sel.startswith("Super") else "conecta_triagem"
+    novo_tipo = _TIPOS[tipo_opcoes.index(tipo_sel)]
     if novo_tipo != tipo_rel_atual:
         reset_auditoria()
         st.session_state["tipo_relatorio"] = novo_tipo
         st.session_state["audit_data_merged"] = None
         st.session_state["dist_data"] = None
+        st.session_state["det_data"] = None
 
     st.divider()
 
     if novo_tipo == "conecta_triagem":
         _render_importacao_triagem()
-    else:
+    elif novo_tipo == "supp_distribuicao":
         _render_importacao_distribuicao()
+    else:
+        _render_importacao_detalhamento()
 
 
 def _render_importacao_triagem() -> None:
@@ -1439,6 +1459,69 @@ def _render_importacao_distribuicao() -> None:
     if st.button("Iniciar Auditoria →", type="primary"):
         st.session_state["pagina"] = "distribuicao"
         st.rerun()
+
+
+def _render_importacao_detalhamento() -> None:
+    """Sub-renderização da importação no modo Power BI — Detalhamento Individual."""
+    st.markdown(
+        "Envie a planilha **Detalhamento Individual PGF** exportada do Power BI "
+        "(Página Inicial → PGF → PGF - Painéis Estratégicos → Detalhamento Individual). "
+        "A auditoria trata de um arquivo por vez."
+    )
+
+    arquivo = st.file_uploader(
+        "Planilha de Detalhamento Individual (.xlsx)",
+        type=["xlsx"],
+        accept_multiple_files=False,
+        key="uploader_detalhamento",
+    )
+
+    if arquivo is None:
+        det_data = get_det_data()
+        if det_data is not None:
+            st.success(f"Arquivo carregado: **{det_data.nome_arquivo}**")
+            _render_resumo_detalhamento(det_data)
+            if st.button("Iniciar Auditoria →", type="primary"):
+                st.session_state["pagina"] = "detalhamento"
+                st.rerun()
+        return
+
+    try:
+        det_data = load_detalhamento_file(arquivo, arquivo.name)
+    except ValueError as e:
+        st.error(str(e))
+        return
+
+    st.session_state["det_data"] = det_data
+    st.success(f"Arquivo lido: **{det_data.nome_arquivo}**")
+    _render_resumo_detalhamento(det_data)
+
+    if st.button("Iniciar Auditoria →", type="primary"):
+        save_session()
+        st.session_state["pagina"] = "detalhamento"
+        st.rerun()
+
+
+def _render_resumo_detalhamento(det_data: DetalhamentoData) -> None:
+    """Cartão com os filtros aplicados e as métricas da planilha."""
+    st.subheader("Filtros aplicados na extração")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"**Usuário:** {det_data.usuario or 'N/D'}")
+        st.markdown(f"**Unidade:** {det_data.unidade or 'N/D'}")
+    with col2:
+        st.markdown(f"**Região:** {det_data.regiao or 'N/D'}")
+        st.markdown(f"**Meses:** {det_data.meses or 'N/D'}")
+
+    if det_data.filtros_raw:
+        with st.expander("Ver bloco de filtros original"):
+            st.code(det_data.filtros_raw)
+
+    st.divider()
+    c1, c2, c3 = st.columns(3)
+    c1.metric("NUPs (população)", det_data.total_nups)
+    c2.metric("Atividades lançadas", det_data.total_atividades)
+    c3.metric("Responsáveis distintos", det_data.total_responsaveis)
 
 
 # ===========================================================================

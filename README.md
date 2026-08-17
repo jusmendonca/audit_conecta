@@ -47,7 +47,7 @@ audit_conecta/
 │   ├── auth.py                   # Autenticação JWT (login, refresh, TOTP)
 │   ├── processo.py               # Processos (CRUD, timeline, NUP)
 │   ├── tarefa.py                 # Tarefas (listagem, filtros, workflow)
-│   ├── atividade.py              # Atividades lançadas nas tarefas
+│   ├── atividade.py              # Atividades (administrativas, judiciais, consultivas)
 │   ├── interessado.py            # Interessados do processo
 │   ├── documento.py              # Documentos e componentes digitais
 │   ├── componente_digital.py     # Arquivos binários (upload/download)
@@ -148,7 +148,7 @@ As primeiras linhas trazem o bloco "Filtros aplicados:" (usuário, unidade, regi
 | `Usuário que realizou a atividade` | Usuário auditado |
 | `Atividades` | Quantidade de atividades lançadas |
 
-O arquivo traz uma linha por combinação de NUP e responsável; a importação agrega em uma linha por NUP. Cada auditoria usa um único arquivo, correspondente a um usuário.
+Um mesmo NUP pode aparecer em mais de uma linha; a importação agrega tudo em uma linha por NUP, somando as atividades e concatenando os responsáveis distintos. Cada auditoria usa um único arquivo, correspondente a um usuário.
 
 Exemplos em `planilhas/2026/`: `detalhamento_individual_2025.xlsx` (12.731 NUPs, 14.036 atividades — amostra de 373) e `detalhamento_individual_2026.xlsx` (10.275 NUPs, 12.107 atividades — amostra de 371).
 

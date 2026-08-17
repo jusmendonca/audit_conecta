@@ -18,7 +18,7 @@ modules/
   ├── auth.py             ← Autenticação JWT (login, refresh, TOTP 2FA)
   ├── processo.py         ← Processos (CRUD, timeline, NUP, juntadas)
   ├── tarefa.py           ← Tarefas (listagem, filtros, workflow)
-  ├── atividade.py        ← Atividades lançadas nas tarefas
+  ├── atividade.py        ← Atividades (administrativas, judiciais e consultivas)
   ├── interessado.py      ← Interessados do processo
   ├── documento.py        ← Documentos + ComponenteDigital
   ├── componente_digital.py ← Arquivos binários (upload/download/assinatura)

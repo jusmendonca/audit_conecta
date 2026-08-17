@@ -18,7 +18,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import parse_xml
 from docx.shared import Inches, Pt, RGBColor
 
-from modules.excel_loader import AuditData, DistribuicaoData
+from modules.excel_loader import AuditData, DetalhamentoData, DistribuicaoData
 from modules.state import COL_CONFORMIDADE, COL_MOTIVO, COL_ACAO
 
 # ---------------------------------------------------------------------------
@@ -876,6 +876,200 @@ def gerar_relatorio_distribuicao(
     p2 = doc.add_paragraph()
     p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p2.add_run("_" * 50)
+    p3 = doc.add_paragraph()
+    p3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p3.add_run(responsavel or "Responsável pela Auditoria").bold = True
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    return buf.read()
+
+
+# ---------------------------------------------------------------------------
+# Relatório de Auditoria de Detalhamento Individual
+# ---------------------------------------------------------------------------
+
+def gerar_relatorio_detalhamento(
+    det_data: DetalhamentoData,
+    df_detalhamento: pd.DataFrame | None,
+    tipo_controle: str | None,
+    tamanho_amostra: int | None,
+    responsavel: str,
+    data_auditoria: date,
+) -> bytes:
+    """
+    Gera o relatório de auditoria de atividades por NUP e retorna bytes do .docx.
+    """
+    from modules.excel_loader import (
+        COL_DET_ATIVIDADES, COL_DET_NUP, COL_DET_RESPONSAVEL,
+    )
+    from modules.state import stats_df
+
+    doc = Document()
+    for section in doc.sections:
+        section.top_margin = Inches(0.9)
+        section.bottom_margin = Inches(0.9)
+        section.left_margin = Inches(1.2)
+        section.right_margin = Inches(1.2)
+
+    _titulo(doc, "RELATÓRIO DE AUDITORIA")
+    _subtitulo(doc, "Detalhamento Individual — Conformidade das Atividades Lançadas")
+    _subtitulo(doc, "Procuradoria-Geral Federal / Advocacia-Geral da União")
+    doc.add_paragraph()
+
+    # 1. Identificação
+    _heading(doc, "1. IDENTIFICAÇÃO")
+    _tabela_2col(doc, [
+        ("Período Auditado", det_data.meses or "N/D"),
+        ("Data de Emissão do Relatório", _fmt_date(data_auditoria)),
+        ("Responsável pela Auditoria", responsavel or "Não informado"),
+        ("Sistema Auditado", "Power BI — Detalhamento Individual PGF"),
+        ("Arquivo Analisado", det_data.nome_arquivo),
+        ("Usuário Auditado", det_data.usuario or "N/D"),
+        ("Unidade", det_data.unidade or "N/D"),
+        ("Região", det_data.regiao or "N/D"),
+        ("Base Normativa", "Portaria PGF/AGU n. 541/2025 — Manual de Gerenciamento Estratégico"),
+    ])
+    doc.add_paragraph()
+
+    # 2. Metodologia
+    _heading(doc, "2. METODOLOGIA")
+    _para(doc, (
+        "A população auditada é composta pelos NUPs em que o usuário registrou "
+        f"atividades no período: {det_data.total_nups} processos, totalizando "
+        f"{det_data.total_atividades} atividades lançadas. Como o relatório de origem "
+        "não identifica individualmente cada atividade, a unidade de análise adotada "
+        "foi o NUP: em cada processo selecionado verificou-se, no Super Sapiens, se as "
+        "atividades registradas correspondem ao efetivamente praticado."
+    ))
+    doc.add_paragraph()
+
+    detalhado = tipo_controle == "detalhado"
+    tipo_label = {
+        "simplificado": "Controle Simplificado",
+        "detalhado": "Controle Detalhado (Amostragem Estatística)",
+    }.get(tipo_controle or "", tipo_controle or "Não informado")
+
+    linhas_metodo = [
+        ("Objeto da Auditoria", "Conformidade das atividades lançadas por NUP"),
+        ("Unidade Amostral", "NUP (processo)"),
+        ("Tipo de Controle", tipo_label),
+        ("Total de NUPs no Relatório", str(det_data.total_nups)),
+        ("Total de Atividades Lançadas", str(det_data.total_atividades)),
+    ]
+    if detalhado and tamanho_amostra:
+        linhas_metodo += [
+            ("Universo Amostral (N)", str(det_data.total_nups)),
+            ("Tamanho da Amostra (n)", str(tamanho_amostra)),
+            ("Nível de Confiança", "95%"),
+            ("Margem de Erro", "±5%"),
+            ("Fórmula Aplicada", "n = n₀ / (1 + (n₀ - 1) / N), onde n₀ = Z² · p · (1-p) / E²"),
+            ("Parâmetros", "Z = 1,96 | p = 0,50 | E = 0,05"),
+            ("Seleção", "Aleatória simples sem reposição"),
+        ]
+    _tabela_2col(doc, linhas_metodo)
+    doc.add_paragraph()
+
+    if detalhado:
+        _para(doc, (
+            f"Aplicou-se controle detalhado, com amostragem aleatória simples de "
+            f"{tamanho_amostra} NUPs, para nível de confiança de 95% e margem de erro "
+            "de ±5%, conforme o Anexo III do Manual."
+        ))
+    else:
+        _para(doc, (
+            "Aplicou-se controle simplificado, com verificação da totalidade dos NUPs "
+            "da população ou de seleção manual do auditor."
+        ))
+    doc.add_paragraph()
+
+    # 3. Resultados
+    _heading(doc, "3. RESULTADOS")
+    s = stats_df(df_detalhamento)
+    _tabela_2col(doc, [
+        ("NUPs na População", str(det_data.total_nups)),
+        ("NUPs na Amostra Auditada", str(s["total"])),
+        ("NUPs Examinados", str(s["auditadas"])),
+        ("NUPs Não Auditados (excluídos das estatísticas)", str(s["total"] - s["auditadas"])),
+        ("Conformes", f"{s['conformes']} ({s['pct_conf']:.1f}%)"),
+        ("Não Conformes", f"{s['nao_conformes']} ({s['pct_nc']:.1f}%)"),
+    ])
+    doc.add_paragraph()
+
+    grafico = _grafico_pizza(s["conformes"], s["nao_conformes"], s["total"] - s["auditadas"],
+                             "Conformidade — Atividades por NUP")
+    if grafico:
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.add_run().add_picture(grafico, width=Inches(4.0))
+    doc.add_paragraph()
+
+    # 4. Não conformidades
+    _heading(doc, "4. NÃO CONFORMIDADES IDENTIFICADAS")
+    if df_detalhamento is None or s["nao_conformes"] == 0:
+        _para(doc, "Não foram identificadas não conformidades na amostra examinada.")
+    else:
+        df_nc = df_detalhamento[df_detalhamento[COL_CONFORMIDADE] == "Não Conforme"]
+        headers_nc = ["NUP", "Responsável", "Atividades", "Motivo", "Ação Corretiva"]
+        tbl = doc.add_table(rows=1 + len(df_nc), cols=len(headers_nc))
+        tbl.style = "Table Grid"
+        for i, h in enumerate(headers_nc):
+            tbl.rows[0].cells[i].text = h
+        _tabela_conformidade_header(tbl)
+        for row_idx, (_, linha) in enumerate(df_nc.iterrows(), start=1):
+            r = tbl.rows[row_idx]
+            r.cells[0].text = str(linha.get(COL_DET_NUP, ""))
+            r.cells[1].text = str(linha.get(COL_DET_RESPONSAVEL, ""))
+            r.cells[2].text = str(linha.get(COL_DET_ATIVIDADES, ""))
+            r.cells[3].text = str(linha.get(COL_MOTIVO, ""))
+            r.cells[4].text = str(linha.get(COL_ACAO, ""))
+        for row in tbl.rows:
+            row.cells[0].width = Inches(1.7)
+            row.cells[1].width = Inches(1.3)
+            row.cells[2].width = Inches(0.8)
+            row.cells[3].width = Inches(1.6)
+            row.cells[4].width = Inches(1.6)
+    doc.add_paragraph()
+
+    # 5. Conclusão
+    _heading(doc, "5. CONCLUSÃO")
+    if s["auditadas"] == 0:
+        _para(doc, "Nenhum NUP foi auditado neste ciclo.")
+    else:
+        if s["nao_conformes"] == 0:
+            texto_conclusao = (
+                f"No presente ciclo de auditoria foram examinados {s['auditadas']} NUP(s), "
+                "todos com as atividades lançadas em conformidade com o efetivamente "
+                "praticado. Não foram identificadas não conformidades."
+            )
+        else:
+            texto_conclusao = (
+                f"No presente ciclo de auditoria foram examinados {s['auditadas']} NUP(s). "
+                f"Foram identificadas {s['nao_conformes']} não conformidade(s) "
+                f"({s['pct_nc']:.1f}% do total auditado) no lançamento das atividades. "
+                "As ações corretivas foram registradas na seção 4 e devem ser "
+                "implementadas e verificadas no próximo ciclo de auditoria."
+            )
+        texto_conclusao += (
+            " Recomenda-se a manutenção do controle periódico da conformidade dos "
+            "lançamentos de atividades, o registro dos resultados em NUP próprio e a "
+            "orientação continuada dos responsáveis, conforme o Manual de Gerenciamento "
+            "Estratégico de Contencioso (Portaria PGF/AGU n. 541/2025, seção 5)."
+        )
+        _para(doc, texto_conclusao)
+    doc.add_paragraph()
+
+    # Assinatura
+    doc.add_paragraph()
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.add_run(f"Brasília, {_fmt_date(data_auditoria)}").italic = True
+
+    p2 = doc.add_paragraph()
+    p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p2.add_run("_" * 50)
+
     p3 = doc.add_paragraph()
     p3.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p3.add_run(responsavel or "Responsável pela Auditoria").bold = True

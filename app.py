@@ -2191,6 +2191,7 @@ def render_auditoria_detalhamento() -> None:
             st.session_state["df_audit_detalhamento"] = None
             st.session_state["tamanho_amostra"] = None
             st.session_state["auditoria_detalhamento_concluida"] = False
+            st.session_state["relatorio_gerado"] = None
             for k in list(st.session_state.keys()):
                 if k.startswith(("filtro_conf_det", "busca_det", "tbl_detalhamento",
                                  "edit_conf_", "edit_motivo_", "edit_acao_", "btn_save_row_")):
@@ -2682,10 +2683,104 @@ def _render_relatorio_distribuicao() -> None:
             )
 
 
+def _render_relatorio_detalhamento() -> None:
+    """Relatório de auditoria para o modo Power BI — Detalhamento Individual."""
+    from modules.report import gerar_relatorio_detalhamento
+
+    det_data = get_det_data()
+    if det_data is None:
+        st.warning("Nenhum arquivo carregado. Volte à página de Importação.")
+        return
+
+    st.title("📄 Relatório de Auditoria — Atividades por NUP")
+
+    df_det = get_df_detalhamento()
+    s_det = stats_df(df_det)
+
+    st.subheader("Identificação do Relatório")
+    col1, col2 = st.columns(2)
+    with col1:
+        responsavel = st.text_input(
+            "Responsável pela auditoria:",
+            value=st.session_state.get("responsavel", ""),
+            placeholder="Nome completo do responsável",
+            key="input_responsavel",
+        )
+        st.session_state["responsavel"] = responsavel
+    with col2:
+        data_aud = st.date_input(
+            "Data da auditoria:",
+            value=st.session_state.get("data_auditoria", date_type.today()),
+            key="input_data_aud",
+            format="DD/MM/YYYY",
+        )
+        st.session_state["data_auditoria"] = data_aud
+
+    st.divider()
+    st.subheader("Resumo Executivo")
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("NUPs na População", det_data.total_nups)
+    c2.metric("Auditados / Amostra", f"{s_det['auditadas']}/{s_det['total']}")
+    c3.metric("Conformes", s_det["conformes"],
+              delta=f"{s_det['pct_conf']:.1f}%" if s_det["auditadas"] > 0 else None)
+    c4.metric("Não Conformes", s_det["nao_conformes"],
+              delta=f"{s_det['pct_nc']:.1f}%" if s_det["auditadas"] > 0 else None,
+              delta_color="inverse")
+
+    if s_det["nao_conformes"] > 0:
+        st.divider()
+        st.subheader(f"⚠️ Não Conformidades Identificadas ({s_det['nao_conformes']})")
+        if df_det is not None:
+            nc_df = df_det[df_det[COL_CONFORMIDADE] == "Não Conforme"][
+                [c for c in [COL_DET_NUP, COL_DET_RESPONSAVEL, COL_DET_ATIVIDADES,
+                             COL_MOTIVO, COL_ACAO] if c in df_det.columns]
+            ].copy()
+            st.dataframe(nc_df, hide_index=True, use_container_width=True)
+    else:
+        st.success("Nenhuma não conformidade identificada nos NUPs auditados.")
+
+    st.divider()
+    col_btn1, col_btn2 = st.columns([1, 2])
+    with col_btn1:
+        if st.button("📥 Gerar Relatório (.docx)", type="primary", use_container_width=True):
+            with st.spinner("Gerando relatório…"):
+                try:
+                    docx_bytes = gerar_relatorio_detalhamento(
+                        det_data=det_data,
+                        df_detalhamento=df_det,
+                        tipo_controle=st.session_state.get("tipo_controle"),
+                        tamanho_amostra=st.session_state.get("tamanho_amostra"),
+                        responsavel=responsavel,
+                        data_auditoria=data_aud,
+                    )
+                    st.session_state["relatorio_gerado"] = docx_bytes
+                    st.success("Relatório gerado com sucesso!")
+                except Exception as e:
+                    st.error(f"Erro ao gerar o relatório: {e}")
+                    raise
+
+    if st.session_state.get("relatorio_gerado"):
+        nome = f"relatorio_detalhamento_{data_aud.strftime('%Y-%m-%d')}.docx"
+        with col_btn2:
+            st.download_button(
+                label="⬇️ Baixar Relatório Word (.docx)",
+                data=st.session_state["relatorio_gerado"],
+                file_name=nome,
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                use_container_width=True,
+                type="primary",
+            )
+
+
 def render_relatorio() -> None:
     tipo_rel = st.session_state.get("tipo_relatorio")
     if tipo_rel == "supp_distribuicao":
         _render_relatorio_distribuicao()
+        return
+
+    if tipo_rel == "detalhamento_individual":
+        _render_relatorio_detalhamento()
         return
 
     audit_data = get_audit_data()

@@ -5,7 +5,10 @@ Inclui persistência em disco para retomar auditorias entre sessões.
 """
 from __future__ import annotations
 
+import dataclasses
+import os
 import pickle
+import sys
 from datetime import date
 from pathlib import Path
 
@@ -102,14 +105,60 @@ def reset_auditoria() -> None:
 # Persistência de sessão
 # ---------------------------------------------------------------------------
 
-def save_session() -> None:
-    """Persiste o estado de auditoria em disco."""
-    data = {k: st.session_state.get(k) for k in _PERSIST_KEYS}
+def _reancorar_dataclass(obj):
+    """
+    Corrige uma armadilha do auto-reload de desenvolvimento do Streamlit: ao
+    editar um módulo local (ex.: excel_loader.py) com a sessão já aberta, o
+    Streamlit recarrega o módulo e cria um *novo* objeto de classe com o
+    mesmo nome. Uma instância construída antes do reload (ex.: `det_data`
+    guardado em session_state) passa a apontar para a classe *antiga* — os
+    dados continuam corretos, só a identidade do tipo ficou obsoleta — e o
+    pickle recusa com "it's not the same object as <classe>".
+
+    Reconstrói `obj` usando a classe atualmente carregada, com os mesmos
+    valores de campo. Se `obj` não for dataclass, ou a classe já for a
+    mesma, ou a reconstrução falhar por qualquer motivo, devolve `obj` sem
+    alteração — nesse caso o pickle segue e falha (ou não) por conta própria.
+    """
+    if not dataclasses.is_dataclass(obj) or isinstance(obj, type):
+        return obj
+    modulo = sys.modules.get(type(obj).__module__)
+    cls_atual = getattr(modulo, type(obj).__name__, None) if modulo else None
+    if cls_atual is None or cls_atual is type(obj):
+        return obj
     try:
-        with open(_SESSION_FILE, "wb") as f:
-            pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+        return cls_atual(**{f.name: getattr(obj, f.name) for f in dataclasses.fields(obj)})
     except Exception:
-        pass  # falha silenciosa — persistência é best-effort
+        return obj
+
+
+def save_session() -> None:
+    """
+    Persiste o estado de auditoria em disco, de forma atômica: grava num
+    arquivo temporário e só substitui o arquivo real (`os.replace`, atômico
+    no mesmo volume) se a gravação terminar por completo. Se o processo for
+    interrompido no meio do caminho, o arquivo já salvo permanece intacto —
+    o que se perde é, no máximo, a tentativa em andamento, nunca o que já
+    estava gravado.
+
+    Falhas ficam registradas em `st.session_state["_save_session_erro"]`
+    para exibição na UI: perder a auditoria de forma silenciosa é pior do
+    que incomodar o auditor com um aviso.
+    """
+    data = {k: _reancorar_dataclass(st.session_state.get(k)) for k in _PERSIST_KEYS}
+    tmp_path = _SESSION_FILE.with_name(_SESSION_FILE.name + ".tmp")
+    try:
+        with open(tmp_path, "wb") as f:
+            pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+        os.replace(tmp_path, _SESSION_FILE)
+    except Exception as exc:
+        st.session_state["_save_session_erro"] = str(exc)
+        try:
+            tmp_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+        return
+    st.session_state.pop("_save_session_erro", None)
 
 
 def load_session() -> bool:

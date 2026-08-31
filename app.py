@@ -333,7 +333,8 @@ def _supp_logout_cleanup() -> None:
         except Exception:
             pass
     for k in ("supp_logged_in", "supp_username", "supp_auth_client",
-              "supp_login_step", "supp_totp_challenge", "supp_username_pendente"):
+              "supp_login_step", "supp_totp_challenge", "supp_username_pendente",
+              "supp_reconectar_aberto"):
         st.session_state.pop(k, None)
 
 
@@ -347,6 +348,40 @@ def _supp_erro_msg(exc: Exception) -> str:
     return str(exc)
 
 
+def _supp_eh_erro_autenticacao(exc: Exception) -> bool:
+    """
+    Reconhece falha de sessão do SUPP: HTTP 401/403 (token expirado/rejeitado)
+    ou o cliente sem token (usuário abriu o 2FA e não concluiu, deixando um
+    AuthClient "morto" em supp_auth_client). O segundo caso não chega como
+    401 — é RuntimeError levantado por from_auth antes de qualquer request —
+    então sem checar o cliente aqui o botão de reconexão nunca apareceria
+    para quem ficou nesse estado.
+    """
+    if getattr(exc, "status_code", None) in (401, 403):
+        return True
+    cliente = st.session_state.get("supp_auth_client")
+    return not getattr(cliente, "token", None)
+
+
+def _supp_render_erro_painel(cached: dict, key_sufixo: str) -> None:
+    """
+    Mostra o erro de uma chamada ao SUPP cacheada em `cached["erro"]`. Quando
+    é falha de sessão, oferece reconexão ali mesmo — sem sair da tela de
+    auditoria nem perder o NUP/tarefa em exame — em vez da mensagem estática.
+    """
+    if cached.get("auth_erro"):
+        st.warning("⚠️ Sessão do Super Sapiens expirada.")
+        if st.button(
+            "🔄 Reconectar ao Super Sapiens",
+            key=f"_reconectar_{key_sufixo}",
+            type="primary",
+        ):
+            st.session_state["supp_reconectar_aberto"] = True
+            st.rerun()
+    else:
+        st.caption(f"⚠️ Erro ao buscar processo: {cached['erro']}")
+
+
 def _supp_finalizar_login(client, usuario: str, base_url: str) -> None:
     """Sessão autenticada: guarda o cliente e limpa o estado do 2FA."""
     st.session_state["supp_auth_client"] = client
@@ -354,6 +389,19 @@ def _supp_finalizar_login(client, usuario: str, base_url: str) -> None:
     st.session_state["supp_username"] = _supp_get_nome(client, usuario)
     st.session_state["supp_base_url"] = base_url
     st.session_state.pop("supp_totp_challenge", None)
+    st.session_state.pop("supp_reconectar_aberto", None)
+    # Uma sessão nova invalida qualquer erro de autenticação já cacheado nos
+    # painéis (Triagem, Distribuição, Detalhamento) — sem isso, o painel que
+    # disparou a reconexão continuaria mostrando "sessão expirada" mesmo com
+    # o token novo em mãos, porque a condição de refetch não recarrega uma
+    # entrada de cache não vazia (só {} ou chave ausente).
+    for _k, _v in list(st.session_state.items()):
+        if (
+            _k.startswith(("_det_cache_", "_proc_id_cache_", "_supp_cache_"))
+            and isinstance(_v, dict)
+            and _v.get("auth_erro")
+        ):
+            st.session_state.pop(_k, None)
     st.rerun()
 
 
@@ -467,10 +515,71 @@ def _render_login_page() -> None:
                 _supp_do_login(SUPP_URL, usuario.strip(), senha)
 
 
+_SUPP_LOGIN_URL = "https://supersapiensbackend.agu.gov.br"
+
+
+@st.dialog("Reconectar ao Super Sapiens")
+def _supp_reconectar_dialog() -> None:
+    """
+    Modal de reconexão para quando o token do SUPP expira em pleno uso da
+    tela de auditoria. Reaproveita o fluxo LDAP + TOTP do login inicial, mas
+    como diálogo — sem navegar para fora da auditoria em andamento, já que
+    `_supp_logout_cleanup` só apaga estado `supp_*`, nunca o progresso salvo
+    (`det_data`, `df_audit_*` etc.).
+    """
+    st.caption("Sua sessão expirou. Informe as credenciais para continuar de onde parou.")
+
+    if st.session_state.get("supp_totp_challenge"):
+        with st.form("reconectar_totp_form"):
+            codigo = st.text_input("Código 2FA", max_chars=6, placeholder="000000")
+            ok = st.form_submit_button(
+                "Verificar →", use_container_width=True, type="primary"
+            )
+        sair = st.button("Sair", use_container_width=True, key="_reconectar_sair")
+
+        if sair:
+            # Encerra a sessão de fato: volta para a tela de login cheia,
+            # não só fecha o diálogo — mesmo comportamento do "← Voltar" da
+            # tela de login inicial nesta mesma etapa.
+            _supp_logout_cleanup()
+            st.rerun()
+        if ok:
+            if not codigo.strip():
+                st.error("Informe o código de 6 dígitos.")
+            else:
+                _supp_do_totp(codigo.strip())
+        return
+
+    with st.form("reconectar_login_form"):
+        usuario = st.text_input("Login (Rede AGU)", placeholder="login")
+        senha = st.text_input("Senha", type="password")
+        ok = st.form_submit_button("Entrar →", use_container_width=True, type="primary")
+    cancelar = st.button("Cancelar", use_container_width=True, key="_reconectar_cancelar")
+
+    if cancelar:
+        st.session_state.pop("supp_reconectar_aberto", None)
+        st.rerun()
+    if ok:
+        if not usuario.strip() or not senha:
+            st.error("Preencha usuário e senha.")
+        else:
+            _supp_do_login(_SUPP_LOGIN_URL, usuario.strip(), senha)
+
+
 # ── Login gate: app só funciona após autenticação ──────────────────────────
 if not st.session_state.get("supp_logged_in"):
     _render_login_page()
     st.stop()
+
+if st.session_state.get("supp_reconectar_aberto"):
+    _supp_reconectar_dialog()
+
+if st.session_state.get("_save_session_erro"):
+    st.error(
+        "⚠️ Falha ao salvar a auditoria em disco — as últimas alterações "
+        "podem não estar persistidas. Não feche esta aba até resolver: "
+        f"{st.session_state['_save_session_erro']}"
+    )
 
 
 with st.sidebar:
@@ -890,7 +999,10 @@ def _render_row_editor(df_key: str, orig_idx, row: dict) -> None:
                         "atividades_erro":  _ativ_erro if not atividades else None,
                     }
                 except Exception as e:
-                    st.session_state[cache_key] = {"erro": str(e)}
+                    st.session_state[cache_key] = {
+                        "erro": str(e),
+                        "auth_erro": _supp_eh_erro_autenticacao(e),
+                    }
         else:
             st.session_state[cache_key] = {}
 
@@ -977,7 +1089,7 @@ def _render_row_editor(df_key: str, orig_idx, row: dict) -> None:
         unsafe_allow_html=True,
     )
     if cached.get("erro"):
-        st.caption(f"⚠️ Erro ao buscar processo: {cached['erro']}")
+        _supp_render_erro_painel(cached, key_sufixo=f"triagem_{tarefa_id}")
 
     # ── Fluxo de Trabalho ─────────────────────────────────────────────────────
     _tarefa_info_rows = ""
@@ -1947,7 +2059,10 @@ def _render_dist_row_editor(df_key: str, orig_idx, row: dict) -> None:
                         "classe_nacional": classe_nacional,
                     }
                 except Exception as e:
-                    st.session_state[cache_key] = {"erro": str(e)}
+                    st.session_state[cache_key] = {
+                        "erro": str(e),
+                        "auth_erro": _supp_eh_erro_autenticacao(e),
+                    }
         else:
             st.session_state[cache_key] = {}
 
@@ -2023,7 +2138,7 @@ def _render_dist_row_editor(df_key: str, orig_idx, row: dict) -> None:
         unsafe_allow_html=True,
     )
     if cached.get("erro"):
-        st.caption(f"⚠️ Erro ao buscar processo: {cached['erro']}")
+        _supp_render_erro_painel(cached, key_sufixo=f"dist_{tarefa_id}")
 
     # ── Campos de auditoria ────────────────────────────────────────────────────
     cur_conf = row.get(COL_CONFORMIDADE, OPCOES_CONFORMIDADE[0])
@@ -2226,6 +2341,25 @@ def _det_fmt_dt(valor) -> str:
         return str(valor)[:16]
 
 
+def _det_ordem_dt(valor) -> float:
+    """
+    Chave de ordenação da linha do tempo: instante em segundos (UTC).
+
+    Datas sem fuso são tomadas como UTC para que a comparação nunca misture
+    datetimes ingênuos e conscientes (o que levantaria TypeError). Valores
+    inilegíveis vão para o fim da ordem decrescente.
+    """
+    from datetime import datetime as _dt, timezone as _tz
+
+    try:
+        d = _dt.fromisoformat(str(valor).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return float("-inf")
+    if d.tzinfo is None:
+        d = d.replace(tzinfo=_tz.utc)
+    return d.timestamp()
+
+
 def _det_obj_nome(obj) -> str:
     """Extrai nome/username/sigla de um objeto populado da API."""
     if isinstance(obj, dict):
@@ -2245,7 +2379,8 @@ def _det_norm_atividade(raw: dict) -> dict:
     if not isinstance(raw, dict):
         # Item da listagem vindo como escalar (id) em vez de objeto.
         return {"especie": "Atividade", "usuario": "", "setor": "", "setor_nome": "",
-                "data": "", "descricao": "", "encerra_tarefa": False}
+                "data": "", "data_iso": "", "data_dia": "", "data_hora": "",
+                "descricao": "", "encerra_tarefa": False}
     base = raw.get("atividade") or raw
     if not isinstance(base, dict):
         # `atividade` pode vir como FK escalar (id) quando não populada.
@@ -2255,17 +2390,23 @@ def _det_norm_atividade(raw: dict) -> dict:
     se = raw.get("setor") or base.get("setor") or {}
     if not isinstance(se, dict):
         se = {}
+    bruta = (
+        raw.get("dataHoraConclusao")
+        or raw.get("criadoEm")
+        or base.get("dataHoraConclusao")
+        or base.get("criadoEm")
+    )
+    formatada = _det_fmt_dt(bruta)
     return {
         "especie": _det_obj_nome(ea) or "Atividade",
         "usuario": _det_obj_nome(au) or "—",
         "setor": se.get("sigla") or se.get("nome") or "",
         "setor_nome": se.get("nome") or "",
-        "data": _det_fmt_dt(
-            raw.get("dataHoraConclusao")
-            or raw.get("criadoEm")
-            or base.get("dataHoraConclusao")
-            or base.get("criadoEm")
-        ),
+        "data": formatada,
+        # Valor cru para ordenar a linha do tempo (ISO 8601 ordena como texto).
+        "data_iso": str(bruta) if bruta else "",
+        "data_dia": formatada[:10] if len(formatada) >= 10 else formatada,
+        "data_hora": formatada[11:] if len(formatada) > 11 else "",
         "descricao": (
             raw.get("observacao")
             or base.get("observacao")
@@ -2415,7 +2556,10 @@ def _render_det_row_editor(df_key: str, orig_idx, row: dict) -> None:
                 try:
                     st.session_state[cache_key] = _det_carregar_nup(auth, nup)
                 except Exception as e:
-                    st.session_state[cache_key] = {"erro": str(e)}
+                    st.session_state[cache_key] = {
+                        "erro": str(e),
+                        "auth_erro": _supp_eh_erro_autenticacao(e),
+                    }
         else:
             st.session_state[cache_key] = {}
 
@@ -2483,81 +2627,6 @@ def _render_det_row_editor(df_key: str, orig_idx, row: dict) -> None:
         unsafe_allow_html=True,
     )
 
-    # ── Atividades lançadas no Super Sapiens ─────────────────────────────────
-    if cached.get("erro"):
-        st.warning(
-            "Não foi possível consultar o Super Sapiens para este NUP: "
-            f"{cached['erro']}"
-        )
-    elif not autenticado:
-        st.info(
-            "Faça login no Super Sapiens (menu lateral) para conferir as "
-            "atividades lançadas neste processo."
-        )
-    elif not proc_id:
-        st.warning("Processo não localizado no Super Sapiens a partir deste NUP.")
-    elif not tarefas_info:
-        st.warning("Nenhuma tarefa encontrada para este NUP no Super Sapiens.")
-    else:
-        total_ss = sum(len(t["atividades"]) for t in tarefas_info)
-        do_usuario = sum(
-            1
-            for t in tarefas_info
-            for a in t["atividades"]
-            if usuario_planilha and _norm_txt(a["usuario"]) == _norm_txt(usuario_planilha)
-        )
-        st.markdown(
-            f"<div style='font-size:0.8rem;color:#1a2a4a;margin-bottom:0.5rem'>"
-            f"<b>{total_ss}</b> atividade(s) em <b>{len(tarefas_info)}</b> tarefa(s) — "
-            f"<b>{do_usuario}</b> do usuário auditado."
-            f"</div>",
-            unsafe_allow_html=True,
-        )
-        for i_t, info in enumerate(tarefas_info):
-            titulo = f"{info['especie']} — {len(info['atividades'])} atividade(s)"
-            if info.get("setor"):
-                titulo += f" · {info['setor']}"
-            with st.expander(titulo, expanded=len(tarefas_info) == 1):
-                if not info["atividades"]:
-                    st.caption("Sem atividades registradas nesta tarefa.")
-                    continue
-                itens = ""
-                for a in info["atividades"]:
-                    do_aud = bool(
-                        usuario_planilha
-                        and _norm_txt(a["usuario"]) == _norm_txt(usuario_planilha)
-                    )
-                    borda = "#1A3A6A" if do_aud else "#d0dcea"
-                    marca = (
-                        "<span style='display:inline-block;background:#1A3A6A;color:#fff;"
-                        "font-size:0.58rem;padding:0 4px;border-radius:3px;margin-left:5px;"
-                        "font-weight:700;vertical-align:middle'>AUDITADO</span>"
-                        if do_aud else ""
-                    )
-                    encerra = (
-                        "<span style='display:inline-block;background:#dc2626;color:#fff;"
-                        "font-size:0.58rem;padding:0 4px;border-radius:3px;margin-left:5px;"
-                        "font-weight:700;vertical-align:middle'>ENCERRA</span>"
-                        if a["encerra_tarefa"] else ""
-                    )
-                    meta = " · ".join(filter(None, [a["usuario"], a["setor"], a["data"]]))
-                    desc = (
-                        f"<div style='font-size:0.72rem;color:#7a8fad;margin-top:1px'>"
-                        f"{a['descricao']}</div>"
-                        if a["descricao"] else ""
-                    )
-                    itens += (
-                        f"<div style='border-left:3px solid {borda};"
-                        f"padding:0.15rem 0 0.25rem 0.65rem;margin-bottom:0.45rem'>"
-                        f"<div style='font-size:0.8rem;font-weight:700;color:#1a2a4a'>"
-                        f"{a['especie']}{marca}{encerra}</div>"
-                        f"<div style='font-size:0.72rem;color:#7a8fad'>{meta}</div>"
-                        f"{desc}</div>"
-                    )
-                st.markdown(itens, unsafe_allow_html=True)
-
-    st.divider()
-
     # ── Campos de auditoria ──────────────────────────────────────────────────
     cur_conf = row.get(COL_CONFORMIDADE, OPCOES_CONFORMIDADE[0])
     if cur_conf not in OPCOES_CONFORMIDADE:
@@ -2593,6 +2662,131 @@ def _render_det_row_editor(df_key: str, orig_idx, row: dict) -> None:
         st.session_state[df_key] = df
         save_session()
         st.rerun()
+
+    st.divider()
+
+    # ── Atividades lançadas no Super Sapiens ─────────────────────────────────
+    if cached.get("erro"):
+        if cached.get("auth_erro"):
+            _supp_render_erro_painel(cached, key_sufixo=f"det_{orig_idx}")
+        else:
+            st.warning(
+                "Não foi possível consultar o Super Sapiens para este NUP: "
+                f"{cached['erro']}"
+            )
+    elif not autenticado:
+        st.info(
+            "Faça login no Super Sapiens (menu lateral) para conferir as "
+            "atividades lançadas neste processo."
+        )
+    elif not proc_id:
+        st.warning("Processo não localizado no Super Sapiens a partir deste NUP.")
+    elif not tarefas_info:
+        st.warning("Nenhuma tarefa encontrada para este NUP no Super Sapiens.")
+    else:
+        total_ss = sum(len(t["atividades"]) for t in tarefas_info)
+        do_usuario = sum(
+            1
+            for t in tarefas_info
+            for a in t["atividades"]
+            if usuario_planilha and _norm_txt(a["usuario"]) == _norm_txt(usuario_planilha)
+        )
+        st.markdown(
+            f"<div style='font-size:0.8rem;color:#1a2a4a;margin-bottom:0.5rem'>"
+            f"<b>{total_ss}</b> atividade(s) em <b>{len(tarefas_info)}</b> tarefa(s) — "
+            f"<b>{do_usuario}</b> do usuário auditado."
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+        # ── Linha do tempo do NUP ────────────────────────────────────────────
+        # As atividades de todas as tarefas são fundidas numa cronologia única
+        # (mais recente primeiro), agrupada por dia. As sem data vão para o fim,
+        # em bloco próprio, para não fingirem uma posição na cronologia.
+        eventos = [
+            {**a, "tarefa": " · ".join(filter(None, [info["especie"], info.get("setor")]))}
+            for info in tarefas_info
+            for a in info["atividades"]
+        ]
+        com_data = sorted(
+            (e for e in eventos if e.get("data_iso")),
+            key=lambda e: _det_ordem_dt(e["data_iso"]),
+            reverse=True,
+        )
+        sem_data = [e for e in eventos if not e.get("data_iso")]
+
+        def _cartao_evento(a: dict) -> str:
+            """HTML de um item da linha do tempo."""
+            do_aud = bool(
+                usuario_planilha
+                and _norm_txt(a["usuario"]) == _norm_txt(usuario_planilha)
+            )
+            cor = "#1A3A6A" if do_aud else "#d0dcea"
+            marca = (
+                "<span style='display:inline-block;background:#1A3A6A;color:#fff;"
+                "font-size:0.58rem;padding:0 4px;border-radius:3px;margin-left:5px;"
+                "font-weight:700;vertical-align:middle'>AUDITADO</span>"
+                if do_aud else ""
+            )
+            encerra = (
+                "<span style='display:inline-block;background:#dc2626;color:#fff;"
+                "font-size:0.58rem;padding:0 4px;border-radius:3px;margin-left:5px;"
+                "font-weight:700;vertical-align:middle'>ENCERRA</span>"
+                if a["encerra_tarefa"] else ""
+            )
+            meta = " · ".join(
+                filter(None, [a.get("data_hora"), a["usuario"], a["setor"]])
+            )
+            desc = (
+                f"<div style='font-size:0.72rem;color:#7a8fad;margin-top:1px'>"
+                f"{a['descricao']}</div>"
+                if a["descricao"] else ""
+            )
+            tarefa = (
+                f"<div style='font-size:0.7rem;color:#9aabc2;margin-top:1px'>"
+                f"↳ {a['tarefa']}</div>"
+                if a.get("tarefa") else ""
+            )
+            return (
+                f"<div style='position:relative;padding:0 0 0.55rem 0.85rem'>"
+                f"<span style='position:absolute;left:-4.5px;top:4px;width:8px;height:8px;"
+                f"border-radius:50%;background:{cor}'></span>"
+                f"<div style='font-size:0.8rem;font-weight:700;color:#1a2a4a'>"
+                f"{a['especie']}{marca}{encerra}</div>"
+                f"<div style='font-size:0.72rem;color:#7a8fad'>{meta}</div>"
+                f"{desc}{tarefa}</div>"
+            )
+
+        blocos = ""
+        dia_atual = None
+        for a in com_data:
+            if a.get("data_dia") != dia_atual:
+                if dia_atual is not None:
+                    blocos += "</div>"
+                dia_atual = a.get("data_dia")
+                blocos += (
+                    f"<div style='font-size:0.72rem;font-weight:700;color:#1A3A6A;"
+                    f"margin:0.15rem 0 0.35rem'>{dia_atual}</div>"
+                    f"<div style='border-left:2px solid #d0dcea;margin-left:4px;"
+                    f"padding-left:0.1rem'>"
+                )
+            blocos += _cartao_evento(a)
+        if dia_atual is not None:
+            blocos += "</div>"
+
+        if sem_data:
+            blocos += (
+                "<div style='font-size:0.72rem;font-weight:700;color:#7a8fad;"
+                "margin:0.35rem 0'>Sem data registrada</div>"
+                "<div style='border-left:2px dashed #d0dcea;margin-left:4px;"
+                "padding-left:0.1rem'>"
+                + "".join(_cartao_evento(a) for a in sem_data)
+                + "</div>"
+            )
+
+        if blocos:
+            st.markdown(blocos, unsafe_allow_html=True)
+        else:
+            st.caption("Nenhuma atividade registrada nas tarefas deste NUP.")
 
 
 # ===========================================================================
